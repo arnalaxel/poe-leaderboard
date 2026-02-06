@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Builds - PoE 2 Leaderboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Metamorphous&display=swap" rel="stylesheet">
+    <style>
+        :root { --poe-gold: #8e734a; --poe-red: #ff4500; }
+        * { font-family: 'Cinzel', serif !important; cursor: url('https://web.poecdn.com/image/layout/cursor-pointer.png'), auto !important; }
+        body {
+            background-color: #050505;
+            background-image: linear-gradient(to bottom, rgba(5, 5, 5, 0.6), rgba(5, 5, 5, 0.95)), url('https://i.ibb.co/Q3R6wF9Z/The-Lastofthe-Druids-MAINKEYART-Background.png');
+            background-attachment: fixed; background-size: cover; color: #a38d6d; margin: 0;
+        }
+        .card-glass { background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(142, 115, 74, 0.2); transition: all 0.3s ease; }
+        .card-glass:hover { border-color: var(--poe-gold); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        .btn-build { background: linear-gradient(135deg, #8e734a 0%, #5d4a2d 100%); color: #050505; font-weight: bold; }
+        .loot-drop { position: absolute; pointer-events: none; padding: 4px 12px; border: 2px solid; font-weight: bold; font-size: 13px; z-index: 100; animation: floatUp 2s forwards; background: rgba(0,0,0,0.95); font-family: sans-serif !important; }
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-80px); } }
+        #emberCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; opacity: 0.5; }
+    </style>
+</head>
+<body onclick="spawnLoot(event)">
+    <canvas id="emberCanvas"></canvas>
+
+    <header class="relative z-10 pt-12 pb-8 flex flex-col items-center">
+        <a href="index.html"><img src="https://i.ibb.co/zTKghTd2/Po-E2-The-Lastofthe-Druids-EN.png" class="max-w-xs h-auto drop-shadow-2xl mb-8"></a>
+        <nav class="flex gap-8 uppercase text-[10px] tracking-[0.3em] font-bold bg-black/60 px-8 py-4 rounded-full border border-white/10 backdrop-blur-md">
+            <a href="index.html" class="hover:text-white transition">Home</a>
+            <a href="builds.html" class="text-white border-b border-white/50">Builds</a>
+            <a href="index.html#about" class="hover:text-white transition">About</a>
+        </nav>
+    </header>
+
+    <main class="relative z-10 max-w-6xl mx-auto px-4 py-12">
+        <h2 class="text-3xl text-center text-[#e4c48a] mb-16 uppercase tracking-widest">Top Meta Builds</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="card-glass p-6 flex flex-col items-center text-center">
+                <img src="icon-classes.png" class="w-20 h-20 mb-6 object-contain" alt="Druid">
+                <h3 class="text-xl text-white mb-2 uppercase">Bear Druid</h3>
+                <p class="text-xs text-stone-500 mb-6 font-sans">Le tank ultime de l'Early Access. Une survie incroyable et des dégâts de zone dévastateurs.</p>
+                <a href="#" class="btn-build w-full py-3 text-[10px] uppercase tracking-widest">View Skill Tree</a>
+            </div>
+
+            <div class="card-glass p-6 flex flex-col items-center text-center">
+                <img src="icon-skills.png" class="w-20 h-20 mb-6 object-contain" alt="Warrior">
+                <h3 class="text-xl text-white mb-2 uppercase">Titan Sunderer</h3>
+                <p class="text-xs text-stone-500 mb-6 font-sans">Utilisez la force brute pour briser le sol et vos ennemis. Focus sur les attaques chargées.</p>
+                <a href="#" class="btn-build w-full py-3 text-[10px] uppercase tracking-widest">View Skill Tree</a>
+            </div>
+
+            <div class="card-glass p-6 flex flex-col items-center text-center">
+                <img src="icon-atlas.png" class="w-20 h-20 mb-6 object-contain" alt="Ranger">
+                <h3 class="text-xl text-white mb-2 uppercase">Storm Arrow</h3>
+                <p class="text-xs text-stone-500 mb-6 font-sans">Une vitesse d'attaque foudroyante. Parfait pour nettoyer les maps de l'Atlas en un éclair.</p>
+                <a href="#" class="btn-build w-full py-3 text-[10px] uppercase tracking-widest">View Skill Tree</a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="relative z-10 mt-20 text-center py-12 border-t border-white/5 bg-black/40">
+        <p class="text-[9px] text-stone-600 tracking-[0.5em] uppercase mb-4 italic">© 2026 GGG - FAN PROJECT</p>
+        <p class="text-xs tracking-widest uppercase">Crafted by <span class="text-white">Axel Arnal</span></p>
+    </footer>
+
+    <script>
+        const lootPool = [
+            { text: "MIRROR OF KALANDRA", color: "#fff", border: "#5df" },
+            { text: "DIVINE ORB", color: "#fff", border: "#ff0" },
+            { text: "EXALTED ORB", color: "#fff", border: "#ff0" }
+        ];
+
+        function spawnLoot(e) {
+            if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') return;
+            const loot = lootPool[Math.floor(Math.random() * lootPool.length)];
+            const div = document.createElement('div');
+            div.className = 'loot-drop';
+            div.innerText = loot.text;
+            div.style.left = (e.pageX - 50) + 'px';
+            div.style.top = e.pageY + 'px';
+            div.style.color = loot.color;
+            div.style.borderColor = loot.border;
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 2000);
+        }
+
+        const canvas = document.getElementById('emberCanvas');
+        const ctx = canvas.getContext('2d');
+        let p = [];
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize);
+        resize();
+        class Particle {
+            constructor() { this.reset(); this.y = Math.random()*canvas.height; }
+            reset() { this.x = Math.random()*canvas.width; this.y = canvas.height+10; this.size = Math.random()*2; this.speedY = Math.random()*0.5+0.2; this.opacity = Math.random()*0.5; }
+            update() { this.y -= this.speedY; this.opacity -= 0.001; if (this.y < -10 || this.opacity <= 0) this.reset(); }
+            draw() { ctx.fillStyle = `rgba(255, 150, 0, ${this.opacity})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill(); }
+        }
+        function animate() { ctx.clearRect(0,0,canvas.width,canvas.height); p.forEach(part=>{part.update();part.draw();}); requestAnimationFrame(animate); }
+        for(let i=0; i<40; i++) p.push(new Particle());
+        animate();
+    </script>
+</body>
+</html>
