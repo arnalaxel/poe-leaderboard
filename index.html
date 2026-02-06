@@ -60,7 +60,7 @@
             <a href="index.html" class="hover:text-white transition">Live</a>
             <a href="builds.html" class="hover:text-white transition">Builds</a>
             <a href="#about" class="hover:text-white transition">About Path of Exile 2</a>
-            <a href="#shop" class="text-yellow-600 hover:text-yellow-400 font-bold">BUY NOW</a>
+            <a href="#shop" class="text-yellow-600 hover:text-yellow-400 font-bold">Early Access</a>
         </nav>
     </header>
 
@@ -73,9 +73,28 @@
                     <select id="streamerSelect" onchange="manualStreamChange()" class="bg-black border border-white/10 px-4 py-1 text-xs text-stone-300 outline-none"></select>
                 </div>
             </div>
-            <div class="lg:col-span-1 card-glass p-8 flex flex-col justify-between">
-                <div><h4 class="text-[10px] uppercase tracking-widest text-white mb-6 flex items-center gap-2 font-bold"><span class="w-2 h-2 bg-red-600 rounded-full animate-pulse"></span> Recommended</h4><h3 class="text-xl text-[#e4c48a] font-bold mb-4 uppercase">Bear Druid Starter</h3><p class="text-[11px] text-stone-400 leading-relaxed mb-8">Master the art of shapeshifting. Focus on massive area damage.</p></div>
-                <a href="https://mobalytics.gg/poe-2/builds/bear-druid-build-league-starter-to-endgame" target="_blank" class="bg-gradient-to-r from-[#8e734a] to-[#5d4a2d] text-[#050505] font-bold text-center py-4 text-[10px] tracking-widest uppercase border border-[#c5a572]">Mobalytics Guide</a>
+
+            <div class="lg:col-span-1 flex flex-col gap-6">
+                <div class="card-glass p-6 border-l-2 border-[#ff4500]">
+                    <h4 class="text-[10px] uppercase tracking-[0.2em] text-[#ff4500] mb-4 flex items-center gap-2 font-bold">
+                        <span class="w-2 h-2 bg-red-600 rounded-full animate-ping"></span> Next Boss Rush
+                    </h4>
+                    <div id="countdown" class="grid grid-cols-4 gap-2 text-center mb-4">
+                        <div class="flex flex-col"><span id="days" class="text-xl font-bold text-white">00</span><span class="text-[7px] uppercase text-stone-500">Days</span></div>
+                        <div class="flex flex-col"><span id="hours" class="text-xl font-bold text-white">00</span><span class="text-[7px] uppercase text-stone-500">Hrs</span></div>
+                        <div class="flex flex-col"><span id="minutes" class="text-xl font-bold text-white">00</span><span class="text-[7px] uppercase text-stone-500">Min</span></div>
+                        <div class="flex flex-col"><span id="seconds" class="text-xl font-bold text-[#e4c48a]">00</span><span class="text-[7px] uppercase text-stone-500">Sec</span></div>
+                    </div>
+                </div>
+
+                <div class="card-glass p-6 flex flex-col justify-between flex-grow">
+                    <div>
+                        <h4 class="text-[10px] uppercase tracking-widest text-white mb-4 flex items-center gap-2 font-bold"><span class="w-2 h-2 bg-red-600 rounded-full animate-pulse"></span> Recommended</h4>
+                        <h3 class="text-xl text-[#e4c48a] font-bold mb-4 uppercase">Bear Druid Starter</h3>
+                        <p class="text-[11px] text-stone-400 leading-relaxed mb-8">Master the art of shapeshifting. Focus on massive area damage.</p>
+                    </div>
+                    <a href="https://mobalytics.gg/poe-2/builds/bear-druid-build-league-starter-to-endgame" target="_blank" class="bg-gradient-to-r from-[#8e734a] to-[#5d4a2d] text-[#050505] font-bold text-center py-4 text-[10px] tracking-widest uppercase border border-[#c5a572]">Guide link</a>
+                </div>
             </div>
         </section>
 
@@ -84,9 +103,37 @@
                 <div class="flex justify-between items-center border-b border-white/10 pb-4"><h2 class="text-2xl uppercase tracking-[0.2em] text-[#e4c48a]">Exile Rankings</h2><input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search..." class="bg-transparent border-b border-white/10 text-xs px-4 py-2 outline-none focus:border-[#8e734a] transition text-stone-300"></div>
                 <div class="card-glass overflow-hidden"><div class="max-h-[500px] overflow-y-auto custom-scrollbar"><table class="w-full text-left text-xs"><tbody id="leaderboardBody"></tbody></table></div></div>
             </div>
-            <div class="lg:col-span-1 card-glass p-10 text-center bg-gradient-to-br from-[#1a130a] to-black" id="shop"><h2 class="text-2xl mb-6 text-[#e4c48a] uppercase">Join the Hunt</h2><a href="https://www.pathofexile.com/poe2" target="_blank" class="bg-gradient-to-r from-[#8e734a] to-[#5d4a2d] text-[#050505] font-bold px-12 py-5 inline-block text-xs tracking-widest border border-[#c5a572]">Buy Now</a></div>
+
+            <div class="lg:col-span-1 card-glass p-8 bg-gradient-to-br from-[#1a130a] to-black border-t-2 border-[#8e734a]" id="shop">
+                <h2 class="text-xl mb-2 text-[#e4c48a] uppercase font-bold tracking-widest text-center">Early Access Pack</h2>
+                <p class="text-[10px] text-stone-500 uppercase tracking-[0.3em] text-center mb-8 italic">Available Now</p>
+                
+                <ul class="space-y-4 mb-10">
+                    <li class="flex items-start gap-3 text-[11px] text-stone-300">
+                        <span class="text-[#8e734a] mt-1">✦</span> 300 Points
+                    </li>
+                    <li class="flex items-start gap-3 text-[11px] text-stone-300">
+                        <span class="text-[#8e734a] mt-1">✦</span> Extended Digital Soundtrack Download
+                    </li>
+                    <li class="flex items-start gap-3 text-[11px] text-stone-100 font-bold border-t border-white/5 pt-3">
+                        <span class="text-yellow-600 mt-1">✦</span> Path of Exile 2 Early Access or Key
+                    </li>
+                </ul>
+
+                <a href="https://pathofexile2.com/early-access" target="_blank" class="w-full bg-gradient-to-r from-[#8e734a] to-[#5d4a2d] text-[#050505] font-bold px-8 py-5 text-center text-xs tracking-[0.2em] uppercase border border-[#c5a572] hover:brightness-125 transition duration-500 shadow-2xl">
+                    Buy Supporter Pack
+                </a>
+                <p class="text-[9px] text-stone-600 text-center mt-6 uppercase tracking-widest leading-relaxed">
+                    Support the development <br>& get immediate access.
+                </p>
+            </div>
         </div>
     </main>
+
+    <footer class="mt-20 text-center py-12 border-t border-white/5 bg-black/40 relative-z">
+        <p class="text-[9px] text-stone-600 tracking-[0.5em] uppercase mb-4 italic">© 2026 GGG - FAN PROJECT</p>
+        <p class="text-xs tracking-widest uppercase">Crafted by <span class="text-white">Axel Arnal</span></p>
+    </footer>
 
     <script>
         const kols = [
@@ -110,7 +157,6 @@
         let m_count = 0; let d_count = 0;
         const runes = ['ᚱ', 'ᚦ', 'ᚧ', 'ᚩ', 'ᚼ', 'ᛏ', 'ᛒ', 'ᛖ', 'ᛗ', 'ᛚ'];
         
-        // SYSTÈME DE POIDS : Plus le weight est élevé, plus l'item est commun.
         const lootPool = [
             { text: "MIRROR OF KALANDRA", color: "#fff", border: "#5df", weight: 1 },
             { text: "DIVINE ORB", color: "#fff", border: "#ff0", weight: 20 },
@@ -121,33 +167,36 @@
             { text: "WISDOM SCROLL", color: "#fff", border: "#888", weight: 1500 }
         ];
 
+        const eventDate = new Date("March 1, 2026 20:00:00").getTime();
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const diff = eventDate - now;
+            if (diff > 0) {
+                document.getElementById("days").innerText = Math.floor(diff / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
+                document.getElementById("hours").innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+                document.getElementById("minutes").innerText = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+                document.getElementById("seconds").innerText = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
+            } else {
+                document.getElementById("countdown").innerHTML = "<div class='col-span-4 text-red-500 font-bold animate-pulse'>EVENT LIVE!</div>";
+            }
+        }
+        setInterval(updateCountdown, 1000);
+
         function hideLoader() { setTimeout(() => { document.getElementById('preloader').style.opacity = '0'; setTimeout(() => document.getElementById('preloader').style.display = 'none', 800); }, 1200); }
         function toggleMusic() { const m = document.getElementById('bgMusic'); const b = document.getElementById('music-status'); if (m.paused) { m.play(); m.volume = 0.3; b.innerText = "🔊 Music On"; } else { m.pause(); b.innerText = "🔈 Music Off"; } }
         function corruptSite() { document.body.classList.toggle('corrupted'); }
 
         function spawnLoot(e) {
             if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT') return;
-
-            // Calcul du loot basé sur les poids
             const totalWeight = lootPool.reduce((sum, item) => sum + item.weight, 0);
             let random = Math.random() * totalWeight;
             let loot = lootPool[lootPool.length - 1]; 
-
-            for (let item of lootPool) {
-                if (random < item.weight) {
-                    loot = item;
-                    break;
-                }
-                random -= item.weight;
-            }
-
+            for (let item of lootPool) { if (random < item.weight) { loot = item; break; } random -= item.weight; }
             const div = document.createElement('div'); div.className = 'loot-drop'; div.innerText = loot.text;
             div.style.left = (e.pageX - 50) + 'px'; div.style.top = e.pageY + 'px';
             div.style.color = loot.color; div.style.borderColor = loot.border;
-            
             if (loot.text === "MIRROR OF KALANDRA") { m_count++; document.getElementById('mir-count').innerText = m_count; triggerRare("#5df"); }
             if (loot.text === "DIVINE ORB") { d_count++; document.getElementById('div-count').innerText = d_count; triggerRare("#ff0"); }
-            
             document.body.appendChild(div); setTimeout(() => div.remove(), 2000);
         }
 
@@ -211,7 +260,7 @@
         class P { constructor() { this.reset(); this.y = Math.random()*canvas.height; } reset() { this.x = Math.random()*canvas.width; this.y = canvas.height+10; this.size = Math.random()*2; this.speedY = Math.random()*0.5+0.2; this.opacity = Math.random()*0.5; } update() { this.y -= this.speedY; this.opacity -= 0.001; if (this.y < -10 || this.opacity <= 0) this.reset(); } draw() { ctx.fillStyle = `rgba(255, 150, 0, ${this.opacity})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill(); } }
         function animate() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(animate); }
         for(let i=0; i<40; i++) particles.push(new P());
-        animate(); updateStream(kols[0].twitch); addLog();
+        animate(); updateStream(kols[0].twitch); addLog(); updateCountdown();
         document.getElementById('streamerSelect').innerHTML = kols.map(k=>`<option value="${k.twitch}">${k.name}</option>`).join('');
     </script>
 </body>
