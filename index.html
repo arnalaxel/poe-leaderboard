@@ -19,66 +19,60 @@
 
         body {
             background-color: #050505;
-            background-image: linear-gradient(to bottom, rgba(5, 5, 5, 0.4), rgba(5, 5, 5, 0.95)), url('https://i.ibb.co/Q3R6wF9Z/The-Lastofthe-Druids-MAINKEYART-Background.png');
+            background-image: linear-gradient(to bottom, rgba(5, 5, 5, 0.6), rgba(5, 5, 5, 0.95)), url('https://i.ibb.co/Q3R6wF9Z/The-Lastofthe-Druids-MAINKEYART-Background.png');
             background-attachment: fixed; background-size: cover; background-position: center;
             color: #a38d6d; overflow-x: hidden; scroll-behavior: smooth; margin: 0;
-            transition: filter 0.5s ease, background-color 0.5s ease;
+            transition: filter 0.5s ease;
         }
 
-        /* SPOTLIGHT EFFECT */
-        #spotlight {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at var(--x) var(--y), transparent 10%, rgba(0,0,0,0.92) 35%);
-            pointer-events: none; z-index: 45; transition: background 0.1s ease;
+        /* EFFET VIGNETTE LÉGER (Juste sur les bords) */
+        body::after {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, transparent 60%, rgba(0,0,0,0.6) 100%);
+            pointer-events: none; z-index: 40;
         }
 
         /* CORRUPTION MODE */
-        body.corrupted { filter: sepia(1) saturate(2) hue-rotate(-50deg) brightness(0.8); }
-        body.corrupted .card-glass { border-color: var(--corrupt-red); box-shadow: 0 0 20px rgba(139, 0, 0, 0.3); }
-        body.corrupted .btn-buy { background: linear-gradient(135deg, #4a0000 0%, #200000 100%); color: white; border-color: red; }
+        body.corrupted { filter: sepia(0.5) saturate(1.5) hue-rotate(-50deg); }
+        body.corrupted .card-glass { border-color: var(--corrupt-red); }
 
         /* PRELOADER */
         #preloader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #050505; z-index: 9999; display: flex; flex-direction: column;
-            justify-content: center; items-center; transition: opacity 1s ease;
+            justify-content: center; items-center; transition: opacity 0.8s ease;
         }
         .rune-loader { font-family: 'Metamorphous' !important; font-size: 5rem; color: var(--poe-gold); animation: pulse-rune 2s infinite; }
         @keyframes pulse-rune { 0%, 100% { opacity: 0.3; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.1); } }
 
         /* LOOT DROP ANIMATION */
         .loot-drop {
-            position: absolute; pointer-events: none; padding: 4px 10px; border: 2px solid;
-            font-weight: bold; font-size: 14px; z-index: 100; animation: floatUp 2s forwards;
-            background: rgba(0,0,0,0.9); font-family: sans-serif !important;
+            position: absolute; pointer-events: none; padding: 4px 12px; border: 2px solid;
+            font-weight: bold; font-size: 13px; z-index: 100; animation: floatUp 2s forwards;
+            background: rgba(0,0,0,0.95); font-family: sans-serif !important; letter-spacing: 1px;
         }
-        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-100px); } }
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-80px); } }
 
-        .card-glass { background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(142, 115, 74, 0.2); transition: all 0.3s; }
+        .card-glass { background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(142, 115, 74, 0.2); }
         .points-glow { color: #ffb84d; text-shadow: 0 0 12px rgba(255, 184, 77, 0.5); font-family: 'Metamorphous' !important; }
-        .rank-row:hover { background: rgba(255, 255, 255, 0.05); }
-        .rank-row::before { 
-            content: attr(data-rune); position: absolute; left: 20%; top: 50%; 
-            transform: translateY(-50%); font-size: 4rem; color: rgba(255, 69, 0, 0); 
-            pointer-events: none; transition: all 0.5s ease; z-index: 0; font-family: 'Metamorphous' !important;
-        }
-        .rank-row:hover::before { color: rgba(255, 69, 0, 0.08); transform: translateY(-50%) scale(1.5); }
+        .active-stream { background: rgba(142, 115, 74, 0.15) !important; border-left: 3px solid var(--poe-gold); }
+        
+        #emberCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; opacity: 0.5; }
     </style>
 </head>
 <body onload="hideLoader()" onclick="spawnLoot(event)">
-    <div id="spotlight"></div>
     <div id="preloader"><div class="rune-loader">ᚦ</div></div>
-    <canvas id="emberCanvas" style="position:fixed; top:0; left:0; pointer-events:none; z-index:1; opacity:0.5;"></canvas>
+    <canvas id="emberCanvas"></canvas>
 
-    <div class="relative-z fixed top-4 right-4 z-[100] flex gap-2">
-        <button onclick="corruptSite()" class="bg-red-900/40 border border-red-600 text-red-500 px-3 py-1 text-[8px] uppercase font-bold hover:bg-red-600 hover:text-white transition">Vaal Orb</button>
-        <button id="music-toggle" onclick="toggleMusic()" class="bg-black/80 border border-white/10 text-[#8e734a] px-3 py-1 text-[8px] uppercase font-bold">
+    <div class="relative-z fixed top-4 right-4 z-[100] flex gap-3">
+        <button onclick="corruptSite()" class="bg-red-900/40 border border-red-600 text-red-500 px-3 py-1 text-[9px] uppercase font-bold hover:bg-red-600 hover:text-white transition">Vaal Orb</button>
+        <button id="music-toggle" onclick="toggleMusic()" class="bg-black/80 border border-white/10 text-[#8e734a] px-3 py-1 text-[9px] uppercase font-bold">
             <span id="music-status">🔈 Music Off</span>
         </button>
         <audio id="bgMusic" loop><source src="https://web.poecdn.com/public/news/2023-07-29/PoE2_Lioneye_Watch_Theme.mp3" type="audio/mpeg"></audio>
     </div>
 
-    <header class="relative-z pt-12 pb-8 flex flex-col items-center">
+    <header class="relative-z pt-12 pb-8 flex flex-col items-center text-center">
         <img src="https://i.ibb.co/zTKghTd2/Po-E2-The-Lastofthe-Druids-EN.png" class="max-w-xs md:max-w-md h-auto drop-shadow-2xl mb-8">
         <nav class="flex gap-8 uppercase text-[10px] tracking-[0.3em] font-bold bg-black/60 px-8 py-4 rounded-full border border-white/10 backdrop-blur-md">
             <a href="#livestream" class="hover:text-white transition">Live</a>
@@ -103,16 +97,15 @@
                     <select id="streamerSelect" onchange="manualStreamChange()" class="bg-black border border-white/10 px-4 py-1 text-xs text-stone-300 outline-none"></select>
                 </div>
             </div>
-            <div class="lg:col-span-1 card-glass p-8 flex flex-col justify-between bg-gradient-to-b from-black/80 to-transparent">
+            <div class="lg:col-span-1 card-glass p-8 flex flex-col justify-between">
                 <div>
-                    <div class="flex items-center gap-2 mb-6">
-                        <span class="w-2 h-2 bg-red-600 rounded-full shadow-[0_0_10px_red] animate-pulse"></span>
-                        <h4 class="text-[10px] uppercase tracking-widest text-white">Recommended Build</h4>
-                    </div>
+                    <h4 class="text-[10px] uppercase tracking-widest text-white mb-6 flex items-center gap-2">
+                        <span class="w-2 h-2 bg-red-600 rounded-full animate-pulse"></span> Recommended
+                    </h4>
                     <h3 class="text-xl text-[#e4c48a] font-bold mb-4 uppercase">Bear Druid Starter</h3>
-                    <p class="text-[11px] text-stone-400 leading-relaxed mb-8">Master the art of shapeshifting. A build focused on survival and massive area damage for Early Access.</p>
+                    <p class="text-[11px] text-stone-400 leading-relaxed mb-8">Master the art of shapeshifting. A build focused on survival and massive area damage.</p>
                 </div>
-                <a href="https://mobalytics.gg/poe-2/builds/bear-druid-build-league-starter-to-endgame" target="_blank" class="btn-buy text-center py-4 text-[10px] tracking-widest uppercase">Mobalytics Guide</a>
+                <a href="https://mobalytics.gg/poe-2/builds/bear-druid-build-league-starter-to-endgame" target="_blank" class="btn-buy text-center py-4 text-[10px] tracking-widest">Mobalytics Guide</a>
             </div>
         </section>
 
@@ -120,9 +113,9 @@
             <div class="lg:col-span-2 space-y-6">
                 <div class="flex justify-between items-center border-b border-white/10 pb-4">
                     <h2 class="text-2xl uppercase tracking-[0.2em] text-[#e4c48a]">Exile Rankings</h2>
-                    <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search Exile..." class="bg-transparent border-b border-white/10 text-xs px-4 py-2 outline-none focus:border-[#8e734a] transition text-stone-300">
+                    <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search..." class="bg-transparent border-b border-white/10 text-xs px-4 py-2 outline-none focus:border-[#8e734a] transition text-stone-300">
                 </div>
-                <div class="card-glass overflow-hidden rounded-sm">
+                <div class="card-glass overflow-hidden">
                     <div class="max-h-[500px] overflow-y-auto custom-scrollbar">
                         <table class="w-full text-left text-xs">
                             <tbody id="leaderboardBody"></tbody>
@@ -130,57 +123,54 @@
                     </div>
                 </div>
             </div>
-            <div class="lg:col-span-1 card-glass p-10 text-center bg-gradient-to-br from-[#1a130a] to-black border-[#8e734a]/40" id="shop">
+            <div class="lg:col-span-1 card-glass p-10 text-center bg-gradient-to-br from-[#1a130a] to-black" id="shop">
                 <h2 class="text-2xl mb-6 text-[#e4c48a] uppercase">Join the Hunt</h2>
                 <a href="https://www.pathofexile.com/poe2" target="_blank" class="btn-buy px-12 py-5 inline-block text-xs tracking-widest">Buy Now</a>
             </div>
         </div>
 
         <section id="about" class="pt-20 border-t border-white/5 grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-            <div class="space-y-6 px-4 group">
+            <div class="space-y-6 group">
                 <img src="icon-classes.png" class="w-28 h-28 mx-auto object-contain opacity-80 group-hover:scale-110 transition duration-500" alt="Classes">
-                <h3 class="text-sm font-bold uppercase tracking-widest text-white">12 Classes</h3>
+                <h3 class="text-sm font-bold uppercase text-white">12 Classes</h3>
             </div>
-            <div class="space-y-6 px-4 group border-x border-white/5">
+            <div class="space-y-6 group border-x border-white/5">
                 <img src="icon-skills.png" class="w-24 h-24 mx-auto object-contain opacity-80 group-hover:scale-110 transition duration-500" alt="Skills">
-                <h3 class="text-sm font-bold uppercase tracking-widest text-white">New Skills</h3>
+                <h3 class="text-sm font-bold uppercase text-white">New Skills</h3>
             </div>
-            <div class="space-y-6 px-4 group">
+            <div class="space-y-6 group">
                 <img src="icon-atlas.png" class="w-28 h-28 mx-auto object-contain opacity-80 group-hover:scale-110 transition duration-500" alt="Endgame">
-                <h3 class="text-sm font-bold uppercase tracking-widest text-white">Endgame</h3>
+                <h3 class="text-sm font-bold uppercase text-white">Endgame</h3>
             </div>
         </section>
     </main>
+
+    <footer class="mt-20 text-center py-12 border-t border-white/5 bg-black/40 relative-z">
+        <p class="text-[9px] text-stone-600 tracking-[0.5em] uppercase mb-4 italic">© 2026 GGG - FAN PROJECT</p>
+        <p class="text-xs tracking-widest uppercase">Crafted by <span class="text-white">Axel Arnal</span></p>
+    </footer>
 
     <script>
         const kols = [{ name: "Trymacs", twitch: "trymacs", points: 15400 }, { name: "metashi12", twitch: "metashi12", points: 14200 }, { name: "PietSmiet", twitch: "pietsmiet", points: 12800 }, { name: "Bonjwa Gaming", twitch: "bonjwa", points: 11500 }, { name: "NoWay4u_Sir", twitch: "noway4u_sir", points: 10900 }, { name: "HandOfBlood", twitch: "handofblood", points: 9500 }, { name: "Terracid", twitch: "terracid", points: 8700 }, { name: "HoneyPuu", twitch: "honeypuu", points: 8200 }, { name: "Alderiate", twitch: "alderiate", points: 7800 }, { name: "Wankil Studio", twitch: "wankilstudio", points: 7500 }, { name: "Ponce", twitch: "ponce", points: 7200 }, { name: "Dhalucard", twitch: "dhalucard", points: 6900 }, { name: "Eligella", twitch: "eligella", points: 6500 }, { name: "Maxim", twitch: "maxim", points: 6200 }, { name: "Joueur Du Grenier", twitch: "joueur_du_grenier", points: 1100 }];
         const runes = ['ᚱ', 'ᚦ', 'ᚧ', 'ᚩ', 'ᚼ', 'ᛏ', 'ᛒ', 'ᛖ', 'ᛗ', 'ᛚ'];
         const lootPool = [
-            { text: "MIRROR OF KALANDRA", color: "#fff", border: "#5df", sound: true },
-            { text: "DIVINE ORB", color: "#fff", border: "#ff0", sound: true },
-            { text: "EXALTED ORB", color: "#fff", border: "#ff0", sound: false },
-            { text: "CHAOS ORB", color: "#ff0", border: "#ff0", sound: false }
+            { text: "MIRROR OF KALANDRA", color: "#fff", border: "#5df" },
+            { text: "DIVINE ORB", color: "#fff", border: "#ff0" },
+            { text: "EXALTED ORB", color: "#fff", border: "#ff0" },
+            { text: "CHAOS ORB", color: "#ff0", border: "#ff0" }
         ];
 
-        function hideLoader() { setTimeout(() => { document.getElementById('preloader').style.opacity = '0'; setTimeout(() => document.getElementById('preloader').style.display = 'none', 1000); }, 1500); }
+        function hideLoader() { setTimeout(() => { document.getElementById('preloader').style.opacity = '0'; setTimeout(() => document.getElementById('preloader').style.display = 'none', 800); }, 1200); }
         function toggleMusic() { const m = document.getElementById('bgMusic'); const b = document.getElementById('music-status'); if (m.paused) { m.play(); m.volume = 0.2; b.innerText = "🔊 Music On"; } else { m.pause(); b.innerText = "🔈 Music Off"; } }
         function corruptSite() { document.body.classList.toggle('corrupted'); }
 
-        // MOUSE SPOTLIGHT
-        window.addEventListener('mousemove', e => {
-            const spotlight = document.getElementById('spotlight');
-            spotlight.style.setProperty('--x', e.clientX + 'px');
-            spotlight.style.setProperty('--y', e.clientY + 'px');
-        });
-
-        // LOOT CLICKER
         function spawnLoot(e) {
             if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT') return;
             const loot = lootPool[Math.floor(Math.random() * lootPool.length)];
             const div = document.createElement('div');
             div.className = 'loot-drop';
             div.innerText = loot.text;
-            div.style.left = e.pageX + 'px';
+            div.style.left = (e.pageX - 50) + 'px';
             div.style.top = e.pageY + 'px';
             div.style.color = loot.color;
             div.style.borderColor = loot.border;
@@ -190,7 +180,7 @@
 
         function updateStream(t) {
             const domain = window.location.hostname || "localhost";
-            document.getElementById('twitchEmbed').src = `https://player.twitch.tv/?channel=${t}&parent=${domain}&autoplay=true`;
+            document.getElementById('twitchEmbed').src = `https://player.twitch.tv/?channel=${t}&parent=${domain}`;
             document.getElementById('currentStreamerName').innerText = t;
             document.getElementById('currentStreamerAvatar').src = `https://api.dicebear.com/7.x/identicon/svg?seed=${t}&backgroundColor=000000`;
             renderLeaderboard(kols, t);
@@ -205,12 +195,8 @@
             }).join('');
         }
 
-        function filterTable() {
-            const q = document.getElementById('searchInput').value.toLowerCase();
-            renderLeaderboard(kols.filter(k => k.name.toLowerCase().includes(q)));
-        }
+        function filterTable() { renderLeaderboard(kols.filter(k => k.name.toLowerCase().includes(document.getElementById('searchInput').value.toLowerCase())), ""); }
 
-        // Particles
         const canvas = document.getElementById('emberCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -227,8 +213,7 @@
         for(let i=0; i<40; i++) particles.push(new P());
         animate();
         updateStream(kols[0].twitch);
-        const s = document.getElementById('streamerSelect');
-        s.innerHTML = kols.map(k=>`<option value="${k.twitch}">${k.name}</option>`).join('');
+        document.getElementById('streamerSelect').innerHTML = kols.map(k=>`<option value="${k.twitch}">${k.name}</option>`).join('');
     </script>
 </body>
 </html>
