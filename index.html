@@ -5,41 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PoE 2 - The Last of the Druids Leaderboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Metamorphous&display=swap" rel="stylesheet">
     <style>
         :root { --poe-gold: #8e734a; --poe-red: #ff4500; }
         
+        /* 1. FORCE LA POLICE SUR ABSOLUMENT TOUT */
+        * {
+            font-family: 'Cinzel', serif !important;
+        }
+
+        /* 2. EXCEPTION POUR LES CHIFFRES ET RUES (Metamorphous est plus stylé pour ça) */
+        .points-glow, .rank-row::before {
+            font-family: 'Metamorphous', cursive !important;
+        }
+
         body {
             background-color: #050505;
             background-image: linear-gradient(to bottom, rgba(5, 5, 5, 0.4), rgba(5, 5, 5, 0.95)), url('https://i.ibb.co/Q3R6wF9Z/The-Lastofthe-Druids-MAINKEYART-Background.png');
-            background-attachment: fixed; background-size: cover; background-position: center;
+            background-attachment: fixed; 
+            background-size: cover; 
+            background-position: center;
             color: #a38d6d; 
-            font-family: 'Cinzel', serif !important; 
-            overflow-x: hidden; scroll-behavior: smooth;
+            overflow-x: hidden; 
+            scroll-behavior: smooth;
         }
 
-        h1, h2, h3, h4, nav a, .btn-buy, .rank-row td {
-            font-family: 'Cinzel', serif !important;
-            letter-spacing: 0.05em;
+        /* Amélioration visuelle du texte pour le côté "ancien" */
+        h1, h2, h3, h4, .btn-buy {
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
         }
 
         #emberCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
         .relative-z { position: relative; z-index: 10; }
         .card-glass { background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); border: 1px solid rgba(142, 115, 74, 0.2); }
-        .btn-buy { background: linear-gradient(135deg, #8e734a 0%, #5d4a2d 100%); color: #050505; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; transition: all 0.3s; border: 1px solid #c5a572; }
+        
+        .btn-buy { 
+            background: linear-gradient(135deg, #8e734a 0%, #5d4a2d 100%); 
+            color: #050505; 
+            font-weight: 800; 
+            transition: all 0.3s; 
+            border: 1px solid #c5a572; 
+        }
         .btn-buy:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(197, 165, 114, 0.4); }
         
-        .points-glow { color: #ffb84d; text-shadow: 0 0 12px rgba(255, 184, 77, 0.5); font-family: 'Metamorphous', cursive !important; }
+        .points-glow { color: #ffb84d; text-shadow: 0 0 12px rgba(255, 184, 77, 0.5); }
         .live-pulse { animation: pulse 2s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
         
+        /* Effet Rune au survol */
         .rank-row { position: relative; overflow: hidden; transition: background 0.3s ease; }
         .rank-row:hover { background: rgba(255, 255, 255, 0.05); cursor: pointer; }
         .rank-row::before { 
             content: attr(data-rune); 
             position: absolute; left: 20%; top: 50%; transform: translateY(-50%); 
             font-size: 4rem; color: rgba(255, 69, 0, 0); pointer-events: none; 
-            transition: all 0.5s ease; z-index: 0; font-family: 'Metamorphous', serif !important;
+            transition: all 0.5s ease; z-index: 0;
         }
         .rank-row:hover::before { 
             color: rgba(255, 69, 0, 0.08); 
@@ -63,7 +87,6 @@
             background: rgba(0,0,0,0.6); border: 1px solid rgba(142, 115, 74, 0.4);
             color: #8e734a; font-size: 9px; padding: 6px 12px; letter-spacing: 1px;
             transition: all 0.3s;
-            font-family: 'Cinzel', serif !important;
         }
         #music-toggle.playing { color: var(--poe-red); border-color: var(--poe-red); box-shadow: 0 0 10px rgba(255, 69, 0, 0.2); }
     </style>
@@ -151,19 +174,19 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
                 <div class="space-y-4 px-4 flex flex-col items-center group">
                     <img src="icon-classes.png" class="w-24 h-24 object-contain opacity-80 group-hover:opacity-100 group-hover:scale-110 transition duration-500 drop-shadow-[0_0_15px_rgba(142,115,74,0.4)]" alt="Classes">
-                    <h3 class="text-sm font-bold uppercase tracking-widest text-white mt-4">12 Character Classes</h3>
+                    <h3 class="text-sm font-bold mt-4">12 Character Classes</h3>
                     <p class="text-[11px] text-stone-500 font-sans leading-relaxed px-4">Discover 12 all-new classes and a dual-specialization system for total build freedom.</p>
                 </div>
                 
                 <div class="space-y-4 px-4 border-x border-white/5 flex flex-col items-center group">
                     <img src="icon-skills.png" class="w-20 h-20 object-contain opacity-80 group-hover:opacity-100 group-hover:scale-110 transition duration-500 drop-shadow-[0_0_15px_rgba(142,115,74,0.4)]" alt="Skills">
-                    <h3 class="text-sm font-bold uppercase tracking-widest text-white mt-4">New Skill System</h3>
+                    <h3 class="text-sm font-bold mt-4">New Skill System</h3>
                     <p class="text-[11px] text-stone-500 font-sans leading-relaxed px-4">Skill gems now slot into your links, not your gear. 6-link your entire arsenal.</p>
                 </div>
                 
                 <div class="space-y-4 px-4 flex flex-col items-center group">
                     <img src="icon-atlas.png" class="w-24 h-24 object-contain opacity-80 group-hover:opacity-100 group-hover:scale-110 transition duration-500 drop-shadow-[0_0_15px_rgba(142,115,74,0.4)]" alt="Endgame">
-                    <h3 class="text-sm font-bold uppercase tracking-widest text-white mt-4">Next-Gen Endgame</h3>
+                    <h3 class="text-sm font-bold mt-4">Next-Gen Endgame</h3>
                     <p class="text-[11px] text-stone-500 font-sans leading-relaxed px-4">Explore over 100 reworked Atlas maps with unique bosses and a revolutionary system.</p>
                 </div>
             </div>
@@ -203,16 +226,15 @@
             const music = document.getElementById('bgMusic');
             const btn = document.getElementById('music-toggle');
             const status = document.getElementById('music-status');
-            
-            if (music.paused) {
-                music.play();
-                music.volume = 0.2;
-                btn.classList.add('playing');
-                status.innerText = "🔊 Music On";
-            } else {
-                music.pause();
-                btn.classList.remove('playing');
-                status.innerText = "🔈 Music Off";
+            if (music.paused) { 
+                music.play(); 
+                music.volume = 0.2; 
+                btn.classList.add('playing'); 
+                status.innerText = "🔊 Music On"; 
+            } else { 
+                music.pause(); 
+                btn.classList.remove('playing'); 
+                status.innerText = "🔈 Music Off"; 
             }
         }
 
