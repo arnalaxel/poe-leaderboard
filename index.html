@@ -25,18 +25,15 @@
             transition: filter 0.5s ease;
         }
 
-        /* EFFET VIGNETTE LÉGER (Juste sur les bords) */
         body::after {
             content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, transparent 60%, rgba(0,0,0,0.6) 100%);
+            background: radial-gradient(circle, transparent 65%, rgba(0,0,0,0.5) 100%);
             pointer-events: none; z-index: 40;
         }
 
-        /* CORRUPTION MODE */
-        body.corrupted { filter: sepia(0.5) saturate(1.5) hue-rotate(-50deg); }
-        body.corrupted .card-glass { border-color: var(--corrupt-red); }
+        body.corrupted { filter: sepia(0.5) saturate(1.8) hue-rotate(-50deg); }
+        body.corrupted .card-glass { border-color: var(--corrupt-red); box-shadow: 0 0 15px rgba(139, 0, 0, 0.2); }
 
-        /* PRELOADER */
         #preloader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #050505; z-index: 9999; display: flex; flex-direction: column;
@@ -45,7 +42,6 @@
         .rune-loader { font-family: 'Metamorphous' !important; font-size: 5rem; color: var(--poe-gold); animation: pulse-rune 2s infinite; }
         @keyframes pulse-rune { 0%, 100% { opacity: 0.3; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.1); } }
 
-        /* LOOT DROP ANIMATION */
         .loot-drop {
             position: absolute; pointer-events: none; padding: 4px 12px; border: 2px solid;
             font-weight: bold; font-size: 13px; z-index: 100; animation: floatUp 2s forwards;
@@ -99,13 +95,13 @@
             </div>
             <div class="lg:col-span-1 card-glass p-8 flex flex-col justify-between">
                 <div>
-                    <h4 class="text-[10px] uppercase tracking-widest text-white mb-6 flex items-center gap-2">
+                    <h4 class="text-[10px] uppercase tracking-widest text-white mb-6 flex items-center gap-2 font-bold">
                         <span class="w-2 h-2 bg-red-600 rounded-full animate-pulse"></span> Recommended
                     </h4>
                     <h3 class="text-xl text-[#e4c48a] font-bold mb-4 uppercase">Bear Druid Starter</h3>
                     <p class="text-[11px] text-stone-400 leading-relaxed mb-8">Master the art of shapeshifting. A build focused on survival and massive area damage.</p>
                 </div>
-                <a href="https://mobalytics.gg/poe-2/builds/bear-druid-build-league-starter-to-endgame" target="_blank" class="btn-buy text-center py-4 text-[10px] tracking-widest">Mobalytics Guide</a>
+                <a href="https://mobalytics.gg/poe-2/builds/bear-druid-build-league-starter-to-endgame" target="_blank" class="bg-gradient-to-r from-[#8e734a] to-[#5d4a2d] text-[#050505] font-bold text-center py-4 text-[10px] tracking-widest uppercase border border-[#c5a572]">Mobalytics Guide</a>
             </div>
         </section>
 
@@ -125,22 +121,25 @@
             </div>
             <div class="lg:col-span-1 card-glass p-10 text-center bg-gradient-to-br from-[#1a130a] to-black" id="shop">
                 <h2 class="text-2xl mb-6 text-[#e4c48a] uppercase">Join the Hunt</h2>
-                <a href="https://www.pathofexile.com/poe2" target="_blank" class="btn-buy px-12 py-5 inline-block text-xs tracking-widest">Buy Now</a>
+                <a href="https://www.pathofexile.com/poe2" target="_blank" class="bg-gradient-to-r from-[#8e734a] to-[#5d4a2d] text-[#050505] font-bold px-12 py-5 inline-block text-xs tracking-widest border border-[#c5a572]">Buy Now</a>
             </div>
         </div>
 
         <section id="about" class="pt-20 border-t border-white/5 grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
             <div class="space-y-6 group">
                 <img src="icon-classes.png" class="w-28 h-28 mx-auto object-contain opacity-80 group-hover:scale-110 transition duration-500" alt="Classes">
-                <h3 class="text-sm font-bold uppercase text-white">12 Classes</h3>
+                <h3 class="text-sm font-bold uppercase text-white font-bold">12 Classes</h3>
+                <p class="text-[11px] text-stone-500 px-4 leading-relaxed">Discover 12 all-new classes and a dual-specialization system for total build freedom.</p>
             </div>
             <div class="space-y-6 group border-x border-white/5">
                 <img src="icon-skills.png" class="w-24 h-24 mx-auto object-contain opacity-80 group-hover:scale-110 transition duration-500" alt="Skills">
-                <h3 class="text-sm font-bold uppercase text-white">New Skills</h3>
+                <h3 class="text-sm font-bold uppercase text-white font-bold">New Skills</h3>
+                <p class="text-[11px] text-stone-500 px-4 leading-relaxed">Skill gems now slot into your links, not your gear. 6-link your entire arsenal.</p>
             </div>
             <div class="space-y-6 group">
                 <img src="icon-atlas.png" class="w-28 h-28 mx-auto object-contain opacity-80 group-hover:scale-110 transition duration-500" alt="Endgame">
-                <h3 class="text-sm font-bold uppercase text-white">Endgame</h3>
+                <h3 class="text-sm font-bold uppercase text-white font-bold">Endgame</h3>
+                <p class="text-[11px] text-stone-500 px-4 leading-relaxed">Explore over 100 reworked Atlas maps with unique bosses and a revolutionary system.</p>
             </div>
         </section>
     </main>
