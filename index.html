@@ -23,14 +23,7 @@
         .shake-effect { animation: shake 0.4s; }
         #loot-flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; opacity: 0; pointer-events: none; z-index: 200; transition: opacity 0.1s; }
         #char-tooltip { position: absolute; display: none; background: rgba(10, 10, 10, 0.95); border: 1px solid var(--poe-gold); padding: 12px; z-index: 500; width: 180px; box-shadow: 0 0 20px rgba(0,0,0,0.8); pointer-events: none; }
-        
-        /* FIX DU LOG GLOBAL */
-        #global-log {
-            position: fixed; bottom: 20px; left: 20px; width: 350px; height: 130px;
-            pointer-events: none; z-index: 50; overflow: hidden;
-            mask-image: linear-gradient(to bottom, black 85%, transparent 100%); /* FADE VERS LE BAS */
-        }
-        
+        #global-log { position: fixed; bottom: 20px; left: 20px; width: 350px; height: 130px; pointer-events: none; z-index: 50; overflow: hidden; mask-image: linear-gradient(to bottom, black 85%, transparent 100%); }
         .log-entry { font-family: sans-serif !important; font-size: 11px; margin-bottom: 2px; text-shadow: 1px 1px 1px black; animation: logSlide 0.3s ease-out; }
         @keyframes logSlide { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
         .chat-death { color: #ff4d4d; } .chat-global { color: #60c1e8; } .chat-trade { color: #abe33d; } .chat-info { color: #afadab; }
@@ -116,7 +109,17 @@
 
         let m_count = 0; let d_count = 0;
         const runes = ['ᚱ', 'ᚦ', 'ᚧ', 'ᚩ', 'ᚼ', 'ᛏ', 'ᛒ', 'ᛖ', 'ᛗ', 'ᛚ'];
-        const lootPool = [{ text: "MIRROR OF KALANDRA", color: "#fff", border: "#5df" }, { text: "DIVINE ORB", color: "#fff", border: "#ff0" }, { text: "EXALTED ORB", color: "#fff", border: "#ff0" }, { text: "CHAOS ORB", color: "#ff0", border: "#ff0" }];
+        
+        // SYSTÈME DE POIDS : Plus le weight est élevé, plus l'item est commun.
+        const lootPool = [
+            { text: "MIRROR OF KALANDRA", color: "#fff", border: "#5df", weight: 1 },
+            { text: "DIVINE ORB", color: "#fff", border: "#ff0", weight: 20 },
+            { text: "EXALTED ORB", color: "#fff", border: "#ff0", weight: 60 },
+            { text: "CHAOS ORB", color: "#ff0", border: "#ff0", weight: 200 },
+            { text: "ALCHEMY ORB", color: "#ff0", border: "#ff0", weight: 400 },
+            { text: "TRANSMUTE", color: "#fff", border: "#888", weight: 800 },
+            { text: "WISDOM SCROLL", color: "#fff", border: "#888", weight: 1500 }
+        ];
 
         function hideLoader() { setTimeout(() => { document.getElementById('preloader').style.opacity = '0'; setTimeout(() => document.getElementById('preloader').style.display = 'none', 800); }, 1200); }
         function toggleMusic() { const m = document.getElementById('bgMusic'); const b = document.getElementById('music-status'); if (m.paused) { m.play(); m.volume = 0.3; b.innerText = "🔊 Music On"; } else { m.pause(); b.innerText = "🔈 Music Off"; } }
@@ -124,12 +127,27 @@
 
         function spawnLoot(e) {
             if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT') return;
-            const loot = lootPool[Math.floor(Math.random() * lootPool.length)];
+
+            // Calcul du loot basé sur les poids
+            const totalWeight = lootPool.reduce((sum, item) => sum + item.weight, 0);
+            let random = Math.random() * totalWeight;
+            let loot = lootPool[lootPool.length - 1]; 
+
+            for (let item of lootPool) {
+                if (random < item.weight) {
+                    loot = item;
+                    break;
+                }
+                random -= item.weight;
+            }
+
             const div = document.createElement('div'); div.className = 'loot-drop'; div.innerText = loot.text;
             div.style.left = (e.pageX - 50) + 'px'; div.style.top = e.pageY + 'px';
             div.style.color = loot.color; div.style.borderColor = loot.border;
+            
             if (loot.text === "MIRROR OF KALANDRA") { m_count++; document.getElementById('mir-count').innerText = m_count; triggerRare("#5df"); }
             if (loot.text === "DIVINE ORB") { d_count++; document.getElementById('div-count').innerText = d_count; triggerRare("#ff0"); }
+            
             document.body.appendChild(div); setTimeout(() => div.remove(), 2000);
         }
 
