@@ -8,29 +8,38 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Metamorphous&display=swap" rel="stylesheet">
     <style>
         :root { --poe-gold: #8e734a; --poe-red: #ff4500; }
+        
         body {
             background-color: #050505;
             background-image: linear-gradient(to bottom, rgba(5, 5, 5, 0.4), rgba(5, 5, 5, 0.95)), url('https://i.ibb.co/Q3R6wF9Z/The-Lastofthe-Druids-MAINKEYART-Background.png');
             background-attachment: fixed; background-size: cover; background-position: center;
-            color: #a38d6d; font-family: 'Cinzel', serif; overflow-x: hidden; scroll-behavior: smooth;
+            color: #a38d6d; 
+            font-family: 'Cinzel', serif !important; 
+            overflow-x: hidden; scroll-behavior: smooth;
         }
+
+        h1, h2, h3, h4, nav a, .btn-buy, .rank-row td {
+            font-family: 'Cinzel', serif !important;
+            letter-spacing: 0.05em;
+        }
+
         #emberCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
         .relative-z { position: relative; z-index: 10; }
         .card-glass { background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); border: 1px solid rgba(142, 115, 74, 0.2); }
         .btn-buy { background: linear-gradient(135deg, #8e734a 0%, #5d4a2d 100%); color: #050505; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; transition: all 0.3s; border: 1px solid #c5a572; }
         .btn-buy:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(197, 165, 114, 0.4); }
-        .points-glow { color: #ffb84d; text-shadow: 0 0 12px rgba(255, 184, 77, 0.5); font-family: 'Metamorphous', cursive; }
+        
+        .points-glow { color: #ffb84d; text-shadow: 0 0 12px rgba(255, 184, 77, 0.5); font-family: 'Metamorphous', cursive !important; }
         .live-pulse { animation: pulse 2s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
         
-        /* Masterclass: Rune Hover Effect */
         .rank-row { position: relative; overflow: hidden; transition: background 0.3s ease; }
         .rank-row:hover { background: rgba(255, 255, 255, 0.05); cursor: pointer; }
         .rank-row::before { 
             content: attr(data-rune); 
             position: absolute; left: 20%; top: 50%; transform: translateY(-50%); 
             font-size: 4rem; color: rgba(255, 69, 0, 0); pointer-events: none; 
-            transition: all 0.5s ease; z-index: 0; font-family: 'Metamorphous', serif;
+            transition: all 0.5s ease; z-index: 0; font-family: 'Metamorphous', serif !important;
         }
         .rank-row:hover::before { 
             color: rgba(255, 69, 0, 0.08); 
@@ -54,6 +63,7 @@
             background: rgba(0,0,0,0.6); border: 1px solid rgba(142, 115, 74, 0.4);
             color: #8e734a; font-size: 9px; padding: 6px 12px; letter-spacing: 1px;
             transition: all 0.3s;
+            font-family: 'Cinzel', serif !important;
         }
         #music-toggle.playing { color: var(--poe-red); border-color: var(--poe-red); box-shadow: 0 0 10px rgba(255, 69, 0, 0.2); }
     </style>
@@ -140,21 +150,21 @@
             <h2 class="text-center text-xl uppercase tracking-[0.3em] mb-12 text-[#e4c48a]">The Next Era of Action RPG</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
                 <div class="space-y-4 px-4 flex flex-col items-center group">
-                    <img src="icon-classes.png" class="w-16 h-16 object-contain opacity-70 group-hover:opacity-100 group-hover:scale-110 transition duration-500" alt="Classes">
-                    <h3 class="text-sm font-bold uppercase tracking-widest text-white mt-4 font-['Cinzel']">12 Character Classes</h3>
-                    <p class="text-[11px] text-stone-500 font-sans leading-relaxed">Discover 12 all-new classes and a dual-specialization system for total build freedom.</p>
+                    <img src="icon-classes.png" class="w-24 h-24 object-contain opacity-80 group-hover:opacity-100 group-hover:scale-110 transition duration-500 drop-shadow-[0_0_15px_rgba(142,115,74,0.4)]" alt="Classes">
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-white mt-4">12 Character Classes</h3>
+                    <p class="text-[11px] text-stone-500 font-sans leading-relaxed px-4">Discover 12 all-new classes and a dual-specialization system for total build freedom.</p>
                 </div>
                 
                 <div class="space-y-4 px-4 border-x border-white/5 flex flex-col items-center group">
-                    <img src="icon-skills.png" class="w-14 h-14 object-contain opacity-70 group-hover:opacity-100 group-hover:scale-110 transition duration-500" alt="Skills">
-                    <h3 class="text-sm font-bold uppercase tracking-widest text-white mt-4 font-['Cinzel']">New Skill System</h3>
-                    <p class="text-[11px] text-stone-500 font-sans leading-relaxed">Skill gems now slot into your links, not your gear. 6-link your entire arsenal.</p>
+                    <img src="icon-skills.png" class="w-20 h-20 object-contain opacity-80 group-hover:opacity-100 group-hover:scale-110 transition duration-500 drop-shadow-[0_0_15px_rgba(142,115,74,0.4)]" alt="Skills">
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-white mt-4">New Skill System</h3>
+                    <p class="text-[11px] text-stone-500 font-sans leading-relaxed px-4">Skill gems now slot into your links, not your gear. 6-link your entire arsenal.</p>
                 </div>
                 
                 <div class="space-y-4 px-4 flex flex-col items-center group">
-                    <img src="icon-atlas.png" class="w-16 h-16 object-contain opacity-70 group-hover:opacity-100 group-hover:scale-110 transition duration-500" alt="Endgame">
-                    <h3 class="text-sm font-bold uppercase tracking-widest text-white mt-4 font-['Cinzel']">Next-Gen Endgame</h3>
-                    <p class="text-[11px] text-stone-500 font-sans leading-relaxed">Explore over 100 reworked Atlas maps with unique bosses and a revolutionary system.</p>
+                    <img src="icon-atlas.png" class="w-24 h-24 object-contain opacity-80 group-hover:opacity-100 group-hover:scale-110 transition duration-500 drop-shadow-[0_0_15px_rgba(142,115,74,0.4)]" alt="Endgame">
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-white mt-4">Next-Gen Endgame</h3>
+                    <p class="text-[11px] text-stone-500 font-sans leading-relaxed px-4">Explore over 100 reworked Atlas maps with unique bosses and a revolutionary system.</p>
                 </div>
             </div>
         </section>
@@ -237,7 +247,7 @@
                     <td class="p-4 text-center font-serif ${index < 3 ? 'text-yellow-500 text-lg' : 'text-stone-500'}">${index + 1}</td>
                     <td class="p-4 flex items-center gap-3 font-bold text-stone-200">
                         <img src="https://api.dicebear.com/7.x/identicon/svg?seed=${kol.name}&backgroundColor=000000" class="w-6 h-6 border border-white/10">
-                        <span class="relative z-10 font-['Cinzel']">${kol.name}</span>
+                        <span class="relative z-10">${kol.name}</span>
                     </td>
                     <td class="p-4 text-right points-glow text-base relative z-10">${kol.points.toLocaleString()}</td>
                 </tr>`;
