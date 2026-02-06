@@ -42,12 +42,44 @@
         .rune-loader { font-family: 'Metamorphous' !important; font-size: 5rem; color: var(--poe-gold); animation: pulse-rune 2s infinite; }
         @keyframes pulse-rune { 0%, 100% { opacity: 0.3; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.1); } }
 
+        /* LOOT & SHAKE */
         .loot-drop {
             position: absolute; pointer-events: none; padding: 4px 12px; border: 2px solid;
             font-weight: bold; font-size: 13px; z-index: 100; animation: floatUp 2s forwards;
             background: rgba(0,0,0,0.95); font-family: sans-serif !important; letter-spacing: 1px;
         }
         @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-80px); } }
+
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            50% { transform: translate(-1px, 2px) rotate(1deg); }
+            100% { transform: translate(1px, -2px) rotate(0deg); }
+        }
+        .shake-effect { animation: shake 0.4s; }
+
+        #loot-flash {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: white; opacity: 0; pointer-events: none; z-index: 200; transition: opacity 0.1s;
+        }
+
+        /* TOOLTIP */
+        #char-tooltip {
+            position: absolute; display: none; background: rgba(10, 10, 10, 0.95);
+            border: 1px solid var(--poe-gold); padding: 12px; z-index: 500; width: 180px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8); pointer-events: none;
+        }
+
+        /* GLOBAL LOG */
+        #global-log {
+            position: fixed; bottom: 20px; left: 20px; width: 320px; height: 110px;
+            pointer-events: none; z-index: 50; overflow: hidden;
+            mask-image: linear-gradient(to top, black 80%, transparent 100%);
+        }
+        .log-entry { font-family: sans-serif !important; font-size: 11px; margin-bottom: 2px; text-shadow: 1px 1px 1px black; animation: logSlide 0.3s ease-out; }
+        @keyframes logSlide { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+        .chat-death { color: #ff4d4d; } .chat-global { color: #60c1e8; } .chat-trade { color: #abe33d; }
 
         .card-glass { background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(142, 115, 74, 0.2); }
         .points-glow { color: #ffb84d; text-shadow: 0 0 12px rgba(255, 184, 77, 0.5); font-family: 'Metamorphous' !important; }
@@ -58,16 +90,23 @@
 </head>
 <body onload="hideLoader()" onclick="spawnLoot(event)">
     <div id="preloader"><div class="rune-loader">ᚦ</div></div>
+    <div id="loot-flash"></div>
+    <div id="char-tooltip"></div>
+    <div id="global-log"></div>
     <canvas id="emberCanvas"></canvas>
 
-    <div class="relative-z fixed top-4 right-4 z-[100] flex gap-3">
-        <button onclick="corruptSite()" class="bg-red-900/40 border border-red-600 text-red-500 px-3 py-1 text-[9px] uppercase font-bold hover:bg-red-600 hover:text-white transition">Vaal Orb</button>
-        <button id="music-toggle" onclick="toggleMusic()" class="bg-black/80 border border-white/10 text-[#8e734a] px-3 py-1 text-[9px] uppercase font-bold">
-            <span id="music-status">🔈 Music Off</span>
-        </button>
-        <audio id="bgMusic" loop>
-    <source src="theme.mp3" type="audio/mpeg">
-</audio>
+    <div class="relative-z fixed top-4 right-4 z-[100] flex flex-col items-end gap-3">
+        <div class="bg-black/80 border border-[#8e734a]/40 px-3 py-2 flex gap-4 rounded-sm shadow-xl">
+            <div class="flex flex-col items-center"><span class="text-[8px] text-stone-500 uppercase">Mirrors</span><span id="mir-count" class="text-cyan-400 font-bold text-xs">0</span></div>
+            <div class="flex flex-col items-center border-l border-white/10 pl-4"><span class="text-[8px] text-stone-500 uppercase">Divines</span><span id="div-count" class="text-yellow-500 font-bold text-xs">0</span></div>
+        </div>
+        <div class="flex gap-2">
+            <button onclick="corruptSite()" class="bg-red-900/40 border border-red-600 text-red-500 px-3 py-1 text-[9px] uppercase font-bold hover:bg-red-600 hover:text-white transition">Vaal Orb</button>
+            <button id="music-toggle" onclick="toggleMusic()" class="bg-black/80 border border-white/10 text-[#8e734a] px-3 py-1 text-[9px] uppercase font-bold">
+                <span id="music-status">🔈 Music Off</span>
+            </button>
+        </div>
+        <audio id="bgMusic" loop><source src="theme.mp3" type="audio/mpeg"></audio>
     </div>
 
     <header class="relative-z pt-12 pb-8 flex flex-col items-center text-center">
@@ -152,17 +191,35 @@
     </footer>
 
     <script>
-        const kols = [{ name: "Trymacs", twitch: "trymacs", points: 15400 }, { name: "metashi12", twitch: "metashi12", points: 14200 }, { name: "PietSmiet", twitch: "pietsmiet", points: 12800 }, { name: "Bonjwa Gaming", twitch: "bonjwa", points: 11500 }, { name: "NoWay4u_Sir", twitch: "noway4u_sir", points: 10900 }, { name: "HandOfBlood", twitch: "handofblood", points: 9500 }, { name: "Terracid", twitch: "terracid", points: 8700 }, { name: "HoneyPuu", twitch: "honeypuu", points: 8200 }, { name: "Alderiate", twitch: "alderiate", points: 7800 }, { name: "Wankil Studio", twitch: "wankilstudio", points: 7500 }, { name: "Ponce", twitch: "ponce", points: 7200 }, { name: "Dhalucard", twitch: "dhalucard", points: 6900 }, { name: "Eligella", twitch: "eligella", points: 6500 }, { name: "Maxim", twitch: "maxim", points: 6200 }, { name: "Joueur Du Grenier", twitch: "joueur_du_grenier", points: 1100 }];
+        const kols = [
+            { name: "Trymacs", twitch: "trymacs", points: 15400, class: "Druid", level: 92 },
+            { name: "metashi12", twitch: "metashi12", points: 14200, class: "Monk", level: 89 },
+            { name: "PietSmiet", twitch: "pietsmiet", points: 12800, class: "Warrior", level: 85 },
+            { name: "Bonjwa Gaming", twitch: "bonjwa", points: 11500, class: "Huntress", level: 82 },
+            { name: "NoWay4u_Sir", twitch: "noway4u_sir", points: 10900, class: "Mercenary", level: 80 },
+            { name: "HandOfBlood", twitch: "handofblood", points: 9500, class: "Witch", level: 78 },
+            { name: "Terracid", twitch: "terracid", points: 8700, class: "Druid", level: 75 },
+            { name: "HoneyPuu", twitch: "honeypuu", points: 8200, class: "Sorceress", level: 72 },
+            { name: "Alderiate", twitch: "alderiate", points: 7800, class: "Warrior", level: 70 },
+            { name: "Wankil Studio", twitch: "wankilstudio", points: 7500, class: "Ranger", level: 68 },
+            { name: "Ponce", twitch: "ponce", points: 7200, class: "Monk", level: 65 },
+            { name: "Dhalucard", twitch: "dhalucard", points: 6900, class: "Mercenary", level: 62 },
+            { name: "Eligella", twitch: "eligella", points: 6500, class: "Huntress", level: 60 },
+            { name: "Maxim", twitch: "maxim", points: 6200, class: "Witch", level: 58 },
+            { name: "Joueur Du Grenier", twitch: "joueur_du_grenier", points: 1100, class: "Druid", level: 12 }
+        ];
+
+        let m_count = 0; let d_count = 0;
         const runes = ['ᚱ', 'ᚦ', 'ᚧ', 'ᚩ', 'ᚼ', 'ᛏ', 'ᛒ', 'ᛖ', 'ᛗ', 'ᛚ'];
         const lootPool = [
-            { text: "MIRROR OF KALANDRA", color: "#fff", border: "#5df" },
-            { text: "DIVINE ORB", color: "#fff", border: "#ff0" },
-            { text: "EXALTED ORB", color: "#fff", border: "#ff0" },
-            { text: "CHAOS ORB", color: "#ff0", border: "#ff0" }
+            { text: "MIRROR OF KALANDRA", color: "#fff", border: "#5df", rare: true },
+            { text: "DIVINE ORB", color: "#fff", border: "#ff0", rare: true },
+            { text: "EXALTED ORB", color: "#fff", border: "#ff0", rare: false },
+            { text: "CHAOS ORB", color: "#ff0", border: "#ff0", rare: false }
         ];
 
         function hideLoader() { setTimeout(() => { document.getElementById('preloader').style.opacity = '0'; setTimeout(() => document.getElementById('preloader').style.display = 'none', 800); }, 1200); }
-        function toggleMusic() { const m = document.getElementById('bgMusic'); const b = document.getElementById('music-status'); if (m.paused) { m.play(); m.volume = 0.2; b.innerText = "🔊 Music On"; } else { m.pause(); b.innerText = "🔈 Music Off"; } }
+        function toggleMusic() { const m = document.getElementById('bgMusic'); const b = document.getElementById('music-status'); if (m.paused) { m.play(); m.volume = 0.3; b.innerText = "🔊 Music On"; } else { m.pause(); b.innerText = "🔈 Music Off"; } }
         function corruptSite() { document.body.classList.toggle('corrupted'); }
 
         function spawnLoot(e) {
@@ -171,13 +228,26 @@
             const div = document.createElement('div');
             div.className = 'loot-drop';
             div.innerText = loot.text;
-            div.style.left = (e.pageX - 50) + 'px';
-            div.style.top = e.pageY + 'px';
-            div.style.color = loot.color;
-            div.style.borderColor = loot.border;
+            div.style.left = (e.pageX - 50) + 'px'; div.style.top = e.pageY + 'px';
+            div.style.color = loot.color; div.style.borderColor = loot.border;
+            
+            if (loot.text === "MIRROR OF KALANDRA") { m_count++; document.getElementById('mir-count').innerText = m_count; triggerRare("#5df"); }
+            if (loot.text === "DIVINE ORB") { d_count++; document.getElementById('div-count').innerText = d_count; triggerRare("#ff0"); }
+
             document.body.appendChild(div);
             setTimeout(() => div.remove(), 2000);
         }
+
+        function triggerRare(c) {
+            const f = document.getElementById('loot-flash'); f.style.background = c; f.style.opacity = "0.3"; setTimeout(()=> f.style.opacity = "0", 100);
+            document.body.classList.add('shake-effect'); setTimeout(()=> document.body.classList.remove('shake-effect'), 400);
+        }
+
+        function showTip(e, cls, lvl) {
+            const t = document.getElementById('char-tooltip'); t.style.display = 'block'; t.style.left = (e.pageX + 15) + 'px'; t.style.top = (e.pageY + 15) + 'px';
+            t.innerHTML = `<div class="text-[#e4c48a] font-bold text-xs uppercase">${cls}</div><div class="text-stone-500 text-[10px] mb-2">Level ${lvl}</div><div class="h-1 bg-gray-800 w-full"><div class="h-full bg-red-700 w-[85%]"></div></div>`;
+        }
+        function hideTip() { document.getElementById('char-tooltip').style.display = 'none'; }
 
         function updateStream(t) {
             const domain = window.location.hostname || "localhost";
@@ -192,28 +262,35 @@
             document.getElementById('leaderboardBody').innerHTML = data.map((kol, i) => {
                 const active = kol.twitch === current;
                 const r = runes[Math.floor(Math.random()*runes.length)];
-                return `<tr onclick="updateStream('${kol.twitch}')" data-rune="${r}" class="rank-row border-b border-white/5 ${active?'active-stream':''}"><td class="p-4 text-center font-bold ${i<3?'text-yellow-500 text-lg':'text-stone-500'}">${i+1}</td><td class="p-4 flex items-center gap-3 font-bold text-stone-200"><img src="https://api.dicebear.com/7.x/identicon/svg?seed=${kol.name}&backgroundColor=000000" class="w-6 h-6 border border-white/10"><span>${kol.name}</span></td><td class="p-4 text-right points-glow text-base">${kol.points.toLocaleString()}</td></tr>`;
+                return `<tr onclick="updateStream('${kol.twitch}')" onmousemove="showTip(event, '${kol.class}', ${kol.level})" onmouseleave="hideTip()" data-rune="${r}" class="rank-row border-b border-white/5 ${active?'active-stream':''} cursor-help"><td class="p-4 text-center font-bold ${i<3?'text-yellow-500 text-lg':'text-stone-500'}">${i+1}</td><td class="p-4 flex items-center gap-3 font-bold text-stone-200"><img src="https://api.dicebear.com/7.x/identicon/svg?seed=${kol.name}&backgroundColor=000000" class="w-6 h-6 border border-white/10"><span>${kol.name}</span></td><td class="p-4 text-right points-glow text-base">${kol.points.toLocaleString()}</td></tr>`;
             }).join('');
         }
 
         function filterTable() { renderLeaderboard(kols.filter(k => k.name.toLowerCase().includes(document.getElementById('searchInput').value.toLowerCase())), ""); }
 
-        const canvas = document.getElementById('emberCanvas');
-        const ctx = canvas.getContext('2d');
+        // LOG LOGIC
+        const logs = [
+            { t: "Trymacs has been slain by Hillock.", c: "chat-death" },
+            { t: "metashi12 reached Level 90!", c: "chat-global" },
+            { t: "PietSmiet has found a Mirror of Kalandra.", c: "chat-trade" },
+            { t: "Joueur Du Grenier has died at Rank 15.", c: "chat-death" },
+            { t: "Global 1: Anyone for Merveil?", c: "chat-global" }
+        ];
+        function addLog() {
+            const l = document.getElementById('global-log'); const m = logs[Math.floor(Math.random()*logs.length)];
+            const d = document.createElement('div'); d.className = `log-entry ${m.c}`; d.innerText = m.t;
+            l.prepend(d); if (l.childNodes.length > 5) l.removeChild(l.lastChild);
+            setTimeout(addLog, Math.random() * 5000 + 3000);
+        }
+
+        const canvas = document.getElementById('emberCanvas'); const ctx = canvas.getContext('2d');
         let particles = [];
         function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-        window.addEventListener('resize', resize);
-        resize();
-        class P {
-            constructor() { this.reset(); this.y = Math.random()*canvas.height; }
-            reset() { this.x = Math.random()*canvas.width; this.y = canvas.height+10; this.size = Math.random()*2; this.speedY = Math.random()*0.5+0.2; this.opacity = Math.random()*0.5; }
-            update() { this.y -= this.speedY; this.opacity -= 0.001; if (this.y < -10 || this.opacity <= 0) this.reset(); }
-            draw() { ctx.fillStyle = `rgba(255, 150, 0, ${this.opacity})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill(); }
-        }
+        window.addEventListener('resize', resize); resize();
+        class P { constructor() { this.reset(); this.y = Math.random()*canvas.height; } reset() { this.x = Math.random()*canvas.width; this.y = canvas.height+10; this.size = Math.random()*2; this.speedY = Math.random()*0.5+0.2; this.opacity = Math.random()*0.5; } update() { this.y -= this.speedY; this.opacity -= 0.001; if (this.y < -10 || this.opacity <= 0) this.reset(); } draw() { ctx.fillStyle = `rgba(255, 150, 0, ${this.opacity})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill(); } }
         function animate() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(animate); }
         for(let i=0; i<40; i++) particles.push(new P());
-        animate();
-        updateStream(kols[0].twitch);
+        animate(); updateStream(kols[0].twitch); addLog();
         document.getElementById('streamerSelect').innerHTML = kols.map(k=>`<option value="${k.twitch}">${k.name}</option>`).join('');
     </script>
 </body>
