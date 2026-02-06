@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PoE 2 - The Last of the Druids Leaderboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Metamorphous&display=swap" rel="stylesheet">
+    <style>
+        :root { --poe-gold: #8e734a; --poe-red: #ff4500; }
+        body {
+            background-color: #050505;
+            background-image: linear-gradient(to bottom, rgba(5, 5, 5, 0.4), rgba(5, 5, 5, 0.95)), url('https://i.ibb.co/Q3R6wF9Z/The-Lastofthe-Druids-MAINKEYART-Background.png');
+            background-attachment: fixed; background-size: cover; background-position: center;
+            color: #a38d6d; font-family: 'Cinzel', serif; overflow-x: hidden; scroll-behavior: smooth;
+        }
+        #emberCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+        .relative-z { position: relative; z-index: 10; }
+        .card-glass { background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); border: 1px solid rgba(142, 115, 74, 0.2); }
+        .btn-buy { background: linear-gradient(135deg, #8e734a 0%, #5d4a2d 100%); color: #050505; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; transition: all 0.3s; border: 1px solid #c5a572; }
+        .btn-buy:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(197, 165, 114, 0.4); }
+        .points-glow { color: #ffb84d; text-shadow: 0 0 12px rgba(255, 184, 77, 0.5); font-family: 'Metamorphous', cursive; }
+        .live-pulse { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+        
+        /* Masterclass: Rune Hover Effect */
+        .rank-row { position: relative; overflow: hidden; transition: background 0.3s ease; }
+        .rank-row:hover { background: rgba(255, 255, 255, 0.05); cursor: pointer; }
+        .rank-row::before { 
+            content: attr(data-rune); 
+            position: absolute; left: 20%; top: 50%; transform: translateY(-50%); 
+            font-size: 4rem; color: rgba(255, 69, 0, 0); pointer-events: none; 
+            transition: all 0.5s ease; z-index: 0; font-family: 'Metamorphous', serif;
+        }
+        .rank-row:hover::before { 
+            color: rgba(255, 69, 0, 0.08); 
+            transform: translateY(-50%) scale(1.5); 
+            text-shadow: 0 0 15px rgba(255, 69, 0, 0.2);
+            animation: runeGlitch 0.3s infinite;
+        }
+        @keyframes runeGlitch {
+            0% { transform: translateY(-50%) scale(1.5) translateX(-2px); }
+            50% { transform: translateY(-50%) scale(1.52) translateX(2px); }
+            100% { transform: translateY(-50%) scale(1.5) translateX(0); }
+        }
+
+        .active-stream { background: rgba(142, 115, 74, 0.1) !important; border-left: 2px solid #8e734a; }
+        .credits { color: #5d523a; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; margin-top: 10px; }
+        .credits span { color: #8e734a; font-weight: bold; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #3d3522; }
+
+        /* Audio Toggle Style */
+        #music-toggle {
+            background: rgba(0,0,0,0.6); border: 1px solid rgba(142, 115, 74, 0.4);
+            color: #8e734a; font-size: 9px; padding: 6px 12px; letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+        #music-toggle.playing { color: var(--poe-red); border-color: var(--poe-red); box-shadow: 0 0 10px rgba(255, 69, 0, 0.2); }
+    </style>
+</head>
+<body>
+    <canvas id="emberCanvas"></canvas>
+
+    <div class="relative-z fixed top-4 right-4 z-[100]">
+        <button id="music-toggle" onclick="toggleMusic()" class="uppercase font-bold rounded-sm">
+            <span id="music-status">🔈 Music Off</span>
+        </button>
+        <audio id="bgMusic" loop>
+            <source src="https://web.poecdn.com/public/news/2023-07-29/PoE2_Lioneye_Watch_Theme.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <header class="relative-z pt-10 pb-6 flex flex-col items-center">
+        <img src="https://i.ibb.co/zTKghTd2/Po-E2-The-Lastofthe-Druids-EN.png" class="max-w-xs md:max-w-md h-auto drop-shadow-2xl mb-6">
+        <nav class="flex gap-6 uppercase text-[10px] tracking-widest font-bold bg-black/40 p-3 rounded-full border border-white/5">
+            <a href="#livestream" class="hover:text-white transition">Live</a>
+            <a href="#leaderboard" class="hover:text-white transition">Rankings</a>
+            <a href="#about" class="hover:text-white transition">About</a>
+            <a href="#shop" class="text-yellow-600 hover:text-yellow-400">Pre-Order</a>
+        </nav>
+    </header>
+
+    <main class="relative-z max-w-6xl mx-auto px-4 space-y-12 pb-20">
+
+        <section id="livestream" class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+            <div class="lg:col-span-3 card-glass overflow-hidden flex flex-col">
+                <div class="aspect-video bg-black">
+                    <iframe id="twitchEmbed" src="" height="100%" width="100%" allowfullscreen="true" frameborder="0"></iframe>
+                </div>
+                <div class="p-4 flex justify-between items-center bg-black/40">
+                    <div class="flex items-center gap-3">
+                        <img id="currentStreamerAvatar" src="" class="w-10 h-10 border border-[#8e734a]/30">
+                        <h3 id="currentStreamerName" class="text-lg text-[#e4c48a] font-bold">...</h3>
+                    </div>
+                    <select id="streamerSelect" onchange="manualStreamChange()" class="bg-black border border-white/10 px-4 py-1 text-xs text-stone-300 outline-none">
+                    </select>
+                </div>
+            </div>
+
+            <div class="lg:col-span-1 card-glass p-6 flex flex-col justify-between border-l-0 lg:border-l border-[#8e734a]/40 bg-gradient-to-b from-black/80 to-transparent">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="w-2 h-2 bg-red-600 rounded-full live-pulse"></span>
+                        <h4 class="text-[10px] uppercase tracking-widest text-white">Recommended Build</h4>
+                    </div>
+                    <h3 class="text-xl text-[#e4c48a] font-bold mb-4">Bear Druid Starter</h3>
+                    <p class="text-[11px] text-stone-400 leading-relaxed mb-6 font-sans">
+                        Maîtrisez l'art de la métamorphose. Un build axé sur la survie et les dégâts de zone massifs pour l'Early Access.
+                    </p>
+                </div>
+                <a href="https://mobalytics.gg/poe-2/builds/bear-druid-build-league-starter-to-endgame" target="_blank" class="btn-buy text-center py-3 text-[10px] tracking-tighter">
+                    Guide Mobalytics
+                </a>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            <div class="lg:col-span-2 space-y-4">
+                <div class="flex justify-between items-center" id="leaderboard">
+                    <h2 class="text-xl uppercase tracking-widest">Exile Rankings</h2>
+                    <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Filter..." class="bg-transparent border-b border-white/10 text-xs px-2 py-1 outline-none focus:border-[#8e734a] transition text-stone-300">
+                </div>
+                <div class="card-glass overflow-hidden">
+                    <div class="max-h-[400px] overflow-y-auto custom-scrollbar">
+                        <table class="w-full text-left text-xs">
+                            <tbody id="leaderboardBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-1 card-glass p-8 text-center bg-gradient-to-br from-[#1a130a] to-black" id="shop">
+                <h2 class="text-2xl mb-4 text-[#e4c48a]">Join the Hunt</h2>
+                <p class="text-stone-500 text-xs mb-8 italic font-sans tracking-wide">Accédez instantanément à l'Early Access de Path of Exile 2.</p>
+                <a href="https://www.pathofexile.com/poe2" target="_blank" class="btn-buy px-10 py-4 inline-block text-sm">Buy Now</a>
+            </div>
+        </div>
+
+        <section id="about" class="pt-10 border-t border-white/5">
+            <h2 class="text-center text-xl uppercase tracking-[0.3em] mb-12 text-[#e4c48a]">The Next Era of Action RPG</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center space-y-4 px-4">
+                    <div class="text-[#8e734a] text-3xl">⚔️</div>
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-white">12 Character Classes</h3>
+                    <p class="text-[11px] text-stone-500 font-sans leading-relaxed">Découvrez 12 classes inédites et un système de double spécialisation pour une liberté de build totale.</p>
+                </div>
+                <div class="text-center space-y-4 px-4 border-x border-white/5">
+                    <div class="text-[#8e734a] text-3xl">💎</div>
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-white">New Skill System</h3>
+                    <p class="text-[11px] text-stone-500 font-sans leading-relaxed">Les gemmes de compétence se logent désormais dans vos liens, plus dans votre équipement. 6-linkez tout votre arsenal.</p>
+                </div>
+                <div class="text-center space-y-4 px-4">
+                    <div class="text-[#8e734a] text-3xl">🐉</div>
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-white">Next-Gen Endgame</h3>
+                    <p class="text-[11px] text-stone-500 font-sans leading-relaxed">Explorez plus de 100 cartes d'Atlas retravaillées avec des boss uniques et un système de progression révolutionnaire.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="mt-10 text-center py-8 border-t border-white/5 bg-black/20">
+        <p class="text-[8px] text-stone-600 tracking-widest uppercase italic">© 2026 GGG - FAN PROJECT</p>
+        <p class="credits">Crafted by <span>Axel Arnal</span></p>
+    </footer>
+
+    <script>
+        const kols = [
+            { name: "Trymacs", twitch: "trymacs", points: 15400 }, { name: "metashi12", twitch: "metashi12", points: 14200 },
+            { name: "PietSmiet", twitch: "pietsmiet", points: 12800 }, { name: "Bonjwa Gaming", twitch: "bonjwa", points: 11500 },
+            { name: "NoWay4u_Sir", twitch: "noway4u_sir", points: 10900 }, { name: "HandOfBlood", twitch: "handofblood", points: 9500 },
+            { name: "Terracid", twitch: "terracid", points: 8700 }, { name: "HoneyPuu", twitch: "honeypuu", points: 8200 },
+            { name: "Alderiate", twitch: "alderiate", points: 7800 }, { name: "Wankil Studio", twitch: "wankilstudio", points: 7500 },
+            { name: "Ponce", twitch: "ponce", points: 7200 }, { name: "Dhalucard", twitch: "dhalucard", points: 6900 },
+            { name: "Eligella", twitch: "eligella", points: 6500 }, { name: "Maxim", twitch: "maxim", points: 6200 },
+            { name: "Joueur Du Grenier", twitch: "joueur_du_grenier", points: 1100 }
+        ];
+
+        const runes = ['ᚱ', 'ᚦ', 'ᚧ', 'ᚩ', 'ᚼ', 'ᛏ', 'ᛒ', 'ᛖ', 'ᛗ', 'ᛚ'];
+        let currentStreamer = kols[0].twitch;
+
+        function init() {
+            populateSelect();
+            updateStream(currentStreamer);
+            renderLeaderboard(kols);
+            initParticles();
+            animateParticles();
+        }
+
+        // Masterclass: Audio Function
+        function toggleMusic() {
+            const music = document.getElementById('bgMusic');
+            const btn = document.getElementById('music-toggle');
+            const status = document.getElementById('music-status');
+            
+            if (music.paused) {
+                music.play();
+                music.volume = 0.2;
+                btn.classList.add('playing');
+                status.innerText = "🔊 Music On";
+            } else {
+                music.pause();
+                btn.classList.remove('playing');
+                status.innerText = "🔈 Music Off";
+            }
+        }
+
+        function updateStream(twitchHandle) {
+            currentStreamer = twitchHandle;
+            const domain = window.location.hostname;
+            const parent = domain === 'localhost' || domain === '' ? 'localhost' : domain;
+            document.getElementById('twitchEmbed').src = `https://player.twitch.tv/?channel=${twitchHandle}&parent=${parent}`;
+            const kol = kols.find(k => (k.twitch || k.name) === twitchHandle) || {name: twitchHandle};
+            document.getElementById('currentStreamerName').innerText = kol.name;
+            document.getElementById('currentStreamerAvatar').src = `https://api.dicebear.com/7.x/identicon/svg?seed=${kol.name}&backgroundColor=000000`;
+            document.getElementById('streamerSelect').value = twitchHandle;
+            renderLeaderboard(kols);
+        }
+
+        function manualStreamChange() { updateStream(document.getElementById('streamerSelect').value); }
+
+        function populateSelect() {
+            const select = document.getElementById('streamerSelect');
+            select.innerHTML = [...kols].sort((a,b) => a.name.localeCompare(b.name)).map(k => `<option value="${k.twitch}">${k.name}</option>`).join('');
+        }
+
+        function renderLeaderboard(data) {
+            data.sort((a, b) => b.points - a.points);
+            document.getElementById('leaderboardBody').innerHTML = data.map((kol, index) => {
+                const isActive = kol.twitch === currentStreamer;
+                const randomRune = runes[Math.floor(Math.random() * runes.length)];
+                return `
+                <tr onclick="updateStream('${kol.twitch}')" 
+                    data-rune="${randomRune}"
+                    class="rank-row border-b border-white/5 relative z-10 ${isActive ? 'active-stream' : ''}">
+                    <td class="p-4 text-center font-serif ${index < 3 ? 'text-yellow-500 text-lg' : 'text-stone-500'}">${index + 1}</td>
+                    <td class="p-4 flex items-center gap-3 font-bold text-stone-200">
+                        <img src="https://api.dicebear.com/7.x/identicon/svg?seed=${kol.name}&backgroundColor=000000" class="w-6 h-6 border border-white/10">
+                        <span class="relative z-10">${kol.name}</span>
+                    </td>
+                    <td class="p-4 text-right points-glow text-base relative z-10">${kol.points.toLocaleString()}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        function filterTable() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            renderLeaderboard(kols.filter(k => k.name.toLowerCase().includes(q)));
+        }
+
+        const canvas = document.getElementById('emberCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        class Particle {
+            constructor() { this.reset(); this.y = Math.random() * canvas.height; }
+            reset() { this.x = Math.random() * canvas.width; this.y = canvas.height + 10; this.size = Math.random() * 2; this.speedY = Math.random() * 0.5 + 0.2; this.speedX = (Math.random() - 0.5) * 0.2; this.opacity = Math.random() * 0.5; }
+            update() { this.y -= this.speedY; this.opacity -= 0.001; if (this.y < -10 || this.opacity <= 0) this.reset(); }
+            draw() { ctx.fillStyle = `rgba(255, 150, 0, ${this.opacity})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
+        }
+        function initParticles() { for (let i = 0; i < 40; i++) particles.push(new Particle()); }
+        function animateParticles() { ctx.clearRect(0, 0, canvas.width, canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animateParticles); }
+        init();
+    </script>
+</body>
+</html>
