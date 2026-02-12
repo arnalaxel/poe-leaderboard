@@ -30,6 +30,7 @@
       color:#a38d6d;
       margin:0;
       overflow-x:hidden;
+      scroll-behavior:smooth;
     }
     body::after{
       content:"";
@@ -112,11 +113,31 @@
     /* Embers */
     #emberCanvas{ position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.55; }
 
-    /* Simple scrollbar */
+    /* Scrollbar */
     .scroll-area{ scrollbar-width: thin; scrollbar-color: rgba(142,115,74,0.65) rgba(0,0,0,0.35); }
     .scroll-area::-webkit-scrollbar{ width:10px; }
     .scroll-area::-webkit-scrollbar-track{ background: rgba(0,0,0,0.35); }
     .scroll-area::-webkit-scrollbar-thumb{ background: rgba(142,115,74,0.65); border-radius:10px; border:2px solid rgba(0,0,0,0.35); }
+
+    /* Small nav underline */
+    .nav-pill a{ position:relative; }
+    .nav-pill a:after{
+      content:"";
+      position:absolute;
+      left:0; right:0; bottom:-10px;
+      height:1px;
+      background: rgba(142,115,74,0.0);
+      transition: background .2s ease;
+    }
+    .nav-pill a:hover:after{ background: rgba(142,115,74,0.55); }
+
+    /* Sticky buy */
+    .sticky-buy{
+      position:fixed;
+      top:18px;
+      left:18px;
+      z-index:70;
+    }
   </style>
 </head>
 
@@ -130,20 +151,38 @@
   <div id="char-tooltip"></div>
   <canvas id="emberCanvas"></canvas>
 
+  <!-- Sticky Buy -->
+  <div class="sticky-buy">
+    <a href="#shop"
+       class="card-glass inline-flex items-center gap-3 px-4 py-3 border border-[rgba(142,115,74,0.35)] hover:border-[rgba(142,115,74,0.75)] transition shadow-xl">
+      <span class="text-[10px] uppercase tracking-[0.28em] text-stone-400">Buy</span>
+      <span class="text-[12px] font-bold uppercase tracking-widest text-[color:var(--poe-title)]">Path of Exile 2</span>
+    </a>
+  </div>
+
   <!-- Header -->
   <header class="pt-12 pb-6 flex flex-col items-center text-center relative z-10">
     <img src="https://i.ibb.co/zTKghTd2/Po-E2-The-Lastofthe-Druids-EN.png"
          class="max-w-xs md:max-w-md h-auto drop-shadow-2xl mb-8" alt="Path of Exile 2" />
-    <div class="card-glass px-6 py-4 rounded-full border border-white/10">
+
+    <nav class="nav-pill flex flex-wrap justify-center gap-8 uppercase text-[10px] tracking-[0.3em] font-bold bg-black/60 px-8 py-4 rounded-full border border-white/10 backdrop-blur-md">
+      <a href="#live" class="hover:text-white transition">Live</a>
+      <a href="#leaderboard" class="hover:text-white transition">Leaderboard</a>
+      <a href="#builds" class="hover:text-white transition">Builds</a>
+      <a href="#about" class="hover:text-white transition">About</a>
+      <a href="#shop" class="text-yellow-600 hover:text-yellow-400 transition">Buy POE 2</a>
+    </nav>
+
+    <div class="mt-7 card-glass px-6 py-4 rounded-full border border-white/10">
       <div class="text-[10px] uppercase tracking-[0.3em] text-stone-400">
-        Watch WEU creators, discover builds, stay sane.
+        Watch WEU creators, grab build links, jump in game.
       </div>
     </div>
   </header>
 
   <main class="max-w-6xl mx-auto px-4 pb-24 relative z-10 space-y-10">
-    <!-- Player + Discovery -->
-    <section class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+    <!-- LIVE -->
+    <section id="live" class="grid grid-cols-1 lg:grid-cols-4 gap-6">
       <!-- Player -->
       <div class="lg:col-span-3 card-glass overflow-hidden flex flex-col border border-white/10">
         <div class="aspect-video bg-black">
@@ -168,34 +207,48 @@
         </div>
       </div>
 
-      <!-- Discovery -->
+      <!-- Right column -->
       <div class="lg:col-span-1 flex flex-col gap-6">
+        <!-- Creators list (neutral) -->
         <div class="card-glass p-6 border border-white/10">
-          <div class="text-[10px] uppercase tracking-[0.28em] text-[color:var(--poe-red)] font-bold">Live now</div>
-          <div id="liveList" class="mt-4 space-y-2"></div>
+          <div class="text-[10px] uppercase tracking-[0.28em] text-stone-400 font-bold">Creators</div>
+          <div class="mt-2 text-[11px] text-stone-500 leading-relaxed">
+            Alphabetical list. Click a name to watch.
+          </div>
+          <div id="creatorList" class="mt-4 space-y-2"></div>
         </div>
 
+        <!-- Quick links -->
         <div class="card-glass p-6 border border-white/10">
-          <div class="text-[10px] uppercase tracking-[0.28em] text-stone-400 font-bold">Featured</div>
-          <div class="mt-3 text-xl text-[color:var(--poe-title)] font-bold uppercase">Bear Druid Starter</div>
-          <div class="mt-3 text-[11px] text-stone-400 leading-relaxed">
-            Simple to understand, fun to watch, easy to start.
-          </div>
+          <div class="text-[10px] uppercase tracking-[0.28em] text-stone-400 font-bold">Quick links</div>
+
+          <a href="#builds"
+             class="mt-4 block bg-black/40 border border-white/10 px-4 py-3 text-[10px] uppercase tracking-[0.22em] font-bold text-stone-200 hover:border-[rgba(142,115,74,0.65)] transition">
+            Open builds section
+          </a>
+
           <a href="https://pathofexile2.com/early-access" target="_blank" rel="noreferrer"
-             class="mt-5 block bg-gradient-to-r from-[#8e734a] to-[#5d4a2d] text-[#050505] font-bold text-center py-4 text-[10px] tracking-[0.28em] uppercase border border-[#c5a572] hover:brightness-110 transition">
-            Get Early Access
+             class="mt-3 block bg-gradient-to-r from-[#8e734a] to-[#5d4a2d] text-[#050505] font-bold px-4 py-4 text-center text-[10px] tracking-[0.22em] uppercase border border-[#c5a572] hover:brightness-110 transition">
+            Buy Early Access
+          </a>
+
+          <a href="https://pathofexile2.com/" target="_blank" rel="noreferrer"
+             class="mt-3 block bg-black/40 border border-white/10 px-4 py-3 text-[10px] uppercase tracking-[0.22em] font-bold text-stone-200 hover:border-[rgba(142,115,74,0.65)] transition">
+            Official website
           </a>
         </div>
       </div>
     </section>
 
-    <!-- Leaderboard -->
-    <section class="card-glass border border-white/10 p-6">
+    <!-- LEADERBOARD -->
+    <section id="leaderboard" class="card-glass border border-white/10 p-6">
       <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         <div>
           <div class="text-[10px] uppercase tracking-[0.3em] text-stone-500">WEU Creators</div>
           <div class="text-2xl uppercase tracking-[0.18em] text-[color:var(--poe-title)] font-bold mt-1">Leaderboard</div>
-          <div class="text-[11px] text-stone-400 mt-2">Click a name to watch.</div>
+          <div class="text-[11px] text-stone-400 mt-2">
+            Points are a fan score for fun. Click a creator to watch.
+          </div>
         </div>
 
         <input id="searchInput" type="text" placeholder="Search creator"
@@ -222,6 +275,137 @@
       <div id="meta" class="mt-4 text-[10px] text-stone-500 uppercase tracking-[0.26em]">-</div>
     </section>
 
+    <!-- BUILDS -->
+    <section id="builds" class="card-glass border border-white/10 p-6">
+      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+        <div>
+          <div class="text-[10px] uppercase tracking-[0.3em] text-stone-500">Builds</div>
+          <div class="text-2xl uppercase tracking-[0.18em] text-[color:var(--poe-title)] font-bold mt-1">Useful guides</div>
+          <div class="text-[11px] text-stone-400 mt-2">Links to help you start fast.</div>
+        </div>
+        <a href="https://mobalytics.gg/poe-2/builds" target="_blank" rel="noreferrer"
+           class="bg-black/40 border border-white/10 px-4 py-3 text-[10px] uppercase tracking-[0.22em] font-bold text-stone-200 hover:border-[rgba(142,115,74,0.65)] transition">
+          Open builds hub
+        </a>
+      </div>
+
+      <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <a href="https://mobalytics.gg/poe-2/builds/bear-druid-build-league-starter-to-endgame" target="_blank" rel="noreferrer"
+           class="card-glass p-5 border border-white/10 hover:border-[rgba(142,115,74,0.65)] transition">
+          <div class="text-[10px] uppercase tracking-[0.28em] text-stone-500">Starter</div>
+          <div class="mt-2 text-lg font-bold uppercase tracking-widest text-[color:var(--poe-title)]">Bear Druid</div>
+          <div class="mt-2 text-[11px] text-stone-400 leading-relaxed">Simple, tanky, good clear.</div>
+          <div class="mt-4 text-[10px] uppercase tracking-[0.22em] text-yellow-500 font-bold">Open guide</div>
+        </a>
+
+        <a href="https://mobalytics.gg/poe-2/builds" target="_blank" rel="noreferrer"
+           class="card-glass p-5 border border-white/10 hover:border-[rgba(142,115,74,0.65)] transition">
+          <div class="text-[10px] uppercase tracking-[0.28em] text-stone-500">Browse</div>
+          <div class="mt-2 text-lg font-bold uppercase tracking-widest text-[color:var(--poe-title)]">All builds</div>
+          <div class="mt-2 text-[11px] text-stone-400 leading-relaxed">Filters, updates, and options.</div>
+          <div class="mt-4 text-[10px] uppercase tracking-[0.22em] text-yellow-500 font-bold">Open hub</div>
+        </a>
+
+        <a href="https://pathofexile2.com/" target="_blank" rel="noreferrer"
+           class="card-glass p-5 border border-white/10 hover:border-[rgba(142,115,74,0.65)] transition">
+          <div class="text-[10px] uppercase tracking-[0.28em] text-stone-500">Official</div>
+          <div class="mt-2 text-lg font-bold uppercase tracking-widest text-[color:var(--poe-title)]">Game website</div>
+          <div class="mt-2 text-[11px] text-stone-400 leading-relaxed">News, updates, and official info.</div>
+          <div class="mt-4 text-[10px] uppercase tracking-[0.22em] text-yellow-500 font-bold">Open site</div>
+        </a>
+      </div>
+    </section>
+
+    <!-- BUY / MARKETING -->
+    <section id="shop" class="card-glass border border-white/10 p-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        <div class="lg:col-span-2">
+          <div class="text-[10px] uppercase tracking-[0.3em] text-stone-500">Buy</div>
+          <div class="text-2xl uppercase tracking-[0.18em] text-[color:var(--poe-title)] font-bold mt-1">Path of Exile 2</div>
+          <div class="text-[12px] text-stone-400 mt-3 leading-relaxed max-w-2xl">
+            Get Early Access, install the game, then come back to watch creators and grab build links.
+          </div>
+
+          <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="card-glass p-5 border border-white/10">
+              <div class="text-[10px] uppercase tracking-[0.28em] text-stone-500">Early Access Pack</div>
+              <div class="mt-2 text-lg font-bold uppercase tracking-widest text-[color:var(--poe-title)]">What you get</div>
+              <ul class="mt-4 space-y-2 text-[11px] text-stone-300">
+                <li class="flex items-start gap-3"><span class="text-[color:var(--poe-gold)] mt-[2px]">✦</span> Path of Exile 2 Early Access or Key</li>
+                <li class="flex items-start gap-3"><span class="text-[color:var(--poe-gold)] mt-[2px]">✦</span> 300 Points</li>
+                <li class="flex items-start gap-3"><span class="text-[color:var(--poe-gold)] mt-[2px]">✦</span> Extended Digital Soundtrack Download</li>
+              </ul>
+            </div>
+
+            <div class="card-glass p-5 border border-white/10">
+              <div class="text-[10px] uppercase tracking-[0.28em] text-stone-500">Start tips</div>
+              <div class="mt-2 text-lg font-bold uppercase tracking-widest text-[color:var(--poe-title)]">First session</div>
+              <ul class="mt-4 space-y-2 text-[11px] text-stone-300">
+                <li class="flex items-start gap-3"><span class="text-yellow-500 mt-[2px]">✦</span> Pick one build and stick with it.</li>
+                <li class="flex items-start gap-3"><span class="text-yellow-500 mt-[2px]">✦</span> Watch one creator and copy the early steps.</li>
+                <li class="flex items-start gap-3"><span class="text-yellow-500 mt-[2px]">✦</span> Keep it simple, finish Act progression first.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-1 card-glass p-6 border border-[rgba(142,115,74,0.35)]">
+          <div class="text-center">
+            <div class="text-[10px] uppercase tracking-[0.3em] text-stone-500">Official store</div>
+            <div class="mt-2 text-xl font-bold uppercase tracking-widest text-[color:var(--poe-title)]">Supporter packs</div>
+            <div class="mt-3 text-[11px] text-stone-400 leading-relaxed">
+              Purchase on the official website.
+            </div>
+          </div>
+
+          <a href="https://pathofexile2.com/early-access" target="_blank" rel="noreferrer"
+             class="mt-6 block w-full bg-gradient-to-r from-[#8e734a] to-[#5d4a2d] text-[#050505] font-bold px-6 py-5 text-center text-xs tracking-[0.2em] uppercase border border-[#c5a572] hover:brightness-110 transition shadow-2xl">
+            Buy Early Access
+          </a>
+
+          <a href="https://pathofexile2.com/early-access" target="_blank" rel="noreferrer"
+             class="mt-3 block w-full bg-black/40 border border-white/10 text-stone-200 font-bold px-6 py-4 text-center text-[10px] tracking-[0.22em] uppercase hover:border-[rgba(142,115,74,0.65)] transition">
+            View packs
+          </a>
+
+          <div class="mt-5 text-[9px] text-stone-600 text-center uppercase tracking-widest leading-relaxed">
+            Fan project. Links go to official pages.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="card-glass border border-white/10 p-6">
+      <div class="text-[10px] uppercase tracking-[0.3em] text-stone-500">About Path of Exile 2</div>
+      <div class="text-[color:var(--poe-title)] font-bold uppercase tracking-widest text-lg mt-2">What it is</div>
+      <div class="mt-3 text-[12px] text-stone-400 leading-relaxed max-w-4xl">
+        Path of Exile 2 is an action RPG built around deep character building, skill combos, loot hunting, and tough bosses.
+        This page is a fan-made hub to watch WEU creators and access useful build links quickly.
+      </div>
+
+      <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="card-glass p-5 border border-white/10">
+          <div class="text-[10px] uppercase tracking-[0.28em] text-stone-500">Buildcraft</div>
+          <div class="mt-2 text-[12px] text-stone-400 leading-relaxed">
+            Skills, passives, gear, and combos. You can play simple, or go very deep.
+          </div>
+        </div>
+        <div class="card-glass p-5 border border-white/10">
+          <div class="text-[10px] uppercase tracking-[0.28em] text-stone-500">Loot chase</div>
+          <div class="mt-2 text-[12px] text-stone-400 leading-relaxed">
+            Drops matter. Crafting and upgrades keep your character evolving.
+          </div>
+        </div>
+        <div class="card-glass p-5 border border-white/10">
+          <div class="text-[10px] uppercase tracking-[0.28em] text-stone-500">Boss fights</div>
+          <div class="mt-2 text-[12px] text-stone-400 leading-relaxed">
+            Mechanics, timing, and learning patterns. Watching creators helps a lot.
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Footer -->
     <footer class="text-center py-10 border-t border-white/5 bg-black/40">
       <div class="text-[9px] text-stone-600 tracking-[0.5em] uppercase italic">© 2026 GGG - FAN PROJECT</div>
@@ -230,19 +414,18 @@
   </main>
 
   <script>
-    /* Consumer data: no KPI fields, only what viewers care about */
     const KOLS = [
-      { name:"Alderiate", twitch:"alderiate", points:17800, className:"Warrior", level:70, live:true },
-      { name:"metashi12", twitch:"metashi12", points:14200, className:"Monk", level:89, live:true },
-      { name:"Bonjwa Gaming", twitch:"bonjwa", points:11500, className:"Huntress", level:82, live:false },
-      { name:"NoWay4u_Sir", twitch:"noway4u_sir", points:10900, className:"Mercenary", level:80, live:true },
-      { name:"Zizaran", twitch:"zizaran", points:10900, className:"Mercenary", level:80, live:false },
-      { name:"Wankil Studio", twitch:"wankilstudio", points:7500, className:"Ranger", level:68, live:false },
-      { name:"ZeratoR", twitch:"zerator", points:7200, className:"Monk", level:65, live:false },
-      { name:"Revenant", twitch:"revenant", points:6900, className:"Mercenary", level:62, live:false },
-      { name:"Ghazzytv", twitch:"ghazzytv", points:6500, className:"Huntress", level:60, live:false },
-      { name:"Maxim", twitch:"maxim", points:6200, className:"Witch", level:58, live:false },
-      { name:"Jessirocks", twitch:"jessirocks", points:18500, className:"Druid", level:12, live:true }
+      { name:"Alderiate", twitch:"alderiate", points:17800, className:"Warrior", level:70 },
+      { name:"metashi12", twitch:"metashi12", points:14200, className:"Monk", level:89 },
+      { name:"Bonjwa Gaming", twitch:"bonjwa", points:11500, className:"Huntress", level:82 },
+      { name:"NoWay4u_Sir", twitch:"noway4u_sir", points:10900, className:"Mercenary", level:80 },
+      { name:"Zizaran", twitch:"zizaran", points:10900, className:"Mercenary", level:80 },
+      { name:"Wankil Studio", twitch:"wankilstudio", points:7500, className:"Ranger", level:68 },
+      { name:"ZeratoR", twitch:"zerator", points:7200, className:"Monk", level:65 },
+      { name:"Revenant", twitch:"revenant", points:6900, className:"Mercenary", level:62 },
+      { name:"Ghazzytv", twitch:"ghazzytv", points:6500, className:"Huntress", level:60 },
+      { name:"Maxim", twitch:"maxim", points:6200, className:"Witch", level:58 },
+      { name:"Jessirocks", twitch:"jessirocks", points:18500, className:"Druid", level:12 }
     ];
 
     const els = {
@@ -253,14 +436,14 @@
       select: document.getElementById("streamerSelect"),
       leaderboard: document.getElementById("leaderboardBody"),
       search: document.getElementById("searchInput"),
-      liveList: document.getElementById("liveList"),
+      creatorList: document.getElementById("creatorList"),
       meta: document.getElementById("meta"),
       tooltip: document.getElementById("char-tooltip"),
       lootFlash: document.getElementById("loot-flash"),
       canvas: document.getElementById("emberCanvas")
     };
 
-    let currentStreamer = (KOLS.find(k => k.live)?.twitch) || KOLS[0].twitch;
+    let currentStreamer = KOLS[0].twitch;
     let currentList = [];
 
     function formatNumber(n) { return new Intl.NumberFormat("fr-FR").format(n); }
@@ -281,19 +464,15 @@
       render();
     }
 
-    function renderLiveList(sortedAll) {
-      const live = sortedAll.filter(k => k.live).slice(0, 6);
-      if (!live.length) {
-        els.liveList.innerHTML = `<div class="text-[11px] text-stone-400">No live channels right now.</div>`;
-        return;
-      }
+    function renderCreatorList() {
+      const list = [...KOLS].sort((a,b) => a.name.localeCompare(b.name, "fr"));
 
-      els.liveList.innerHTML = live.map(k => `
+      els.creatorList.innerHTML = list.map(k => `
         <button class="w-full text-left px-3 py-2 bg-black/40 border border-white/10 hover:border-[rgba(142,115,74,0.6)] transition"
                 data-twitch="${k.twitch}">
           <div class="flex items-center justify-between gap-3">
             <div class="font-bold text-stone-100">${k.name}</div>
-            <div class="text-[10px] uppercase tracking-widest text-[color:var(--poe-red)] font-bold">Live</div>
+            <div class="text-[10px] uppercase tracking-widest text-stone-500 font-bold">Watch</div>
           </div>
           <div class="text-[10px] text-stone-500 uppercase tracking-[0.22em] mt-1">${k.className}</div>
         </button>
@@ -332,18 +511,17 @@
     function render() {
       const q = els.search.value.trim().toLowerCase();
 
-      // Viewer logic: live first, then points
-      const sortedAll = [...KOLS].sort((a, b) => {
-        if (a.live !== b.live) return a.live ? -1 : 1;
-        return b.points - a.points;
-      });
+      const sortedAll = [...KOLS].sort((a, b) => b.points - a.points);
 
-      currentList = sortedAll.filter(k => !q || k.name.toLowerCase().includes(q) || k.twitch.toLowerCase().includes(q));
-      renderLiveList(sortedAll);
+      currentList = sortedAll.filter(k =>
+        !q ||
+        k.name.toLowerCase().includes(q) ||
+        k.twitch.toLowerCase().includes(q)
+      );
+
       renderTable(currentList);
     }
 
-    // Tooltip (class + level)
     function showTip(e, k) {
       const t = els.tooltip;
       t.style.display = "block";
@@ -370,7 +548,6 @@
     }
     function hideTip(){ els.tooltip.style.display = "none"; }
 
-    // Loot click
     const lootPool = [
       { text:"MIRROR OF KALANDRA", border:"#5df", weight:1, rare:true },
       { text:"DIVINE ORB", border:"#ff0", weight:20, rare:true },
@@ -397,7 +574,7 @@
     }
 
     function spawnLoot(e){
-      const tag = e.target?.tagName || "";
+      const tag = e.target && e.target.tagName ? e.target.tagName : "";
       if (tag === "A" || tag === "BUTTON" || tag === "SELECT" || tag === "INPUT" || tag === "IFRAME") return;
 
       const loot = weightedPick(lootPool);
@@ -414,7 +591,6 @@
       if (loot.rare) triggerRare(loot.border);
     }
 
-    // Embers
     function initEmbers(){
       const canvas = els.canvas;
       const ctx = canvas.getContext("2d");
@@ -463,17 +639,17 @@
       }, 900);
     }
 
-    // Init
     window.addEventListener("DOMContentLoaded", () => {
       initEmbers();
 
-      els.select.innerHTML = KOLS
-        .slice()
-        .sort((a,b)=> b.points - a.points)
+      els.select.innerHTML = [...KOLS]
+        .sort((a,b)=> a.name.localeCompare(b.name, "fr"))
         .map(k => `<option value="${k.twitch}">${k.name}</option>`)
         .join("");
 
       els.select.addEventListener("change", () => updateStream(els.select.value));
+
+      renderCreatorList();
 
       let searchTimer;
       els.search.addEventListener("input", () => {
@@ -481,14 +657,12 @@
         searchTimer = setTimeout(render, 120);
       });
 
-      // Table click
       els.leaderboard.addEventListener("click", (e) => {
         const row = e.target.closest("tr[data-twitch]");
         if (!row) return;
         updateStream(row.dataset.twitch);
       });
 
-      // Tooltip on hover
       els.leaderboard.addEventListener("mousemove", (e) => {
         const row = e.target.closest("tr[data-twitch]");
         if (!row) return;
@@ -498,14 +672,12 @@
       });
       els.leaderboard.addEventListener("mouseleave", hideTip, true);
 
-      // Live list click
-      els.liveList.addEventListener("click", (e) => {
+      els.creatorList.addEventListener("click", (e) => {
         const btn = e.target.closest("button[data-twitch]");
         if (!btn) return;
         updateStream(btn.dataset.twitch);
       });
 
-      // Loot click
       document.body.addEventListener("click", spawnLoot);
 
       render();
