@@ -1,674 +1,152 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Path of Exile 2 - WEU Creators</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Path of Exile 2 - Top Meta Builds</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Metamorphous&display=swap" rel="stylesheet">
+    <style>
+        :root { --poe-gold: #8e734a; --poe-red: #ff4500; --corrupt-red: #8b0000; }
+        * { font-family: 'Cinzel', serif !important; cursor: url('https://web.poecdn.com/image/layout/cursor-pointer.png'), auto !important; user-select: none; }
+        
+        body { 
+            background-color: #050505; 
+            background-image: linear-gradient(to bottom, rgba(5, 5, 5, 0.6), rgba(5, 5, 5, 0.95)), url('https://i.ibb.co/Q3R6wF9Z/The-Lastofthe-Druids-MAINKEYART-Background.png'); 
+            background-attachment: fixed; background-size: cover; background-position: center; 
+            color: #a38d6d; overflow-x: hidden; scroll-behavior: smooth; margin: 0; transition: filter 0.5s ease;
+        }
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Metamorphous&display=swap" rel="stylesheet" />
+        body.corrupted { filter: sepia(0.5) saturate(1.8) hue-rotate(-50deg); }
+        
+        .card-glass { background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(142, 115, 74, 0.2); transition: all 0.3s ease; }
+        .card-glass:hover { border-color: var(--poe-gold); transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
 
-  <style>
-    :root { --poe-gold:#8e734a; --poe-title:#e4c48a; --poe-ink:#050505; --poe-red:#ff4500; }
-    * { font-family:'Cinzel', serif !important; user-select:none; }
-    input, select { user-select:text; }
+        .loot-drop { position: absolute; pointer-events: none; padding: 4px 12px; border: 2px solid; font-weight: bold; font-size: 13px; z-index: 100; animation: floatUp 2s forwards; background: rgba(0,0,0,0.95); font-family: sans-serif !important; letter-spacing: 1px; }
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-80px); } }
+        
+        #loot-flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; opacity: 0; pointer-events: none; z-index: 200; transition: opacity 0.1s; }
+        @keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 10% { transform: translate(-1px, -2px) rotate(-1deg); } 30% { transform: translate(3px, 2px) rotate(0deg); } 50% { transform: translate(-1px, 2px) rotate(1deg); } 100% { transform: translate(1px, -2px) rotate(0deg); } }
+        .shake-effect { animation: shake 0.4s; }
 
-    @media (pointer:fine) {
-      * { cursor: url('https://web.poecdn.com/image/layout/cursor-pointer.png'), auto !important; }
-    }
-
-    body{
-      background-color:#050505;
-      background-image:
-        linear-gradient(to bottom, rgba(5,5,5,0.6), rgba(5,5,5,0.95)),
-        url('https://i.ibb.co/Q3R6wF9Z/The-Lastofthe-Druids-MAINKEYART-Background.png');
-      background-attachment: fixed;
-      background-size: cover;
-      background-position: center;
-      color:#a38d6d;
-      margin:0;
-      overflow-x:hidden;
-      scroll-behavior:smooth;
-    }
-    body::after{
-      content:"";
-      position:fixed; inset:0;
-      background: radial-gradient(circle, transparent 65%, rgba(0,0,0,0.55) 100%);
-      pointer-events:none;
-      z-index:20;
-    }
-
-    .card-glass{
-      background: rgba(0,0,0,0.86);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(142,115,74,0.22);
-    }
-
-    /* Loot */
-    .loot-drop{
-      position:absolute;
-      pointer-events:none;
-      padding:4px 12px;
-      border:2px solid;
-      font-weight:700;
-      font-size:12px;
-      z-index:100;
-      animation: floatUp 2s forwards;
-      background: rgba(0,0,0,0.95);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif !important;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-    }
-    @keyframes floatUp{ 0%{opacity:1; transform:translateY(0)} 100%{opacity:0; transform:translateY(-85px)} }
-
-    #loot-flash{
-      position:fixed; inset:0;
-      opacity:0;
-      pointer-events:none;
-      z-index:200;
-      transition: opacity .12s ease;
-    }
-    @keyframes shake{
-      0%{transform:translate(1px,1px) rotate(0)}
-      12%{transform:translate(-1px,-2px) rotate(-1deg)}
-      36%{transform:translate(3px,2px) rotate(0)}
-      60%{transform:translate(-1px,2px) rotate(1deg)}
-      100%{transform:translate(1px,-2px) rotate(0)}
-    }
-    .shake-effect{ animation: shake .4s; }
-
-    /* Tooltip */
-    #char-tooltip{
-      position:absolute;
-      display:none;
-      background: rgba(10,10,10,0.96);
-      border: 1px solid var(--poe-gold);
-      padding: 12px;
-      z-index: 500;
-      width: 190px;
-      box-shadow: 0 0 22px rgba(0,0,0,0.85);
-      pointer-events:none;
-    }
-
-    /* Embers */
-    #emberCanvas{ position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.55; }
-
-    /* Scrollbar */
-    .scroll-area{ scrollbar-width: thin; scrollbar-color: rgba(142,115,74,0.65) rgba(0,0,0,0.35); }
-    .scroll-area::-webkit-scrollbar{ width:10px; }
-    .scroll-area::-webkit-scrollbar-track{ background: rgba(0,0,0,0.35); }
-    .scroll-area::-webkit-scrollbar-thumb{ background: rgba(142,115,74,0.65); border-radius:10px; border:2px solid rgba(0,0,0,0.35); }
-
-    /* Sticky buy */
-    .sticky-buy{
-      position:fixed;
-      top:18px;
-      left:18px;
-      z-index:70;
-    }
-
-    /* HUD top-right */
-    .hud{
-      position:fixed;
-      top:18px;
-      right:18px;
-      z-index:80;
-      display:flex;
-      flex-direction:column;
-      align-items:flex-end;
-      gap:10px;
-    }
-
-    /* Fake chat */
-    #global-log{
-      position:fixed;
-      bottom:18px;
-      left:18px;
-      width:360px;
-      height:140px;
-      pointer-events:none;
-      z-index:60;
-      overflow:hidden;
-      mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
-    }
-    .log-entry{
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif !important;
-      font-size: 11px;
-      margin-bottom: 2px;
-      text-shadow: 1px 1px 1px #000;
-      animation: logSlide .28s ease-out;
-      opacity: .95;
-    }
-    @keyframes logSlide { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
-    .chat-death { color: #ff4d4d; }
-    .chat-global { color: #60c1e8; }
-    .chat-trade { color: #abe33d; }
-    .chat-info  { color: #afadab; }
-
-    @media (prefers-reduced-motion: reduce) {
-      * { scroll-behavior: auto !important; }
-      .shake-effect { animation: none !important; }
-    }
-  </style>
+        #emberCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; opacity: 0.5; }
+        .relative-z { position: relative; z-index: 10; }
+    </style>
 </head>
+<body onclick="spawnLoot(event)">
+    <div id="loot-flash"></div>
+    <canvas id="emberCanvas"></canvas>
 
-<body>
-  <div id="loot-flash"></div>
-  <div id="char-tooltip"></div>
-  <div id="global-log"></div>
-  <canvas id="emberCanvas"></canvas>
-
-  <!-- Sticky Buy -->
-  <div class="sticky-buy">
-    <a href="#shop"
-       class="card-glass inline-flex items-center gap-3 px-4 py-3 border border-[rgba(142,115,74,0.35)] hover:border-[rgba(142,115,74,0.75)] transition shadow-xl">
-      <span class="text-[10px] uppercase tracking-[0.28em] text-stone-400">Buy</span>
-      <span class="text-[12px] font-bold uppercase tracking-widest text-[color:var(--poe-title)]">Path of Exile 2</span>
-    </a>
-  </div>
-
-  <!-- HUD (loot counters + music) -->
-  <div class="hud">
-    <div class="card-glass px-4 py-3 border border-white/10 shadow-xl">
-      <div class="flex gap-4">
-        <div class="flex flex-col items-center">
-          <div class="text-[9px] uppercase tracking-[0.22em] text-stone-500">Mirrors</div>
-          <div id="mir-count" class="text-cyan-300 font-bold text-sm">0</div>
+    <div class="relative-z fixed top-4 right-4 z-[100] flex flex-col items-end gap-3">
+        <div class="bg-black/80 border border-[#8e734a]/40 px-3 py-2 flex gap-4 rounded-sm shadow-xl text-xs">
+            <div class="flex flex-col items-center"><span class="text-[8px] text-stone-500 uppercase">Mirrors</span><span id="mir-count" class="text-cyan-400 font-bold">0</span></div>
+            <div class="flex flex-col items-center border-l border-white/10 pl-4"><span class="text-[8px] text-stone-500 uppercase">Divines</span><span id="div-count" class="text-yellow-500 font-bold">0</span></div>
         </div>
-        <div class="flex flex-col items-center border-l border-white/10 pl-4">
-          <div class="text-[9px] uppercase tracking-[0.22em] text-stone-500">Divines</div>
-          <div id="div-count" class="text-yellow-300 font-bold text-sm">0</div>
+        <div class="flex gap-2">
+            <button onclick="corruptSite()" class="bg-red-900/40 border border-red-600 text-red-500 px-3 py-1 text-[9px] uppercase font-bold hover:bg-red-600 hover:text-white transition">Vaal Orb</button>
+            <button id="music-toggle" onclick="toggleMusic()" class="bg-black/80 border border-white/10 text-[#8e734a] px-3 py-1 text-[9px] uppercase font-bold">
+                <span id="music-status">🔈 Music Off</span>
+            </button>
         </div>
-      </div>
+        <audio id="bgMusic" loop><source src="theme.mp3" type="audio/mpeg"></audio>
     </div>
 
-    <div class="flex gap-2">
-      <button id="music-toggle"
-        class="card-glass px-4 py-2 border border-white/10 text-[10px] uppercase tracking-[0.22em] font-bold text-stone-200 hover:border-[rgba(142,115,74,0.65)] transition">
-        Music Off
-      </button>
-      <audio id="bgMusic" loop>
-        <source src="theme.mp3" type="audio/mpeg">
-      </audio>
-    </div>
-  </div>
+    <header class="relative-z pt-12 pb-8 flex flex-col items-center text-center">
+        <a href="index.html"><img src="https://i.ibb.co/zTKghTd2/Po-E2-The-Lastofthe-Druids-EN.png" class="max-w-xs md:max-w-md h-auto drop-shadow-2xl mb-8"></a>
+        <nav class="flex gap-8 uppercase text-[10px] tracking-[0.3em] font-bold bg-black/60 px-8 py-4 rounded-full border border-white/10 backdrop-blur-md">
+            <a href="index.html" class="hover:text-white transition">Live</a>
+            <a href="builds.html" class="text-white border-b border-white/50">Builds</a>
+            <a href="index.html#about" class="hover:text-white transition">About Path of Exile 2</a>
+            <a href="index.html#shop" class="text-yellow-600 hover:text-yellow-400 font-bold">Early Access</a>
+        </nav>
+    </header>
 
-  <!-- Header -->
-  <header class="pt-12 pb-6 flex flex-col items-center text-center relative z-10">
-    <img src="https://i.ibb.co/zTKghTd2/Po-E2-The-Lastofthe-Druids-EN.png"
-         class="max-w-xs md:max-w-md h-auto drop-shadow-2xl mb-8" alt="Path of Exile 2" />
-
-    <nav class="flex flex-wrap justify-center gap-8 uppercase text-[10px] tracking-[0.3em] font-bold bg-black/60 px-8 py-4 rounded-full border border-white/10 backdrop-blur-md">
-      <a href="#live" class="hover:text-white transition">Live</a>
-      <a href="#leaderboard" class="hover:text-white transition">Leaderboard</a>
-      <a href="builds.html" class="hover:text-white transition">Builds</a>
-      <a href="#about" class="hover:text-white transition">About POE 2</a>
-      <a href="#shop" class="text-yellow-600 hover:text-yellow-400 transition">Buy POE 2</a>
-    </nav>
-
-    <div class="mt-7 card-glass px-6 py-4 rounded-full border border-white/10">
-      <div class="text-[10px] uppercase tracking-[0.3em] text-stone-400">
-        Watch WEU creators, grab build links, jump in game.
-      </div>
-    </div>
-  </header>
-
-  <main class="max-w-6xl mx-auto px-4 pb-20 relative z-10 space-y-10">
-    <!-- LIVE -->
-    <section id="live" class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-      <div class="lg:col-span-3 card-glass overflow-hidden flex flex-col border border-white/10">
-        <div class="aspect-video bg-black">
-          <iframe id="twitchEmbed" src="" class="w-full h-full" allowfullscreen="true" frameborder="0"></iframe>
-        </div>
-
-        <div class="p-4 bg-black/40 border-t border-white/5 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-          <div class="flex items-center gap-3">
-            <img id="currentAvatar" src="" class="w-10 h-10 border border-[rgba(142,115,74,0.35)]" alt="" />
-            <div>
-              <div class="text-[10px] uppercase tracking-[0.28em] text-stone-500">Now watching</div>
-              <div id="currentName" class="text-lg text-[color:var(--poe-title)] font-bold uppercase tracking-widest">-</div>
-            </div>
-          </div>
-
-          <div class="flex items-center gap-2 w-full md:w-auto">
-            <div class="text-[10px] uppercase tracking-[0.28em] text-stone-500 hidden md:block">Switch</div>
-            <select id="streamerSelect"
-              class="w-full md:w-[260px] bg-black/40 border border-white/10 px-4 py-2 text-xs text-stone-200 outline-none focus:border-[rgba(142,115,74,0.65)] transition">
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right column -->
-      <div class="lg:col-span-1 flex flex-col gap-6">
-        <div class="card-glass p-6 border border-white/10">
-          <div class="text-[10px] uppercase tracking-[0.28em] text-stone-400 font-bold">Creators</div>
-          <div class="mt-2 text-[11px] text-stone-500 leading-relaxed">
-            Alphabetical list. Click a name to watch.
-          </div>
-          <div class="mt-4">
-            <input id="creatorQuickSearch" type="text" placeholder="Search creator"
-              class="w-full bg-black/40 border border-white/10 px-4 py-3 text-xs text-stone-200 outline-none focus:border-[rgba(142,115,74,0.65)] transition" />
-          </div>
-          <div id="creatorList" class="mt-4 space-y-2"></div>
-
-          <a href="builds.html"
-             class="mt-4 block w-full bg-black/40 border border-white/10 text-stone-200 font-bold px-6 py-4 text-center text-[10px] tracking-[0.22em] uppercase hover:border-[rgba(142,115,74,0.65)] transition">
-            Open builds page
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- LEADERBOARD -->
-    <section id="leaderboard" class="card-glass border border-white/10 p-6">
-      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-        <div>
-          <div class="text-[10px] uppercase tracking-[0.3em] text-stone-500">WEU Creators</div>
-          <div class="text-2xl uppercase tracking-[0.18em] text-[color:var(--poe-title)] font-bold mt-1">Leaderboard</div>
-          <div class="text-[11px] text-stone-400 mt-2">Click a creator to watch.</div>
-        </div>
-
-        <input id="searchInput" type="text" placeholder="Search creator"
-          class="w-full md:w-[280px] bg-black/40 border border-white/10 px-4 py-3 text-xs text-stone-200 outline-none focus:border-[rgba(142,115,74,0.65)] transition" />
-      </div>
-
-      <div class="mt-6 card-glass border border-white/10 overflow-hidden">
-        <div class="max-h-[520px] overflow-y-auto scroll-area">
-          <table class="w-full text-left text-xs">
-            <thead class="sticky top-0 bg-black/80 backdrop-blur-md border-b border-white/10">
-              <tr class="text-stone-400 uppercase tracking-[0.22em] text-[10px]">
-                <th class="p-4 w-[70px]">Rank</th>
-                <th class="p-4">Creator</th>
-                <th class="p-4 w-[140px] text-center">Class</th>
-                <th class="p-4 w-[110px] text-center">Level</th>
-                <th class="p-4 w-[160px] text-right">Points</th>
-              </tr>
-            </thead>
-            <tbody id="leaderboardBody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div id="meta" class="mt-4 text-[10px] text-stone-500 uppercase tracking-[0.26em]">-</div>
-    </section>
-
-    <!-- SHOP (Supporter pack section restored, useful, not repetitive) -->
-    <section id="shop" class="card-glass border border-white/10 p-6">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-        <div class="lg:col-span-2">
-          <div class="text-[10px] uppercase tracking-[0.3em] text-stone-500">Buy</div>
-          <div class="text-2xl uppercase tracking-[0.18em] text-[color:var(--poe-title)] font-bold mt-1">Path of Exile 2</div>
-          <div class="text-[12px] text-stone-400 mt-3 leading-relaxed max-w-2xl">
-            Early Access is available on the official website. Supporter packs give access and cosmetics.
-          </div>
-
-          <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="card-glass p-5 border border-white/10">
-              <div class="text-[10px] uppercase tracking-[0.28em] text-stone-500">Supporter pack</div>
-              <div class="mt-2 text-lg font-bold uppercase tracking-widest text-[color:var(--poe-title)]">What you get</div>
-              <ul class="mt-4 space-y-2 text-[11px] text-stone-300">
-                <li class="flex items-start gap-3"><span class="text-[color:var(--poe-gold)] mt-[2px]">✦</span> Path of Exile 2 Early Access or Key</li>
-                <li class="flex items-start gap-3"><span class="text-[color:var(--poe-gold)] mt-[2px]">✦</span> 300 Points</li>
-                <li class="flex items-start gap-3"><span class="text-[color:var(--poe-gold)] mt-[2px]">✦</span> Extended Digital Soundtrack Download</li>
-              </ul>
-            </div>
-
-            <div class="card-glass p-5 border border-white/10">
-              <div class="text-[10px] uppercase tracking-[0.28em] text-stone-500">Fast start</div>
-              <div class="mt-2 text-lg font-bold uppercase tracking-widest text-[color:var(--poe-title)]">Viewer to player</div>
-              <ul class="mt-4 space-y-2 text-[11px] text-stone-300">
-                <li class="flex items-start gap-3"><span class="text-yellow-500 mt-[2px]">✦</span> Pick a build on builds.html.</li>
-                <li class="flex items-start gap-3"><span class="text-yellow-500 mt-[2px]">✦</span> Watch one creator, copy the first steps.</li>
-                <li class="flex items-start gap-3"><span class="text-yellow-500 mt-[2px]">✦</span> Keep it simple, push acts first.</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div class="lg:col-span-1 card-glass p-6 border border-[rgba(142,115,74,0.35)]">
-          <div class="text-center">
-            <div class="text-[10px] uppercase tracking-[0.3em] text-stone-500">Official store</div>
-            <div class="mt-2 text-xl font-bold uppercase tracking-widest text-[color:var(--poe-title)]">Early Access</div>
-            <div class="mt-3 text-[11px] text-stone-400 leading-relaxed">
-              This link goes to the official Path of Exile 2 store page.
-            </div>
-          </div>
-
-          <a href="https://pathofexile2.com/early-access" target="_blank" rel="noreferrer"
-             class="mt-6 block w-full bg-gradient-to-r from-[#8e734a] to-[#5d4a2d] text-[#050505] font-bold px-6 py-5 text-center text-xs tracking-[0.2em] uppercase border border-[#c5a572] hover:brightness-110 transition shadow-2xl">
-            Buy Supporter Pack
-          </a>
-
-          <div class="mt-5 text-[9px] text-stone-600 text-center uppercase tracking-widest leading-relaxed">
-            Fan project. Not affiliated with Grinding Gear Games.
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ABOUT (short, clean) -->
-    <section id="about" class="card-glass border border-white/10 p-6">
-      <div class="text-[10px] uppercase tracking-[0.3em] text-stone-500">About Path of Exile 2</div>
-      <div class="text-[color:var(--poe-title)] font-bold uppercase tracking-widest text-lg mt-2">What it is</div>
-      <div class="mt-3 text-[12px] text-stone-400 leading-relaxed max-w-4xl">
-        Action RPG focused on buildcraft, loot chase, and boss fights. This page is a fan-made hub to watch WEU creators and jump to build resources.
-      </div>
-    </section>
-
-    <footer class="text-center py-10 border-t border-white/5 bg-black/40">
-      <div class="text-[9px] text-stone-600 tracking-[0.5em] uppercase italic">© 2026 GGG - FAN PROJECT</div>
-      <div class="text-xs tracking-widest uppercase mt-3">Crafted by <span class="text-white">Axel Arnal</span></div>
-    </footer>
-  </main>
-
-  <script>
-    const KOLS = [
-      { name:"Alderiate", twitch:"alderiate", points:17800, className:"Warrior", level:70 },
-      { name:"metashi12", twitch:"metashi12", points:14200, className:"Monk", level:89 },
-      { name:"Bonjwa Gaming", twitch:"bonjwa", points:11500, className:"Huntress", level:82 },
-      { name:"NoWay4u_Sir", twitch:"noway4u_sir", points:10900, className:"Mercenary", level:80 },
-      { name:"Zizaran", twitch:"zizaran", points:10900, className:"Mercenary", level:80 },
-      { name:"Wankil Studio", twitch:"wankilstudio", points:7500, className:"Ranger", level:68 },
-      { name:"ZeratoR", twitch:"zerator", points:7200, className:"Monk", level:65 },
-      { name:"Revenant", twitch:"revenant", points:6900, className:"Mercenary", level:62 },
-      { name:"Ghazzytv", twitch:"ghazzytv", points:6500, className:"Huntress", level:60 },
-      { name:"Maxim", twitch:"maxim", points:6200, className:"Witch", level:58 },
-      { name:"Jessirocks", twitch:"jessirocks", points:18500, className:"Druid", level:12 }
-    ];
-
-    function buildTwitchUrl(channel) {
-      // Twitch requires the exact hostname as parent. Works on arnalaxel.github.io and local dev.
-      const host = window.location.hostname || "localhost";
-      return `https://player.twitch.tv/?channel=${encodeURIComponent(channel)}&parent=${encodeURIComponent(host)}`;
-    }
-    function formatNumber(n) { return new Intl.NumberFormat("fr-FR").format(n); }
-
-    window.addEventListener("DOMContentLoaded", () => {
-      const els = {
-        twitch: document.getElementById("twitchEmbed"),
-        currentName: document.getElementById("currentName"),
-        currentAvatar: document.getElementById("currentAvatar"),
-        select: document.getElementById("streamerSelect"),
-        leaderboard: document.getElementById("leaderboardBody"),
-        search: document.getElementById("searchInput"),
-        meta: document.getElementById("meta"),
-        tooltip: document.getElementById("char-tooltip"),
-        lootFlash: document.getElementById("loot-flash"),
-        canvas: document.getElementById("emberCanvas"),
-        creatorList: document.getElementById("creatorList"),
-        creatorQuickSearch: document.getElementById("creatorQuickSearch"),
-        log: document.getElementById("global-log"),
-        mir: document.getElementById("mir-count"),
-        div: document.getElementById("div-count"),
-        musicBtn: document.getElementById("music-toggle"),
-        music: document.getElementById("bgMusic")
-      };
-
-      let currentStreamer = KOLS[0].twitch;
-      let currentTableList = [];
-
-      // Music
-      function toggleMusic() {
-        const m = els.music;
-        if (!m) return;
-        if (m.paused) {
-          m.volume = 0.28;
-          m.play();
-          els.musicBtn.textContent = "Music On";
-        } else {
-          m.pause();
-          els.musicBtn.textContent = "Music Off";
-        }
-      }
-      if (els.musicBtn) {
-        els.musicBtn.addEventListener("click", (e) => { e.stopPropagation(); toggleMusic(); });
-      }
-
-      // Twitch
-      function updateStream(t) {
-        currentStreamer = t;
-        els.twitch.src = buildTwitchUrl(t);
-        els.currentName.textContent = t;
-        els.currentAvatar.src = `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(t)}&backgroundColor=000000`;
-        els.select.value = t;
-        renderTable();
-      }
-
-      // Creators list (neutral, alphabetical)
-      function renderCreatorsList() {
-        const q = (els.creatorQuickSearch.value || "").trim().toLowerCase();
-        const list = [...KOLS]
-          .sort((a, b) => a.name.localeCompare(b.name, "fr"))
-          .filter(k => !q || k.name.toLowerCase().includes(q) || k.twitch.toLowerCase().includes(q));
-
-        els.creatorList.innerHTML = list.map(k => `
-          <button class="w-full text-left px-3 py-2 bg-black/40 border border-white/10 hover:border-[rgba(142,115,74,0.6)] transition"
-                  data-twitch="${k.twitch}">
-            <div class="flex items-center justify-between gap-3">
-              <div class="font-bold text-stone-100">${k.name}</div>
-              <div class="text-[10px] uppercase tracking-widest text-stone-500 font-bold">Watch</div>
-            </div>
-            <div class="text-[10px] text-stone-500 uppercase tracking-[0.22em] mt-1">${k.className}</div>
-          </button>
-        `).join("") || `<div class="text-[11px] text-stone-400">No match.</div>`;
-      }
-
-      // Leaderboard table
-      function renderTable() {
-        const q = (els.search.value || "").trim().toLowerCase();
-        const sorted = [...KOLS].sort((a, b) => b.points - a.points);
-
-        currentTableList = sorted.filter(k =>
-          !q || k.name.toLowerCase().includes(q) || k.twitch.toLowerCase().includes(q)
-        );
-
-        els.leaderboard.innerHTML = currentTableList.map((k, idx) => {
-          const active = k.twitch === currentStreamer;
-          return `
-            <tr class="border-b border-white/5 ${active ? "bg-[rgba(142,115,74,0.14)]" : ""} hover:bg-white/5 transition cursor-pointer"
-                data-twitch="${k.twitch}">
-              <td class="p-4 text-center font-bold ${idx < 3 ? "text-yellow-400 text-lg" : "text-stone-500"}">${idx + 1}</td>
-              <td class="p-4">
-                <div class="flex items-center gap-3">
-                  <img src="https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(k.name)}&backgroundColor=000000"
-                       class="w-7 h-7 border border-white/10" alt="">
-                  <div>
-                    <div class="font-bold text-stone-100">${k.name}</div>
-                    <div class="text-[10px] text-stone-500 uppercase tracking-widest">${k.twitch}</div>
-                  </div>
+    <main class="relative-z max-w-6xl mx-auto px-4 py-16">
+        <h2 class="text-3xl text-center text-[#e4c48a] mb-20 uppercase tracking-[0.3em]">Master your Destiny</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            <div class="card-glass p-8 flex flex-col items-center text-center group">
+                <div class="w-24 h-24 mb-6 relative">
+                    <img src="icon-classes.png" class="w-full h-full object-contain opacity-80 group-hover:scale-110 transition duration-500">
                 </div>
-              </td>
-              <td class="p-4 text-center text-stone-200">${k.className}</td>
-              <td class="p-4 text-center font-bold text-stone-200">${k.level}</td>
-              <td class="p-4 text-right font-bold text-[color:var(--poe-title)]" style="text-shadow:0 0 12px rgba(255,184,77,0.35);">
-                ${formatNumber(k.points)}
-              </td>
-            </tr>
-          `;
-        }).join("");
+                <h3 class="text-xl text-white mb-3 uppercase font-bold tracking-widest">Bear Druid</h3>
+                <p class="text-[11px] text-stone-500 mb-8 leading-relaxed italic">"Nature's fury, contained in flesh."</p>
+                <p class="text-xs text-stone-400 mb-8 font-sans leading-relaxed">Le tank ultime pour l'Early Access. Une survie incroyable couplée à des dégâts de zone massifs lors des transformations.</p>
+                <a href="https://mobalytics.gg/poe-2/builds/bear-druid-build-league-starter-to-endgame" target="_blank" class="w-full bg-stone-900 border border-[#8e734a]/40 text-[#8e734a] hover:bg-[#8e734a] hover:text-black transition duration-300 py-4 text-[9px] uppercase tracking-widest font-bold">Full Guide link</a>
+            </div>
 
-        if (els.meta) els.meta.textContent = `${currentTableList.length} creators shown`;
-      }
+            <div class="card-glass p-8 flex flex-col items-center text-center group">
+                <div class="w-24 h-24 mb-6 relative">
+                    <img src="icon-skills.png" class="w-full h-full object-contain opacity-80 group-hover:scale-110 transition duration-500">
+                </div>
+                <h3 class="text-xl text-white mb-3 uppercase font-bold tracking-widest">Storm Monk</h3>
+                <p class="text-[11px] text-stone-500 mb-8 leading-relaxed italic">"Swift as the wind, strike like thunder."</p>
+                <p class="text-xs text-stone-400 mb-8 font-sans leading-relaxed">Une mobilité hors du commun. Enchaînez les combos électriques pour électrocuter des packs entiers instantanément.</p>
+                <a href="#" class="w-full bg-stone-900 border border-[#8e734a]/40 text-[#8e734a] opacity-50 cursor-not-allowed py-4 text-[9px] uppercase tracking-widest font-bold italic">Coming Soon</a>
+            </div>
 
-      // Tooltip
-      function showTip(e, k) {
-        const t = els.tooltip;
-        if (!t) return;
-        t.style.display = "block";
-        const pad = 14, w = 190, h = 95;
-        const maxX = window.scrollX + window.innerWidth - w - pad;
-        const maxY = window.scrollY + window.innerHeight - h - pad;
-        t.style.left = Math.min(maxX, e.pageX + 16) + "px";
-        t.style.top  = Math.min(maxY, e.pageY + 16) + "px";
-        t.innerHTML = `
-          <div class="text-[color:var(--poe-title)] font-bold text-xs uppercase tracking-widest">${k.className}</div>
-          <div class="text-[10px] text-stone-500 uppercase tracking-[0.22em] mt-1">Level ${k.level}</div>
-          <div class="mt-3 h-1 bg-gray-800 w-full">
-            <div class="h-full bg-red-700 w-[85%]"></div>
-          </div>
-        `;
-      }
-      function hideTip() { if (els.tooltip) els.tooltip.style.display = "none"; }
+            <div class="card-glass p-8 flex flex-col items-center text-center group">
+                <div class="w-24 h-24 mb-6 relative">
+                    <img src="icon-atlas.png" class="w-full h-full object-contain opacity-80 group-hover:scale-110 transition duration-500">
+                </div>
+                <h3 class="text-xl text-white mb-3 uppercase font-bold tracking-widest">Sunder Warrior</h3>
+                <p class="text-[11px] text-stone-500 mb-8 leading-relaxed italic">"Break the ground, then break them."</p>
+                <p class="text-xs text-stone-400 mb-8 font-sans leading-relaxed">Focus sur les attaques chargées et le contrôle de foule. Idéal pour ceux qui aiment ressentir chaque impact.</p>
+                <a href="#" class="w-full bg-stone-900 border border-[#8e734a]/40 text-[#8e734a] opacity-50 cursor-not-allowed py-4 text-[9px] uppercase tracking-widest font-bold italic">Coming Soon</a>
+            </div>
+        </div>
+    </main>
 
-      // Loot + counters
-      const lootPool = [
-        { text:"MIRROR OF KALANDRA", border:"#5df", weight:1, rare:true, type:"mirror" },
-        { text:"DIVINE ORB", border:"#ff0", weight:20, rare:true, type:"divine" },
-        { text:"EXALTED ORB", border:"#ff0", weight:70, rare:false, type:"other" },
-        { text:"CHAOS ORB", border:"#ff0", weight:220, rare:false, type:"other" },
-        { text:"ALCHEMY ORB", border:"#ff0", weight:420, rare:false, type:"other" },
-        { text:"WISDOM SCROLL", border:"#888", weight:1600, rare:false, type:"other" }
-      ];
+    <footer class="relative-z mt-20 text-center py-12 border-t border-white/5 bg-black/40">
+        <p class="text-[9px] text-stone-600 tracking-[0.5em] uppercase mb-4 italic">© 2026 GGG - FAN PROJECT</p>
+        <p class="text-xs tracking-widest uppercase">Crafted by <span class="text-white">Axel Arnal</span></p>
+    </footer>
 
-      function weightedPick(pool) {
-        const total = pool.reduce((s,x)=> s + x.weight, 0);
-        let r = Math.random() * total;
-        for (const it of pool) { if (r < it.weight) return it; r -= it.weight; }
-        return pool[pool.length - 1];
-      }
+    <script>
+        let m_count = 0; let d_count = 0;
+        const lootPool = [
+            { text: "MIRROR OF KALANDRA", color: "#fff", border: "#5df", weight: 1 },
+            { text: "DIVINE ORB", color: "#fff", border: "#ff0", weight: 20 },
+            { text: "EXALTED ORB", color: "#fff", border: "#ff0", weight: 60 },
+            { text: "CHAOS ORB", color: "#ff0", border: "#ff0", weight: 200 },
+            { text: "WISDOM SCROLL", color: "#fff", border: "#888", weight: 1500 }
+        ];
 
-      let mirrorCount = 0;
-      let divineCount = 0;
+        function toggleMusic() { const m = document.getElementById('bgMusic'); const b = document.getElementById('music-status'); if (m.paused) { m.play(); m.volume = 0.3; b.innerText = "🔊 Music On"; } else { m.pause(); b.innerText = "🔈 Music Off"; } }
+        function corruptSite() { document.body.classList.toggle('corrupted'); }
 
-      function triggerRare(color) {
-        els.lootFlash.style.background = color;
-        els.lootFlash.style.opacity = "0.28";
-        setTimeout(() => els.lootFlash.style.opacity = "0", 120);
-        document.body.classList.add("shake-effect");
-        setTimeout(() => document.body.classList.remove("shake-effect"), 400);
-      }
+        function spawnLoot(e) {
+            if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') return;
+            const totalWeight = lootPool.reduce((sum, item) => sum + item.weight, 0);
+            let random = Math.random() * totalWeight;
+            let loot = lootPool[lootPool.length - 1]; 
+            for (let item of lootPool) { if (random < item.weight) { loot = item; break; } random -= item.weight; }
 
-      function spawnLoot(e) {
-        const tag = e.target?.tagName || "";
-        if (tag === "A" || tag === "BUTTON" || tag === "SELECT" || tag === "INPUT" || tag === "IFRAME") return;
+            const div = document.createElement('div'); div.className = 'loot-drop'; div.innerText = loot.text;
+            div.style.left = (e.pageX - 50) + 'px'; div.style.top = e.pageY + 'px';
+            div.style.color = loot.color; div.style.borderColor = loot.border;
+            
+            if (loot.text === "MIRROR OF KALANDRA") { m_count++; document.getElementById('mir-count').innerText = m_count; triggerRare("#5df"); }
+            if (loot.text === "DIVINE ORB") { d_count++; document.getElementById('div-count').innerText = d_count; triggerRare("#ff0"); }
+            document.body.appendChild(div); setTimeout(() => div.remove(), 2000);
+        }
 
-        const loot = weightedPick(lootPool);
-        const div = document.createElement("div");
-        div.className = "loot-drop";
-        div.textContent = loot.text;
-        div.style.left = (e.pageX - 60) + "px";
-        div.style.top  = e.pageY + "px";
-        div.style.borderColor = loot.border;
-        div.style.color = "#fff";
-        document.body.appendChild(div);
-        setTimeout(() => div.remove(), 2000);
+        function triggerRare(c) {
+            const f = document.getElementById('loot-flash'); f.style.background = c; f.style.opacity = "0.3"; setTimeout(()=> f.style.opacity = "0", 100);
+            document.body.classList.add('shake-effect'); setTimeout(()=> document.body.classList.remove('shake-effect'), 400);
+        }
 
-        if (loot.type === "mirror") { mirrorCount += 1; if (els.mir) els.mir.textContent = String(mirrorCount); }
-        if (loot.type === "divine") { divineCount += 1; if (els.div) els.div.textContent = String(divineCount); }
-        if (loot.rare) triggerRare(loot.border);
-      }
-
-      // Fake chat
-      const logs = [
-        { t: "Global 1: Still sane, Exile?", c: "chat-global" },
-        { t: "Global 1: Anyone running Act bosses?", c: "chat-global" },
-        { t: "Trade: WTS Chaos, fast trade.", c: "chat-trade" },
-        { t: "Info: A strongbox was opened.", c: "chat-info" },
-        { t: "Global 1: That slam is brutal.", c: "chat-global" },
-        { t: "Death: An exile has fallen.", c: "chat-death" },
-        { t: "Global 1: Crafting luck today is cursed.", c: "chat-global" },
-        { t: "Trade: Buying maps, whisper price.", c: "chat-trade" },
-        { t: "Info: A rare monster has been slain.", c: "chat-info" },
-        { t: "Global 1: Boss pattern learned, finally.", c: "chat-global" }
-      ];
-
-      function addLog() {
-        if (!els.log) return;
-        const m = logs[Math.floor(Math.random() * logs.length)];
-        const d = document.createElement("div");
-        d.className = `log-entry ${m.c}`;
-        d.textContent = m.t;
-        els.log.prepend(d);
-        if (els.log.childNodes.length > 7) els.log.removeChild(els.log.lastChild);
-        setTimeout(addLog, Math.random() * 5000 + 3500);
-      }
-
-      // Embers
-      function initEmbers() {
-        if (!els.canvas) return;
-        const canvas = els.canvas;
-        const ctx = canvas.getContext("2d");
+        // --- Ember/Particle Animation ---
+        const canvas = document.getElementById('emberCanvas'); const ctx = canvas.getContext('2d');
         let particles = [];
-
         function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-        window.addEventListener("resize", resize);
-        resize();
-
-        class P {
-          constructor(){ this.reset(); this.y = Math.random() * canvas.height; }
-          reset(){
-            this.x = Math.random() * canvas.width;
-            this.y = canvas.height + 10;
-            this.size = Math.random() * 2.3;
-            this.speedY = Math.random() * 0.55 + 0.18;
-            this.opacity = Math.random() * 0.55;
-          }
-          update(){
-            this.y -= this.speedY;
-            this.opacity -= 0.0012;
-            if (this.y < -10 || this.opacity <= 0) this.reset();
-          }
-          draw(){
-            ctx.fillStyle = `rgba(255,150,0,${this.opacity})`;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fill();
-          }
-        }
-
-        function animate(){
-          ctx.clearRect(0,0,canvas.width,canvas.height);
-          for (const p of particles) { p.update(); p.draw(); }
-          requestAnimationFrame(animate);
-        }
-
-        particles = Array.from({ length: 48 }, () => new P());
+        window.addEventListener('resize', resize); resize();
+        class P { constructor() { this.reset(); this.y = Math.random()*canvas.height; } reset() { this.x = Math.random()*canvas.width; this.y = canvas.height+10; this.size = Math.random()*2; this.speedY = Math.random()*0.5+0.2; this.opacity = Math.random()*0.5; } update() { this.y -= this.speedY; this.opacity -= 0.001; if (this.y < -10 || this.opacity <= 0) this.reset(); } draw() { ctx.fillStyle = `rgba(255, 150, 0, ${this.opacity})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill(); } }
+        function animate() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(animate); }
+        for(let i=0; i<40; i++) particles.push(new P());
         animate();
-      }
-
-      // Wire UI
-      els.select.innerHTML = [...KOLS]
-        .sort((a,b)=> a.name.localeCompare(b.name, "fr"))
-        .map(k => `<option value="${k.twitch}">${k.name}</option>`)
-        .join("");
-      els.select.addEventListener("change", () => updateStream(els.select.value));
-
-      els.creatorQuickSearch.addEventListener("input", renderCreatorsList);
-      els.creatorList.addEventListener("click", (e) => {
-        const btn = e.target.closest("button[data-twitch]");
-        if (!btn) return;
-        updateStream(btn.dataset.twitch);
-      });
-
-      els.search.addEventListener("input", renderTable);
-
-      els.leaderboard.addEventListener("click", (e) => {
-        const row = e.target.closest("tr[data-twitch]");
-        if (!row) return;
-        updateStream(row.dataset.twitch);
-      });
-
-      els.leaderboard.addEventListener("mousemove", (e) => {
-        const row = e.target.closest("tr[data-twitch]");
-        if (!row) return;
-        const k = currentTableList.find(x => x.twitch === row.dataset.twitch) || KOLS.find(x => x.twitch === row.dataset.twitch);
-        if (!k) return;
-        showTip(e, k);
-      });
-      els.leaderboard.addEventListener("mouseleave", hideTip, true);
-
-      document.body.addEventListener("click", spawnLoot);
-
-      // Start
-      initEmbers();
-      renderCreatorsList();
-      renderTable();
-      updateStream(currentStreamer);
-      addLog();
-    });
-  </script>
+    </script>
 </body>
 </html>
