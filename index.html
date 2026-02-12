@@ -1,263 +1,612 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Path of Exile 2 - WEU Creators Leaderboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Metamorphous&display=swap" rel="stylesheet">
-    <style>
-        :root { --poe-gold: #8e734a; --poe-red: #ff4500; --corrupt-red: #8b0000; }
-        * { font-family: 'Cinzel', serif !important; cursor: url('https://web.poecdn.com/image/layout/cursor-pointer.png'), auto !important; user-select: none; }
-        body { background-color: #050505; background-image: linear-gradient(to bottom, rgba(5, 5, 5, 0.6), rgba(5, 5, 5, 0.95)), url('https://i.ibb.co/Q3R6wF9Z/The-Lastofthe-Druids-MAINKEYART-Background.png'); background-attachment: fixed; background-size: cover; background-position: center; color: #a38d6d; overflow-x: hidden; scroll-behavior: smooth; margin: 0; transition: filter 0.5s ease; }
-        body::after { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, transparent 65%, rgba(0,0,0,0.5) 100%); pointer-events: none; z-index: 40; }
-        body.corrupted { filter: sepia(0.5) saturate(1.8) hue-rotate(-50deg); }
-        body.corrupted .card-glass { border-color: var(--corrupt-red); box-shadow: 0 0 15px rgba(139, 0, 0, 0.2); }
-        #preloader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #050505; z-index: 9999; display: flex; flex-direction: column; justify-content: center; items-center; transition: opacity 0.8s ease; }
-        .rune-loader { font-family: 'Metamorphous' !important; font-size: 5rem; color: var(--poe-gold); animation: pulse-rune 2s infinite; }
-        .loot-drop { position: absolute; pointer-events: none; padding: 4px 12px; border: 2px solid; font-weight: bold; font-size: 13px; z-index: 100; animation: floatUp 2s forwards; background: rgba(0,0,0,0.95); font-family: sans-serif !important; letter-spacing: 1px; }
-        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-80px); } }
-        @keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 10% { transform: translate(-1px, -2px) rotate(-1deg); } 30% { transform: translate(3px, 2px) rotate(0deg); } 50% { transform: translate(-1px, 2px) rotate(1deg); } 100% { transform: translate(1px, -2px) rotate(0deg); } }
-        .shake-effect { animation: shake 0.4s; }
-        #loot-flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; opacity: 0; pointer-events: none; z-index: 200; transition: opacity 0.1s; }
-        #char-tooltip { position: absolute; display: none; background: rgba(10, 10, 10, 0.95); border: 1px solid var(--poe-gold); padding: 12px; z-index: 500; width: 180px; box-shadow: 0 0 20px rgba(0,0,0,0.8); pointer-events: none; }
-        #global-log { position: fixed; bottom: 20px; left: 20px; width: 350px; height: 130px; pointer-events: none; z-index: 50; overflow: hidden; mask-image: linear-gradient(to bottom, black 85%, transparent 100%); }
-        .log-entry { font-family: sans-serif !important; font-size: 11px; margin-bottom: 2px; text-shadow: 1px 1px 1px black; animation: logSlide 0.3s ease-out; }
-        @keyframes logSlide { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
-        .chat-death { color: #ff4d4d; } .chat-global { color: #60c1e8; } .chat-trade { color: #abe33d; } .chat-info { color: #afadab; }
-        .card-glass { background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(142, 115, 74, 0.2); }
-        .points-glow { color: #ffb84d; text-shadow: 0 0 12px rgba(255, 184, 77, 0.5); font-family: 'Metamorphous' !important; }
-        .active-stream { background: rgba(142, 115, 74, 0.15) !important; border-left: 3px solid var(--poe-gold); }
-        #emberCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; opacity: 0.5; }
-    </style>
-</head>
-<body onload="hideLoader()" onclick="spawnLoot(event)">
-    <div id="preloader"><div class="rune-loader">ᚦ</div></div>
-    <div id="loot-flash"></div>
-    <div id="char-tooltip"></div>
-    <div id="global-log"></div>
-    <canvas id="emberCanvas"></canvas>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Path of Exile 2 - WEU Creators Leaderboard</title>
 
-    <div class="relative-z fixed top-4 right-4 z-[100] flex flex-col items-end gap-3">
-        <div class="bg-black/80 border border-[#8e734a]/40 px-3 py-2 flex gap-4 rounded-sm shadow-xl">
-            <div class="flex flex-col items-center"><span class="text-[8px] text-stone-500 uppercase">Mirrors</span><span id="mir-count" class="text-cyan-400 font-bold text-xs">0</span></div>
-            <div class="flex flex-col items-center border-l border-white/10 pl-4"><span class="text-[8px] text-stone-500 uppercase">Divines</span><span id="div-count" class="text-yellow-500 font-bold text-xs">0</span></div>
-        </div>
-        <div class="flex gap-2">
-            <button onclick="corruptSite()" class="bg-red-900/40 border border-red-600 text-red-500 px-3 py-1 text-[9px] uppercase font-bold hover:bg-red-600 hover:text-white transition">Vaal Orb</button>
-            <button id="music-toggle" onclick="toggleMusic()" class="bg-black/80 border border-white/10 text-[#8e734a] px-3 py-1 text-[9px] uppercase font-bold">
-                <span id="music-status">🔈 Music Off</span>
-            </button>
-        </div>
-        <audio id="bgMusic" loop><source src="theme.mp3" type="audio/mpeg"></audio>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Metamorphous&display=swap" rel="stylesheet" />
+
+  <style>
+    :root { --poe-gold: #8e734a; --poe-red: #ff4500; --corrupt-red: #8b0000; }
+    * { font-family: 'Cinzel', serif !important; user-select: none; }
+
+    /* Custom cursor only on desktop pointers */
+    @media (pointer: fine) {
+      * { cursor: url('https://web.poecdn.com/image/layout/cursor-pointer.png'), auto !important; }
+    }
+
+    body {
+      background-color: #050505;
+      background-image:
+        linear-gradient(to bottom, rgba(5, 5, 5, 0.6), rgba(5, 5, 5, 0.95)),
+        url('https://i.ibb.co/Q3R6wF9Z/The-Lastofthe-Druids-MAINKEYART-Background.png');
+      background-attachment: fixed;
+      background-size: cover;
+      background-position: center;
+      color: #a38d6d;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+      margin: 0;
+      transition: filter 0.5s ease;
+    }
+    body::after {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: radial-gradient(circle, transparent 65%, rgba(0,0,0,0.5) 100%);
+      pointer-events: none;
+      z-index: 40;
+    }
+
+    body.corrupted { filter: sepia(0.5) saturate(1.8) hue-rotate(-50deg); }
+    body.corrupted .card-glass { border-color: var(--corrupt-red); box-shadow: 0 0 15px rgba(139, 0, 0, 0.2); }
+
+    #preloader {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: #050505;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center; /* FIXED */
+      transition: opacity 0.8s ease;
+    }
+    .rune-loader { font-family: 'Metamorphous' !important; font-size: 5rem; color: var(--poe-gold); animation: pulse-rune 2s infinite; }
+    @keyframes pulse-rune { 0%,100%{ opacity: 0.7; transform: scale(1);} 50%{ opacity:1; transform: scale(1.06);} }
+
+    .loot-drop {
+      position: absolute;
+      pointer-events: none;
+      padding: 4px 12px;
+      border: 2px solid;
+      font-weight: bold;
+      font-size: 13px;
+      z-index: 100;
+      animation: floatUp 2s forwards;
+      background: rgba(0,0,0,0.95);
+      font-family: sans-serif !important;
+      letter-spacing: 1px;
+    }
+    @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-80px); } }
+
+    @keyframes shake {
+      0% { transform: translate(1px, 1px) rotate(0deg); }
+      10% { transform: translate(-1px, -2px) rotate(-1deg); }
+      30% { transform: translate(3px, 2px) rotate(0deg); }
+      50% { transform: translate(-1px, 2px) rotate(1deg); }
+      100% { transform: translate(1px, -2px) rotate(0deg); }
+    }
+    .shake-effect { animation: shake 0.4s; }
+
+    #loot-flash {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: white;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 200;
+      transition: opacity 0.1s;
+    }
+
+    #char-tooltip {
+      position: absolute;
+      display: none;
+      background: rgba(10, 10, 10, 0.95);
+      border: 1px solid var(--poe-gold);
+      padding: 12px;
+      z-index: 500;
+      width: 180px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.8);
+      pointer-events: none;
+    }
+
+    #global-log {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      width: 350px;
+      height: 130px;
+      pointer-events: none;
+      z-index: 50;
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+      mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+    }
+    .log-entry { font-family: sans-serif !important; font-size: 11px; margin-bottom: 2px; text-shadow: 1px 1px 1px black; animation: logSlide 0.3s ease-out; }
+    @keyframes logSlide { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+    .chat-death { color: #ff4d4d; } .chat-global { color: #60c1e8; } .chat-trade { color: #abe33d; } .chat-info { color: #afadab; }
+
+    .card-glass { background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(142, 115, 74, 0.2); }
+    .points-glow { color: #ffb84d; text-shadow: 0 0 12px rgba(255, 184, 77, 0.5); font-family: 'Metamorphous' !important; }
+    .active-stream { background: rgba(142, 115, 74, 0.15) !important; border-left: 3px solid var(--poe-gold); }
+
+    #emberCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; opacity: 0.5; }
+
+    /* Allow selecting text where it matters */
+    #searchInput, #leaderboardBody, #leaderboardBody * { user-select: text; }
+  </style>
+</head>
+
+<body>
+  <div id="preloader"><div class="rune-loader">ᚦ</div></div>
+  <div id="loot-flash"></div>
+  <div id="char-tooltip"></div>
+  <div id="global-log"></div>
+  <canvas id="emberCanvas"></canvas>
+
+  <div class="fixed top-4 right-4 z-[100] flex flex-col items-end gap-3">
+    <div class="bg-black/80 border border-[#8e734a]/40 px-3 py-2 flex gap-4 rounded-sm shadow-xl">
+      <div class="flex flex-col items-center">
+        <span class="text-[8px] text-stone-500 uppercase">Mirrors</span>
+        <span id="mir-count" class="text-cyan-400 font-bold text-xs">0</span>
+      </div>
+      <div class="flex flex-col items-center border-l border-white/10 pl-4">
+        <span class="text-[8px] text-stone-500 uppercase">Divines</span>
+        <span id="div-count" class="text-yellow-500 font-bold text-xs">0</span>
+      </div>
     </div>
 
-    <header class="relative-z pt-12 pb-8 flex flex-col items-center text-center">
-        <img src="https://i.ibb.co/zTKghTd2/Po-E2-The-Lastofthe-Druids-EN.png" class="max-w-xs md:max-w-md h-auto drop-shadow-2xl mb-8">
-        <nav class="flex gap-8 uppercase text-[10px] tracking-[0.3em] font-bold bg-black/60 px-8 py-4 rounded-full border border-white/10 backdrop-blur-md">
-            <a href="index.html" class="hover:text-white transition">Live</a>
-            <a href="builds.html" class="hover:text-white transition">Builds</a>
-            <a href="#about" class="hover:text-white transition">About Path of Exile 2</a>
-            <a href="#shop" class="text-yellow-600 hover:text-yellow-400 font-bold">Early Access</a>
-        </nav>
-    </header>
+    <div class="flex gap-2">
+      <button id="vaalBtn" class="bg-red-900/40 border border-red-600 text-red-500 px-3 py-1 text-[9px] uppercase font-bold hover:bg-red-600 hover:text-white transition" aria-label="Vaal Orb">
+        Vaal Orb
+      </button>
+      <button id="music-toggle" class="bg-black/80 border border-white/10 text-[#8e734a] px-3 py-1 text-[9px] uppercase font-bold" aria-label="Toggle music">
+        <span id="music-status">🔈 Music Off</span>
+      </button>
+    </div>
 
-    <main class="relative-z max-w-6xl mx-auto px-4 space-y-20 pb-24">
-        <section id="livestream" class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <div class="lg:col-span-3 card-glass overflow-hidden flex flex-col">
-                <div class="aspect-video bg-black"><iframe id="twitchEmbed" src="" height="100%" width="100%" allowfullscreen="true" frameborder="0"></iframe></div>
-                <div class="p-4 flex justify-between items-center bg-black/40 border-t border-white/5">
-                    <div class="flex items-center gap-3"><img id="currentStreamerAvatar" src="" class="w-10 h-10 border border-[#8e734a]/30"><h3 id="currentStreamerName" class="text-lg text-[#e4c48a] font-bold uppercase tracking-widest">...</h3></div>
-                    <select id="streamerSelect" onchange="manualStreamChange()" class="bg-black border border-white/10 px-4 py-1 text-xs text-stone-300 outline-none"></select>
-                </div>
-            </div>
+    <audio id="bgMusic" loop>
+      <source src="theme.mp3" type="audio/mpeg" />
+    </audio>
+  </div>
 
-            <div class="lg:col-span-1 flex flex-col gap-6">
-                <div class="card-glass p-6 border-l-2 border-[#ff4500]">
-                    <h4 class="text-[10px] uppercase tracking-[0.2em] text-[#ff4500] mb-4 flex items-center gap-2 font-bold">
-                        <span class="w-2 h-2 bg-red-600 rounded-full animate-ping"></span> Next Boss Rush
-                    </h4>
-                    <div id="countdown" class="grid grid-cols-4 gap-2 text-center mb-4">
-                        <div class="flex flex-col"><span id="days" class="text-xl font-bold text-white">00</span><span class="text-[7px] uppercase text-stone-500">Days</span></div>
-                        <div class="flex flex-col"><span id="hours" class="text-xl font-bold text-white">00</span><span class="text-[7px] uppercase text-stone-500">Hrs</span></div>
-                        <div class="flex flex-col"><span id="minutes" class="text-xl font-bold text-white">00</span><span class="text-[7px] uppercase text-stone-500">Min</span></div>
-                        <div class="flex flex-col"><span id="seconds" class="text-xl font-bold text-[#e4c48a]">00</span><span class="text-[7px] uppercase text-stone-500">Sec</span></div>
-                    </div>
-                </div>
+  <header class="pt-12 pb-8 flex flex-col items-center text-center relative z-10">
+    <img src="https://i.ibb.co/zTKghTd2/Po-E2-The-Lastofthe-Druids-EN.png" class="max-w-xs md:max-w-md h-auto drop-shadow-2xl mb-8" alt="Path of Exile 2" />
+    <nav class="flex flex-wrap justify-center gap-6 uppercase text-[10px] tracking-[0.3em] font-bold bg-black/60 px-8 py-4 rounded-full border border-white/10 backdrop-blur-md">
+      <a href="index.html" class="hover:text-white transition">Live</a>
+      <a href="builds.html" class="hover:text-white transition">Builds</a>
+      <a href="#about" class="hover:text-white transition">About Path of Exile 2</a>
+      <a href="#shop" class="text-yellow-600 hover:text-yellow-400 font-bold">Early Access</a>
+    </nav>
+  </header>
 
-                <div class="card-glass p-6 flex flex-col justify-between flex-grow">
-                    <div>
-                        <h4 class="text-[10px] uppercase tracking-widest text-white mb-4 flex items-center gap-2 font-bold"><span class="w-2 h-2 bg-red-600 rounded-full animate-pulse"></span> Recommended</h4>
-                        <h3 class="text-xl text-[#e4c48a] font-bold mb-4 uppercase">Bear Druid Starter</h3>
-                        <p class="text-[11px] text-stone-400 leading-relaxed mb-8">Master the art of shapeshifting. Focus on massive area damage.</p>
-                    </div>
-                    <a href="https://mobalytics.gg/poe-2/builds/bear-druid-build-league-starter-to-endgame" target="_blank" class="bg-gradient-to-r from-[#8e734a] to-[#5d4a2d] text-[#050505] font-bold text-center py-4 text-[10px] tracking-widest uppercase border border-[#c5a572]">Guide link</a>
-                </div>
-            </div>
-        </section>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
-            <div class="lg:col-span-2 space-y-6">
-                <div class="flex justify-between items-center border-b border-white/10 pb-4"><h2 class="text-2xl uppercase tracking-[0.2em] text-[#e4c48a]">Exile Rankings</h2><input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search..." class="bg-transparent border-b border-white/10 text-xs px-4 py-2 outline-none focus:border-[#8e734a] transition text-stone-300"></div>
-                <div class="card-glass overflow-hidden"><div class="max-h-[500px] overflow-y-auto custom-scrollbar"><table class="w-full text-left text-xs"><tbody id="leaderboardBody"></tbody></table></div></div>
-            </div>
-
-            <div class="lg:col-span-1 card-glass p-8 bg-gradient-to-br from-[#1a130a] to-black border-t-2 border-[#8e734a]" id="shop">
-                <h2 class="text-xl mb-2 text-[#e4c48a] uppercase font-bold tracking-widest text-center">Early Access Pack</h2>
-                <p class="text-[10px] text-stone-500 uppercase tracking-[0.3em] text-center mb-8 italic">Available Now</p>
-                
-                <ul class="space-y-4 mb-10">
-                    <li class="flex items-start gap-3 text-[11px] text-stone-300">
-                        <span class="text-[#8e734a] mt-1">✦</span> 300 Points
-                    </li>
-                    <li class="flex items-start gap-3 text-[11px] text-stone-300">
-                        <span class="text-[#8e734a] mt-1">✦</span> Extended Digital Soundtrack Download
-                    </li>
-                    <li class="flex items-start gap-3 text-[11px] text-stone-100 font-bold border-t border-white/5 pt-3">
-                        <span class="text-yellow-600 mt-1">✦</span> Path of Exile 2 Early Access or Key
-                    </li>
-                </ul>
-
-                <a href="https://pathofexile2.com/early-access" target="_blank" class="w-full bg-gradient-to-r from-[#8e734a] to-[#5d4a2d] text-[#050505] font-bold px-8 py-5 text-center text-xs tracking-[0.2em] uppercase border border-[#c5a572] hover:brightness-125 transition duration-500 shadow-2xl">
-                    Buy Supporter Pack
-                </a>
-                <p class="text-[9px] text-stone-600 text-center mt-6 uppercase tracking-widest leading-relaxed">
-                    Support the development <br>& get immediate access.
-                </p>
-            </div>
+  <main class="max-w-6xl mx-auto px-4 space-y-20 pb-24 relative z-10">
+    <section id="livestream" class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div class="lg:col-span-3 card-glass overflow-hidden flex flex-col">
+        <div class="aspect-video bg-black">
+          <iframe id="twitchEmbed" src="" height="100%" width="100%" allowfullscreen="true" frameborder="0"></iframe>
         </div>
-    </main>
+        <div class="p-4 flex justify-between items-center bg-black/40 border-t border-white/5">
+          <div class="flex items-center gap-3">
+            <img id="currentStreamerAvatar" src="" class="w-10 h-10 border border-[#8e734a]/30" alt="Streamer avatar" />
+            <h3 id="currentStreamerName" class="text-lg text-[#e4c48a] font-bold uppercase tracking-widest">...</h3>
+          </div>
 
-    <footer class="mt-20 text-center py-12 border-t border-white/5 bg-black/40 relative-z">
-        <p class="text-[9px] text-stone-600 tracking-[0.5em] uppercase mb-4 italic">© 2026 GGG - FAN PROJECT</p>
-        <p class="text-xs tracking-widest uppercase">Crafted by <span class="text-white">Axel Arnal</span></p>
-    </footer>
+          <select id="streamerSelect" class="bg-black border border-white/10 px-4 py-1 text-xs text-stone-300 outline-none"></select>
+        </div>
+      </div>
 
-    <script>
-        const kols = [
-            { name: "Alderiate", twitch: "alderiate", points: 17800, class: "Warrior", level: 70 },
-            { name: "metashi12", twitch: "metashi12", points: 14200, class: "Monk", level: 89 },
-            { name: "Bonjwa Gaming", twitch: "bonjwa", points: 11500, class: "Huntress", level: 82 },
-            { name: "NoWay4u_Sir", twitch: "noway4u_sir", points: 10900, class: "Mercenary", level: 80 },
-            { name: "Zizaran", twitch: "zizaran", points: 10900, class: "Mercenary", level: 80 },
-            { name: "Wankil Studio", twitch: "wankilstudio", points: 7500, class: "Ranger", level: 68 },
-            { name: "ZeratoR", twitch: "zerator", points: 7200, class: "Monk", level: 65 },
-            { name: "Revenant", twitch: "revenant", points: 6900, class: "Mercenary", level: 62 },
-            { name: "Ghazzytv", twitch: "ghazzytv", points: 6500, class: "Huntress", level: 60 },
-            { name: "Maxim", twitch: "maxim", points: 6200, class: "Witch", level: 58 },
-            { name: "Jessirocks", twitch: "jessirocks", points: 18500, class: "Druid", level: 12 }
-        ];
+      <div class="lg:col-span-1 flex flex-col gap-6">
+        <div class="card-glass p-6 border-l-2 border-[#ff4500]">
+          <h4 class="text-[10px] uppercase tracking-[0.2em] text-[#ff4500] mb-4 flex items-center gap-2 font-bold">
+            <span class="w-2 h-2 bg-red-600 rounded-full animate-ping"></span> Next Boss Rush
+          </h4>
+          <div id="countdown" class="grid grid-cols-4 gap-2 text-center mb-4">
+            <div class="flex flex-col"><span id="days" class="text-xl font-bold text-white">00</span><span class="text-[7px] uppercase text-stone-500">Days</span></div>
+            <div class="flex flex-col"><span id="hours" class="text-xl font-bold text-white">00</span><span class="text-[7px] uppercase text-stone-500">Hrs</span></div>
+            <div class="flex flex-col"><span id="minutes" class="text-xl font-bold text-white">00</span><span class="text-[7px] uppercase text-stone-500">Min</span></div>
+            <div class="flex flex-col"><span id="seconds" class="text-xl font-bold text-[#e4c48a]">00</span><span class="text-[7px] uppercase text-stone-500">Sec</span></div>
+          </div>
+        </div>
 
-        let m_count = 0; let d_count = 0;
-        const runes = ['ᚱ', 'ᚦ', 'ᚧ', 'ᚩ', 'ᚼ', 'ᛏ', 'ᛒ', 'ᛖ', 'ᛗ', 'ᛚ'];
-        
-        const lootPool = [
-            { text: "MIRROR OF KALANDRA", color: "#fff", border: "#5df", weight: 1 },
-            { text: "DIVINE ORB", color: "#fff", border: "#ff0", weight: 20 },
-            { text: "EXALTED ORB", color: "#fff", border: "#ff0", weight: 60 },
-            { text: "CHAOS ORB", color: "#ff0", border: "#ff0", weight: 200 },
-            { text: "ALCHEMY ORB", color: "#ff0", border: "#ff0", weight: 400 },
-            { text: "TRANSMUTE", color: "#fff", border: "#888", weight: 800 },
-            { text: "WISDOM SCROLL", color: "#fff", border: "#888", weight: 1500 }
-        ];
+        <div class="card-glass p-6 flex flex-col justify-between flex-grow">
+          <div>
+            <h4 class="text-[10px] uppercase tracking-widest text-white mb-4 flex items-center gap-2 font-bold">
+              <span class="w-2 h-2 bg-red-600 rounded-full animate-pulse"></span> Recommended
+            </h4>
+            <h3 class="text-xl text-[#e4c48a] font-bold mb-4 uppercase">Bear Druid Starter</h3>
+            <p class="text-[11px] text-stone-400 leading-relaxed mb-8">Master the art of shapeshifting. Focus on massive area damage.</p>
+          </div>
+          <a href="https://mobalytics.gg/poe-2/builds/bear-druid-build-league-starter-to-endgame" target="_blank" rel="noreferrer"
+             class="bg-gradient-to-r from-[#8e734a] to-[#5d4a2d] text-[#050505] font-bold text-center py-4 text-[10px] tracking-widest uppercase border border-[#c5a572]">
+            Guide link
+          </a>
+        </div>
+      </div>
+    </section>
 
-        const eventDate = new Date("April 10, 2026 20:00:00").getTime();
-        function updateCountdown() {
-            const now = new Date().getTime();
-            const diff = eventDate - now;
-            if (diff > 0) {
-                document.getElementById("days").innerText = Math.floor(diff / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
-                document.getElementById("hours").innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
-                document.getElementById("minutes").innerText = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
-                document.getElementById("seconds").innerText = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
-            } else {
-                document.getElementById("countdown").innerHTML = "<div class='col-span-4 text-red-500 font-bold animate-pulse'>EVENT LIVE!</div>";
-            }
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
+      <div class="lg:col-span-2 space-y-6">
+        <div class="flex justify-between items-center border-b border-white/10 pb-4">
+          <h2 class="text-2xl uppercase tracking-[0.2em] text-[#e4c48a]">Exile Rankings</h2>
+          <input type="text" id="searchInput" placeholder="Search..."
+                 class="bg-transparent border-b border-white/10 text-xs px-4 py-2 outline-none focus:border-[#8e734a] transition text-stone-300" />
+        </div>
+
+        <div class="card-glass overflow-hidden">
+          <div class="max-h-[500px] overflow-y-auto">
+            <table class="w-full text-left text-xs">
+              <tbody id="leaderboardBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-1 card-glass p-8 bg-gradient-to-br from-[#1a130a] to-black border-t-2 border-[#8e734a]" id="shop">
+        <h2 class="text-xl mb-2 text-[#e4c48a] uppercase font-bold tracking-widest text-center">Early Access Pack</h2>
+        <p class="text-[10px] text-stone-500 uppercase tracking-[0.3em] text-center mb-8 italic">Available Now</p>
+
+        <ul class="space-y-4 mb-10">
+          <li class="flex items-start gap-3 text-[11px] text-stone-300"><span class="text-[#8e734a] mt-1">✦</span> 300 Points</li>
+          <li class="flex items-start gap-3 text-[11px] text-stone-300"><span class="text-[#8e734a] mt-1">✦</span> Extended Digital Soundtrack Download</li>
+          <li class="flex items-start gap-3 text-[11px] text-stone-100 font-bold border-t border-white/5 pt-3">
+            <span class="text-yellow-600 mt-1">✦</span> Path of Exile 2 Early Access or Key
+          </li>
+        </ul>
+
+        <a href="https://pathofexile2.com/early-access" target="_blank" rel="noreferrer"
+           class="w-full bg-gradient-to-r from-[#8e734a] to-[#5d4a2d] text-[#050505] font-bold px-8 py-5 text-center text-xs tracking-[0.2em] uppercase border border-[#c5a572] hover:brightness-125 transition duration-500 shadow-2xl block">
+          Buy Supporter Pack
+        </a>
+
+        <p class="text-[9px] text-stone-600 text-center mt-6 uppercase tracking-widest leading-relaxed">
+          Support the development <br />&amp; get immediate access.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="mt-20 text-center py-12 border-t border-white/5 bg-black/40 relative z-10">
+    <p class="text-[9px] text-stone-600 tracking-[0.5em] uppercase mb-4 italic">© 2026 GGG - FAN PROJECT</p>
+    <p class="text-xs tracking-widest uppercase">Crafted by <span class="text-white">Axel Arnal</span></p>
+  </footer>
+
+  <script>
+    // ===== DATA =====
+    const kols = [
+      { name: "Alderiate", twitch: "alderiate", points: 17800, className: "Warrior", level: 70 },
+      { name: "metashi12", twitch: "metashi12", points: 14200, className: "Monk", level: 89 },
+      { name: "Bonjwa Gaming", twitch: "bonjwa", points: 11500, className: "Huntress", level: 82 },
+      { name: "NoWay4u_Sir", twitch: "noway4u_sir", points: 10900, className: "Mercenary", level: 80 },
+      { name: "Zizaran", twitch: "zizaran", points: 10900, className: "Mercenary", level: 80 },
+      { name: "Wankil Studio", twitch: "wankilstudio", points: 7500, className: "Ranger", level: 68 },
+      { name: "ZeratoR", twitch: "zerator", points: 7200, className: "Monk", level: 65 },
+      { name: "Revenant", twitch: "revenant", points: 6900, className: "Mercenary", level: 62 },
+      { name: "Ghazzytv", twitch: "ghazzytv", points: 6500, className: "Huntress", level: 60 },
+      { name: "Maxim", twitch: "maxim", points: 6200, className: "Witch", level: 58 },
+      { name: "Jessirocks", twitch: "jessirocks", points: 18500, className: "Druid", level: 12 }
+    ];
+
+    const runes = ['ᚱ', 'ᚦ', 'ᚧ', 'ᚩ', 'ᚼ', 'ᛏ', 'ᛒ', 'ᛖ', 'ᛗ', 'ᛚ'];
+
+    const lootPool = [
+      { text: "MIRROR OF KALANDRA", color: "#fff", border: "#5df", weight: 1 },
+      { text: "DIVINE ORB", color: "#fff", border: "#ff0", weight: 20 },
+      { text: "EXALTED ORB", color: "#fff", border: "#ff0", weight: 60 },
+      { text: "CHAOS ORB", color: "#ff0", border: "#ff0", weight: 200 },
+      { text: "ALCHEMY ORB", color: "#ff0", border: "#ff0", weight: 400 },
+      { text: "TRANSMUTE", color: "#fff", border: "#888", weight: 800 },
+      { text: "WISDOM SCROLL", color: "#fff", border: "#888", weight: 1500 }
+    ];
+
+    // ===== STATE =====
+    const kolsSorted = [...kols].sort((a, b) => b.points - a.points);
+    let currentStreamer = kolsSorted[0].twitch;
+    let currentList = [...kolsSorted];
+
+    let m_count = 0;
+    let d_count = 0;
+
+    // ===== PRELOADER =====
+    function hideLoader() {
+      setTimeout(() => {
+        const p = document.getElementById('preloader');
+        p.style.opacity = '0';
+        setTimeout(() => p.style.display = 'none', 800);
+      }, 1200);
+    }
+
+    // ===== MUSIC / CORRUPTION =====
+    function toggleMusic() {
+      const m = document.getElementById('bgMusic');
+      const b = document.getElementById('music-status');
+      if (m.paused) {
+        m.play();
+        m.volume = 0.3;
+        b.innerText = "🔊 Music On";
+      } else {
+        m.pause();
+        b.innerText = "🔈 Music Off";
+      }
+    }
+    function corruptSite() { document.body.classList.toggle('corrupted'); }
+
+    // ===== LOOT =====
+    function spawnLoot(e) {
+      const tag = (e.target && e.target.tagName) ? e.target.tagName : "";
+      if (tag === 'A' || tag === 'BUTTON' || tag === 'SELECT' || tag === 'INPUT' || tag === 'IFRAME') return;
+
+      const totalWeight = lootPool.reduce((sum, item) => sum + item.weight, 0);
+      let random = Math.random() * totalWeight;
+      let loot = lootPool[lootPool.length - 1];
+
+      for (const item of lootPool) {
+        if (random < item.weight) { loot = item; break; }
+        random -= item.weight;
+      }
+
+      const div = document.createElement('div');
+      div.className = 'loot-drop';
+      div.innerText = loot.text;
+
+      div.style.left = (e.pageX - 50) + 'px';
+      div.style.top = e.pageY + 'px';
+      div.style.color = loot.color;
+      div.style.borderColor = loot.border;
+
+      if (loot.text === "MIRROR OF KALANDRA") {
+        m_count++;
+        document.getElementById('mir-count').innerText = m_count;
+        triggerRare("#5df");
+      }
+      if (loot.text === "DIVINE ORB") {
+        d_count++;
+        document.getElementById('div-count').innerText = d_count;
+        triggerRare("#ff0");
+      }
+
+      document.body.appendChild(div);
+      setTimeout(() => div.remove(), 2000);
+    }
+
+    function triggerRare(c) {
+      const f = document.getElementById('loot-flash');
+      f.style.background = c;
+      f.style.opacity = "0.3";
+      setTimeout(() => f.style.opacity = "0", 100);
+
+      document.body.classList.add('shake-effect');
+      setTimeout(() => document.body.classList.remove('shake-effect'), 400);
+    }
+
+    // ===== TOOLTIP (clamped in viewport) =====
+    function showTip(e, cls, lvl) {
+      const t = document.getElementById('char-tooltip');
+      t.style.display = 'block';
+
+      const pad = 16;
+      const w = 180;
+      const h = 110;
+      const maxX = window.scrollX + window.innerWidth - w - pad;
+      const maxY = window.scrollY + window.innerHeight - h - pad;
+
+      const x = Math.min(maxX, e.pageX + 15);
+      const y = Math.min(maxY, e.pageY + 15);
+
+      t.style.left = x + 'px';
+      t.style.top = y + 'px';
+
+      t.innerHTML =
+        `<div class="text-[#e4c48a] font-bold text-xs uppercase">${cls}</div>` +
+        `<div class="text-stone-500 text-[10px] mb-2">Level ${lvl}</div>` +
+        `<div class="h-1 bg-gray-800 w-full"><div class="h-full bg-red-700 w-[85%]"></div></div>`;
+    }
+    function hideTip() { document.getElementById('char-tooltip').style.display = 'none'; }
+
+    // ===== TWITCH / LEADERBOARD =====
+    function updateStream(t) {
+      const parent = window.location.hostname || "localhost";
+      document.getElementById('twitchEmbed').src = `https://player.twitch.tv/?channel=${encodeURIComponent(t)}&parent=${encodeURIComponent(parent)}`;
+
+      currentStreamer = t;
+      document.getElementById('currentStreamerName').innerText = t;
+      document.getElementById('currentStreamerAvatar').src = `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(t)}&backgroundColor=000000`;
+
+      // keep select in sync
+      const sel = document.getElementById('streamerSelect');
+      if (sel.value !== t) sel.value = t;
+
+      renderLeaderboard(currentList, currentStreamer);
+    }
+
+    function renderLeaderboard(data, current) {
+      const body = document.getElementById('leaderboardBody');
+
+      body.innerHTML = data.map((kol, i) => {
+        const active = kol.twitch === current;
+        const r = runes[Math.floor(Math.random() * runes.length)];
+
+        return `
+          <tr
+            class="rank-row border-b border-white/5 ${active ? 'active-stream' : ''} cursor-pointer"
+            data-twitch="${kol.twitch}"
+            data-class="${kol.className}"
+            data-level="${kol.level}"
+            data-rune="${r}"
+          >
+            <td class="p-4 text-center font-bold ${i < 3 ? 'text-yellow-500 text-lg' : 'text-stone-500'}">${i + 1}</td>
+            <td class="p-4 flex items-center gap-3 font-bold text-stone-200">
+              <img src="https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(kol.name)}&backgroundColor=000000" class="w-6 h-6 border border-white/10" alt="">
+              <span>${kol.name}</span>
+            </td>
+            <td class="p-4 text-right points-glow text-base">${kol.points.toLocaleString()}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Event delegation for leaderboard interactions
+    function attachLeaderboardListeners() {
+      const body = document.getElementById('leaderboardBody');
+
+      body.addEventListener('click', (e) => {
+        const row = e.target.closest('tr[data-twitch]');
+        if (!row) return;
+        updateStream(row.dataset.twitch);
+      });
+
+      body.addEventListener('mousemove', (e) => {
+        const row = e.target.closest('tr[data-twitch]');
+        if (!row) return;
+        showTip(e, row.dataset.class, row.dataset.level);
+      });
+
+      body.addEventListener('mouseleave', () => hideTip(), true);
+    }
+
+    function manualStreamChange() {
+      const t = document.getElementById('streamerSelect').value;
+      updateStream(t);
+    }
+
+    // ===== SEARCH (debounced) =====
+    function attachSearch() {
+      const input = document.getElementById('searchInput');
+      let timer;
+
+      input.addEventListener('input', () => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          const q = input.value.toLowerCase();
+          currentList = kolsSorted.filter(k => k.name.toLowerCase().includes(q));
+          renderLeaderboard(currentList, currentStreamer);
+        }, 120);
+      });
+    }
+
+    // ===== COUNTDOWN =====
+    const eventDate = new Date("April 10, 2026 20:00:00").getTime();
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const diff = eventDate - now;
+
+      if (diff > 0) {
+        document.getElementById("days").innerText = Math.floor(diff / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
+        document.getElementById("hours").innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+        document.getElementById("minutes").innerText = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+        document.getElementById("seconds").innerText = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
+      } else {
+        document.getElementById("countdown").innerHTML = "<div class='col-span-4 text-red-500 font-bold animate-pulse'>EVENT LIVE!</div>";
+      }
+    }
+
+    // ===== GLOBAL LOG =====
+    const logs = [
+      { t: "Trymacs has been slain by Hillock.", c: "chat-death" },
+      { t: "metashi12 reached Level 90!", c: "chat-global" },
+      { t: "PietSmiet has found a Mirror of Kalandra.", c: "chat-trade" },
+      { t: "Joueur Du Grenier has died at Rank 15.", c: "chat-death" },
+      { t: "Global 1: Anyone for Merveil?", c: "chat-global" },
+      { t: "Global 1: Axel your website is so cool!", c: "chat-global" },
+      { t: "GhazzyTV: I think Diablo is kind of bad though", c: "chat-global" },
+      { t: "Global 1: LET'S GOOOO DIVINE ORBS !", c: "chat-global" },
+      { t: "Global 1: rue is a cat?", c: "chat-global" },
+      { t: "Zizaran has been slain by a Rhoa.", c: "chat-death" },
+      { t: "Global 1: Still sane, Exile? No? Me neither.", c: "chat-global" },
+      { t: "Wankil Studio: Trading 1 Chaos for 20 Necropolis Maps.", c: "chat-trade" },
+      { t: "Global 1: Toucan has been kicked for spam.", c: "chat-info" },
+      { t: "Alderiate: Why is this boss so fast?!", c: "chat-global" }
+    ];
+
+    function addLog() {
+      const l = document.getElementById('global-log');
+      const m = logs[Math.floor(Math.random() * logs.length)];
+      const d = document.createElement('div');
+      d.className = `log-entry ${m.c}`;
+      d.innerText = m.t;
+
+      l.prepend(d);
+      if (l.childNodes.length > 6) l.removeChild(l.lastChild);
+
+      setTimeout(addLog, Math.random() * 5000 + 4000);
+    }
+
+    // ===== EMBERS CANVAS =====
+    function initEmbers() {
+      const canvas = document.getElementById('emberCanvas');
+      const ctx = canvas.getContext('2d');
+      let particles = [];
+
+      function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+      window.addEventListener('resize', resize);
+      resize();
+
+      class P {
+        constructor() { this.reset(); this.y = Math.random() * canvas.height; }
+        reset() {
+          this.x = Math.random() * canvas.width;
+          this.y = canvas.height + 10;
+          this.size = Math.random() * 2;
+          this.speedY = Math.random() * 0.5 + 0.2;
+          this.opacity = Math.random() * 0.5;
         }
-        setInterval(updateCountdown, 1000);
-
-        function hideLoader() { setTimeout(() => { document.getElementById('preloader').style.opacity = '0'; setTimeout(() => document.getElementById('preloader').style.display = 'none', 800); }, 1200); }
-        function toggleMusic() { const m = document.getElementById('bgMusic'); const b = document.getElementById('music-status'); if (m.paused) { m.play(); m.volume = 0.3; b.innerText = "🔊 Music On"; } else { m.pause(); b.innerText = "🔈 Music Off"; } }
-        function corruptSite() { document.body.classList.toggle('corrupted'); }
-
-        function spawnLoot(e) {
-            if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT') return;
-            const totalWeight = lootPool.reduce((sum, item) => sum + item.weight, 0);
-            let random = Math.random() * totalWeight;
-            let loot = lootPool[lootPool.length - 1]; 
-            for (let item of lootPool) { if (random < item.weight) { loot = item; break; } random -= item.weight; }
-            const div = document.createElement('div'); div.className = 'loot-drop'; div.innerText = loot.text;
-            div.style.left = (e.pageX - 50) + 'px'; div.style.top = e.pageY + 'px';
-            div.style.color = loot.color; div.style.borderColor = loot.border;
-            if (loot.text === "MIRROR OF KALANDRA") { m_count++; document.getElementById('mir-count').innerText = m_count; triggerRare("#5df"); }
-            if (loot.text === "DIVINE ORB") { d_count++; document.getElementById('div-count').innerText = d_count; triggerRare("#ff0"); }
-            document.body.appendChild(div); setTimeout(() => div.remove(), 2000);
+        update() {
+          this.y -= this.speedY;
+          this.opacity -= 0.001;
+          if (this.y < -10 || this.opacity <= 0) this.reset();
         }
-
-        function triggerRare(c) {
-            const f = document.getElementById('loot-flash'); f.style.background = c; f.style.opacity = "0.3"; setTimeout(()=> f.style.opacity = "0", 100);
-            document.body.classList.add('shake-effect'); setTimeout(()=> document.body.classList.remove('shake-effect'), 400);
+        draw() {
+          ctx.fillStyle = `rgba(255, 150, 0, ${this.opacity})`;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
         }
+      }
 
-        function showTip(e, cls, lvl) {
-            const t = document.getElementById('char-tooltip'); t.style.display = 'block'; t.style.left = (e.pageX + 15) + 'px'; t.style.top = (e.pageY + 15) + 'px';
-            t.innerHTML = `<div class="text-[#e4c48a] font-bold text-xs uppercase">${cls}</div><div class="text-stone-500 text-[10px] mb-2">Level ${lvl}</div><div class="h-1 bg-gray-800 w-full"><div class="h-full bg-red-700 w-[85%]"></div></div>`;
-        }
-        function hideTip() { document.getElementById('char-tooltip').style.display = 'none'; }
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => { p.update(); p.draw(); });
+        requestAnimationFrame(animate);
+      }
 
-        function updateStream(t) {
-            const domain = window.location.hostname || "localhost";
-            document.getElementById('twitchEmbed').src = `https://player.twitch.tv/?channel=${t}&parent=${domain}`;
-            document.getElementById('currentStreamerName').innerText = t;
-            document.getElementById('currentStreamerAvatar').src = `https://api.dicebear.com/7.x/identicon/svg?seed=${t}&backgroundColor=000000`;
-            renderLeaderboard(kols, t);
-        }
+      for (let i = 0; i < 40; i++) particles.push(new P());
+      animate();
+    }
 
-        function renderLeaderboard(data, current) {
-            data.sort((a, b) => b.points - a.points);
-            document.getElementById('leaderboardBody').innerHTML = data.map((kol, i) => {
-                const active = kol.twitch === current;
-                const r = runes[Math.floor(Math.random()*runes.length)];
-                return `<tr onclick="updateStream('${kol.twitch}')" onmousemove="showTip(event, '${kol.class}', ${kol.level})" onmouseleave="hideTip()" data-rune="${r}" class="rank-row border-b border-white/5 ${active?'active-stream':''} cursor-help"><td class="p-4 text-center font-bold ${i<3?'text-yellow-500 text-lg':'text-stone-500'}">${i+1}</td><td class="p-4 flex items-center gap-3 font-bold text-stone-200"><img src="https://api.dicebear.com/7.x/identicon/svg?seed=${kol.name}&backgroundColor=000000" class="w-6 h-6 border border-white/10"><span>${kol.name}</span></td><td class="p-4 text-right points-glow text-base">${kol.points.toLocaleString()}</td></tr>`;
-            }).join('');
-        }
+    // ===== INIT =====
+    window.addEventListener('DOMContentLoaded', () => {
+      // Buttons
+      document.getElementById('vaalBtn').addEventListener('click', (e) => { e.stopPropagation(); corruptSite(); });
+      document.getElementById('music-toggle').addEventListener('click', (e) => { e.stopPropagation(); toggleMusic(); });
 
-        function filterTable() { renderLeaderboard(kols.filter(k => k.name.toLowerCase().includes(document.getElementById('searchInput').value.toLowerCase())), ""); }
+      // Body click => loot
+      document.body.addEventListener('click', (e) => spawnLoot(e));
 
-        const logs = [
-            { t: "Trymacs has been slain by Hillock.", c: "chat-death" },
-            { t: "metashi12 reached Level 90!", c: "chat-global" },
-            { t: "PietSmiet has found a Mirror of Kalandra.", c: "chat-trade" },
-            { t: "Joueur Du Grenier has died at Rank 15.", c: "chat-death" },
-            { t: "Global 1: Anyone for Merveil?", c: "chat-global" },
-            { t: "Global 1: Axel your website is so cool!", c: "chat-global" },
-            { t: "GhazzyTV: I think Diablo is kind of bad though", c: "chat-global" },
-            { t: "Global 1: LET'S GOOOO DIVINE ORBS !", c: "chat-global" },
-            { t: "Global 1: rue is a cat?", c: "chat-global" },
-            { t: "Zizaran has been slain by a Rhoa.", c: "chat-death" },
-            { t: "Global 1: Still sane, Exile? No? Me neither.", c: "chat-global" },
-            { t: "Wankil Studio: Trading 1 Chaos for 20 Necropolis Maps.", c: "chat-trade" },
-            { t: "Global 1: Toucan has been kicked for spam.", c: "chat-info" },
-            { t: "Alderiate: Why is this boss so fast?!", c: "chat-global" }
-        ];
+      // Select change
+      document.getElementById('streamerSelect').addEventListener('change', manualStreamChange);
 
-        function addLog() {
-            const l = document.getElementById('global-log'); const m = logs[Math.floor(Math.random()*logs.length)];
-            const d = document.createElement('div'); d.className = `log-entry ${m.c}`; d.innerText = m.t;
-            l.prepend(d); if (l.childNodes.length > 6) l.removeChild(l.lastChild);
-            setTimeout(addLog, Math.random() * 5000 + 4000);
-        }
+      // Fill select
+      document.getElementById('streamerSelect').innerHTML =
+        kolsSorted.map(k => `<option value="${k.twitch}">${k.name}</option>`).join('');
 
-        const canvas = document.getElementById('emberCanvas'); const ctx = canvas.getContext('2d');
-        let particles = []; function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-        window.addEventListener('resize', resize); resize();
-        class P { constructor() { this.reset(); this.y = Math.random()*canvas.height; } reset() { this.x = Math.random()*canvas.width; this.y = canvas.height+10; this.size = Math.random()*2; this.speedY = Math.random()*0.5+0.2; this.opacity = Math.random()*0.5; } update() { this.y -= this.speedY; this.opacity -= 0.001; if (this.y < -10 || this.opacity <= 0) this.reset(); } draw() { ctx.fillStyle = `rgba(255, 150, 0, ${this.opacity})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill(); } }
-        function animate() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(animate); }
-        for(let i=0; i<40; i++) particles.push(new P());
-        animate(); updateStream(kols[0].twitch); addLog(); updateCountdown();
-        document.getElementById('streamerSelect').innerHTML = kols.map(k=>`<option value="${k.twitch}">${k.name}</option>`).join('');
-    </script>
+      // Listeners + initial render
+      attachLeaderboardListeners();
+      attachSearch();
+
+      // Visuals
+      initEmbers();
+
+      // Start timers
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+      addLog();
+
+      // First stream
+      currentList = [...kolsSorted];
+      renderLeaderboard(currentList, currentStreamer);
+      updateStream(currentStreamer);
+
+      // Preloader
+      hideLoader();
+    });
+  </script>
 </body>
 </html>
