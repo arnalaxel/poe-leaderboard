@@ -6,15 +6,41 @@
   <title>Path of Exile 2 - WEU Creators Leaderboard</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            poeGold: "#8e734a",
+            poeGold2: "#c5a572",
+            poeInk: "#050505",
+            poeText: "#a38d6d",
+            poeTitle: "#e4c48a",
+            poeRed: "#ff4500",
+            corrupt: "#8b0000",
+          },
+          boxShadow: {
+            glass: "0 0 20px rgba(0,0,0,0.6)",
+          }
+        }
+      }
+    }
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Metamorphous&display=swap" rel="stylesheet" />
 
   <style>
-    :root { --poe-gold: #8e734a; --poe-red: #ff4500; --corrupt-red: #8b0000; }
+    :root {
+      --poe-gold: #8e734a;
+      --poe-gold2: #c5a572;
+      --poe-red: #ff4500;
+      --corrupt-red: #8b0000;
+    }
+
     * { font-family: 'Cinzel', serif !important; user-select: none; }
 
-    /* Custom cursor only on desktop pointers */
     @media (pointer: fine) {
       * { cursor: url('https://web.poecdn.com/image/layout/cursor-pointer.png'), auto !important; }
     }
@@ -22,144 +48,190 @@
     body {
       background-color: #050505;
       background-image:
-        linear-gradient(to bottom, rgba(5, 5, 5, 0.6), rgba(5, 5, 5, 0.95)),
+        linear-gradient(to bottom, rgba(5, 5, 5, 0.60), rgba(5, 5, 5, 0.95)),
         url('https://i.ibb.co/Q3R6wF9Z/The-Lastofthe-Druids-MAINKEYART-Background.png');
       background-attachment: fixed;
       background-size: cover;
       background-position: center;
       color: #a38d6d;
       overflow-x: hidden;
-      scroll-behavior: smooth;
       margin: 0;
       transition: filter 0.5s ease;
     }
+
     body::after {
       content: "";
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: radial-gradient(circle, transparent 65%, rgba(0,0,0,0.5) 100%);
+      inset: 0;
+      background: radial-gradient(circle, transparent 65%, rgba(0,0,0,0.55) 100%);
       pointer-events: none;
-      z-index: 40;
+      z-index: 20;
     }
 
     body.corrupted { filter: sepia(0.5) saturate(1.8) hue-rotate(-50deg); }
-    body.corrupted .card-glass { border-color: var(--corrupt-red); box-shadow: 0 0 15px rgba(139, 0, 0, 0.2); }
+    body.corrupted .card-glass {
+      border-color: var(--corrupt-red);
+      box-shadow: 0 0 18px rgba(139, 0, 0, 0.25);
+    }
 
+    /* Preloader */
     #preloader {
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      inset: 0;
       background: #050505;
       z-index: 9999;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      align-items: center; /* FIXED */
+      align-items: center;
       transition: opacity 0.8s ease;
     }
-    .rune-loader { font-family: 'Metamorphous' !important; font-size: 5rem; color: var(--poe-gold); animation: pulse-rune 2s infinite; }
-    @keyframes pulse-rune { 0%,100%{ opacity: 0.7; transform: scale(1);} 50%{ opacity:1; transform: scale(1.06);} }
+    .rune-loader {
+      font-family: 'Metamorphous' !important;
+      font-size: 5rem;
+      color: var(--poe-gold);
+      animation: pulse-rune 2s infinite;
+    }
+    @keyframes pulse-rune {
+      0%, 100% { opacity: 0.65; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.06); }
+    }
 
+    /* Glass card */
+    .card-glass {
+      background: rgba(0, 0, 0, 0.86);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(142, 115, 74, 0.22);
+    }
+
+    /* Scrollbar */
+    .scroll-area { scrollbar-width: thin; scrollbar-color: rgba(142,115,74,0.65) rgba(0,0,0,0.35); }
+    .scroll-area::-webkit-scrollbar { width: 10px; }
+    .scroll-area::-webkit-scrollbar-track { background: rgba(0,0,0,0.35); }
+    .scroll-area::-webkit-scrollbar-thumb { background: rgba(142,115,74,0.65); border-radius: 10px; border: 2px solid rgba(0,0,0,0.35); }
+
+    /* Loot */
     .loot-drop {
       position: absolute;
       pointer-events: none;
       padding: 4px 12px;
       border: 2px solid;
-      font-weight: bold;
-      font-size: 13px;
+      font-weight: 700;
+      font-size: 12px;
       z-index: 100;
       animation: floatUp 2s forwards;
       background: rgba(0,0,0,0.95);
-      font-family: sans-serif !important;
-      letter-spacing: 1px;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif !important;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
-    @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-80px); } }
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-85px); }
+    }
+
+    #loot-flash {
+      position: fixed;
+      inset: 0;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 200;
+      transition: opacity 0.12s ease;
+    }
 
     @keyframes shake {
       0% { transform: translate(1px, 1px) rotate(0deg); }
-      10% { transform: translate(-1px, -2px) rotate(-1deg); }
-      30% { transform: translate(3px, 2px) rotate(0deg); }
-      50% { transform: translate(-1px, 2px) rotate(1deg); }
+      12% { transform: translate(-1px, -2px) rotate(-1deg); }
+      36% { transform: translate(3px, 2px) rotate(0deg); }
+      60% { transform: translate(-1px, 2px) rotate(1deg); }
       100% { transform: translate(1px, -2px) rotate(0deg); }
     }
     .shake-effect { animation: shake 0.4s; }
 
-    #loot-flash {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: white;
-      opacity: 0;
-      pointer-events: none;
-      z-index: 200;
-      transition: opacity 0.1s;
-    }
-
+    /* Tooltip */
     #char-tooltip {
       position: absolute;
       display: none;
-      background: rgba(10, 10, 10, 0.95);
+      background: rgba(10, 10, 10, 0.96);
       border: 1px solid var(--poe-gold);
       padding: 12px;
       z-index: 500;
-      width: 180px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.8);
+      width: 210px;
+      box-shadow: 0 0 22px rgba(0,0,0,0.85);
       pointer-events: none;
     }
 
+    /* Log */
     #global-log {
       position: fixed;
-      bottom: 20px;
-      left: 20px;
-      width: 350px;
-      height: 130px;
+      bottom: 18px;
+      left: 18px;
+      width: 360px;
+      height: 140px;
       pointer-events: none;
-      z-index: 50;
+      z-index: 30;
       overflow: hidden;
       -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
       mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
     }
-    .log-entry { font-family: sans-serif !important; font-size: 11px; margin-bottom: 2px; text-shadow: 1px 1px 1px black; animation: logSlide 0.3s ease-out; }
+    .log-entry {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif !important;
+      font-size: 11px;
+      margin-bottom: 3px;
+      text-shadow: 1px 1px 1px black;
+      animation: logSlide 0.25s ease-out;
+    }
     @keyframes logSlide { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
-    .chat-death { color: #ff4d4d; } .chat-global { color: #60c1e8; } .chat-trade { color: #abe33d; } .chat-info { color: #afadab; }
+    .chat-death { color: #ff4d4d; }
+    .chat-global { color: #60c1e8; }
+    .chat-trade { color: #abe33d; }
+    .chat-info { color: #afadab; }
 
-    .card-glass { background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(142, 115, 74, 0.2); }
-    .points-glow { color: #ffb84d; text-shadow: 0 0 12px rgba(255, 184, 77, 0.5); font-family: 'Metamorphous' !important; }
-    .active-stream { background: rgba(142, 115, 74, 0.15) !important; border-left: 3px solid var(--poe-gold); }
+    /* Canvas */
+    #emberCanvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.55;
+    }
 
-    #emberCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; opacity: 0.5; }
-
-    /* Allow selecting text where it matters */
-    #searchInput, #leaderboardBody, #leaderboardBody * { user-select: text; }
+    /* Allow selecting text in inputs */
+    input, select, textarea { user-select: text; }
+    #leaderboardBody, #leaderboardBody * { user-select: text; }
   </style>
 </head>
 
 <body>
-  <div id="preloader"><div class="rune-loader">ᚦ</div></div>
+  <div id="preloader">
+    <div class="rune-loader">ᚦ</div>
+    <div class="mt-4 text-[10px] tracking-[0.3em] uppercase text-stone-600">Loading</div>
+  </div>
+
   <div id="loot-flash"></div>
   <div id="char-tooltip"></div>
   <div id="global-log"></div>
   <canvas id="emberCanvas"></canvas>
 
-  <div class="fixed top-4 right-4 z-[100] flex flex-col items-end gap-3">
-    <div class="bg-black/80 border border-[#8e734a]/40 px-3 py-2 flex gap-4 rounded-sm shadow-xl">
+  <!-- Top right UI -->
+  <div class="fixed top-4 right-4 z-[60] flex flex-col items-end gap-3">
+    <div class="card-glass px-3 py-2 flex gap-4 rounded-sm shadow-glass border border-[rgba(142,115,74,0.35)]">
       <div class="flex flex-col items-center">
-        <span class="text-[8px] text-stone-500 uppercase">Mirrors</span>
-        <span id="mir-count" class="text-cyan-400 font-bold text-xs">0</span>
+        <span class="text-[8px] text-stone-500 uppercase tracking-widest">Mirrors</span>
+        <span id="mir-count" class="text-cyan-300 font-bold text-xs">0</span>
       </div>
       <div class="flex flex-col items-center border-l border-white/10 pl-4">
-        <span class="text-[8px] text-stone-500 uppercase">Divines</span>
-        <span id="div-count" class="text-yellow-500 font-bold text-xs">0</span>
+        <span class="text-[8px] text-stone-500 uppercase tracking-widest">Divines</span>
+        <span id="div-count" class="text-yellow-400 font-bold text-xs">0</span>
       </div>
     </div>
 
     <div class="flex gap-2">
-      <button id="vaalBtn" class="bg-red-900/40 border border-red-600 text-red-500 px-3 py-1 text-[9px] uppercase font-bold hover:bg-red-600 hover:text-white transition" aria-label="Vaal Orb">
+      <button id="vaalBtn" class="bg-red-900/35 border border-red-700/70 text-red-400 px-3 py-1 text-[10px] uppercase font-bold hover:bg-red-700 hover:text-white transition">
         Vaal Orb
       </button>
-      <button id="music-toggle" class="bg-black/80 border border-white/10 text-[#8e734a] px-3 py-1 text-[9px] uppercase font-bold" aria-label="Toggle music">
-        <span id="music-status">🔈 Music Off</span>
+      <button id="musicBtn" class="bg-black/80 border border-white/10 text-poeGold px-3 py-1 text-[10px] uppercase font-bold hover:border-poeGold/60 transition">
+        Music Off
       </button>
     </div>
 
@@ -168,8 +240,14 @@
     </audio>
   </div>
 
-  <header class="pt-12 pb-8 flex flex-col items-center text-center relative z-10">
-    <img src="https://i.ibb.co/zTKghTd2/Po-E2-The-Lastofthe-Druids-EN.png" class="max-w-xs md:max-w-md h-auto drop-shadow-2xl mb-8" alt="Path of Exile 2" />
+  <!-- Header -->
+  <header class="pt-12 pb-6 flex flex-col items-center text-center relative z-10">
+    <img
+      src="https://i.ibb.co/zTKghTd2/Po-E2-The-Lastofthe-Druids-EN.png"
+      class="max-w-xs md:max-w-md h-auto drop-shadow-2xl mb-8"
+      alt="Path of Exile 2"
+    />
+
     <nav class="flex flex-wrap justify-center gap-6 uppercase text-[10px] tracking-[0.3em] font-bold bg-black/60 px-8 py-4 rounded-full border border-white/10 backdrop-blur-md">
       <a href="index.html" class="hover:text-white transition">Live</a>
       <a href="builds.html" class="hover:text-white transition">Builds</a>
@@ -178,188 +256,579 @@
     </nav>
   </header>
 
-  <main class="max-w-6xl mx-auto px-4 space-y-20 pb-24 relative z-10">
-    <section id="livestream" class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-      <div class="lg:col-span-3 card-glass overflow-hidden flex flex-col">
-        <div class="aspect-video bg-black">
-          <iframe id="twitchEmbed" src="" height="100%" width="100%" allowfullscreen="true" frameborder="0"></iframe>
-        </div>
-        <div class="p-4 flex justify-between items-center bg-black/40 border-t border-white/5">
-          <div class="flex items-center gap-3">
-            <img id="currentStreamerAvatar" src="" class="w-10 h-10 border border-[#8e734a]/30" alt="Streamer avatar" />
-            <h3 id="currentStreamerName" class="text-lg text-[#e4c48a] font-bold uppercase tracking-widest">...</h3>
-          </div>
-
-          <select id="streamerSelect" class="bg-black border border-white/10 px-4 py-1 text-xs text-stone-300 outline-none"></select>
-        </div>
+  <main class="max-w-6xl mx-auto px-4 space-y-10 pb-24 relative z-10">
+    <!-- KPI Row -->
+    <section class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+      <div class="card-glass p-5 border border-white/10">
+        <div class="text-[10px] uppercase tracking-[0.28em] text-stone-500">Total creators</div>
+        <div id="kpiCreators" class="text-2xl font-bold text-poeTitle mt-2">0</div>
+        <div class="text-[11px] text-stone-400 mt-2">Filtered list</div>
       </div>
 
-      <div class="lg:col-span-1 flex flex-col gap-6">
-        <div class="card-glass p-6 border-l-2 border-[#ff4500]">
-          <h4 class="text-[10px] uppercase tracking-[0.2em] text-[#ff4500] mb-4 flex items-center gap-2 font-bold">
-            <span class="w-2 h-2 bg-red-600 rounded-full animate-ping"></span> Next Boss Rush
-          </h4>
-          <div id="countdown" class="grid grid-cols-4 gap-2 text-center mb-4">
-            <div class="flex flex-col"><span id="days" class="text-xl font-bold text-white">00</span><span class="text-[7px] uppercase text-stone-500">Days</span></div>
-            <div class="flex flex-col"><span id="hours" class="text-xl font-bold text-white">00</span><span class="text-[7px] uppercase text-stone-500">Hrs</span></div>
-            <div class="flex flex-col"><span id="minutes" class="text-xl font-bold text-white">00</span><span class="text-[7px] uppercase text-stone-500">Min</span></div>
-            <div class="flex flex-col"><span id="seconds" class="text-xl font-bold text-[#e4c48a]">00</span><span class="text-[7px] uppercase text-stone-500">Sec</span></div>
-          </div>
-        </div>
+      <div class="card-glass p-5 border border-white/10">
+        <div class="text-[10px] uppercase tracking-[0.28em] text-stone-500">Total score</div>
+        <div id="kpiScore" class="text-2xl font-bold text-poeTitle mt-2">0</div>
+        <div class="text-[11px] text-stone-400 mt-2">Sum of leaderboard score</div>
+      </div>
 
-        <div class="card-glass p-6 flex flex-col justify-between flex-grow">
-          <div>
-            <h4 class="text-[10px] uppercase tracking-widest text-white mb-4 flex items-center gap-2 font-bold">
-              <span class="w-2 h-2 bg-red-600 rounded-full animate-pulse"></span> Recommended
-            </h4>
-            <h3 class="text-xl text-[#e4c48a] font-bold mb-4 uppercase">Bear Druid Starter</h3>
-            <p class="text-[11px] text-stone-400 leading-relaxed mb-8">Master the art of shapeshifting. Focus on massive area damage.</p>
+      <div class="card-glass p-5 border border-white/10">
+        <div class="text-[10px] uppercase tracking-[0.28em] text-stone-500">Top country</div>
+        <div id="kpiCountry" class="text-2xl font-bold text-poeTitle mt-2">-</div>
+        <div class="text-[11px] text-stone-400 mt-2">By filtered count</div>
+      </div>
+
+      <div class="card-glass p-5 border border-white/10">
+        <div class="text-[10px] uppercase tracking-[0.28em] text-stone-500">Next boss rush</div>
+        <div class="mt-2 grid grid-cols-4 gap-2 text-center">
+          <div class="flex flex-col">
+            <span id="days" class="text-xl font-bold text-white">00</span>
+            <span class="text-[8px] uppercase text-stone-500 tracking-widest">Days</span>
           </div>
-          <a href="https://mobalytics.gg/poe-2/builds/bear-druid-build-league-starter-to-endgame" target="_blank" rel="noreferrer"
-             class="bg-gradient-to-r from-[#8e734a] to-[#5d4a2d] text-[#050505] font-bold text-center py-4 text-[10px] tracking-widest uppercase border border-[#c5a572]">
-            Guide link
-          </a>
+          <div class="flex flex-col">
+            <span id="hours" class="text-xl font-bold text-white">00</span>
+            <span class="text-[8px] uppercase text-stone-500 tracking-widest">Hrs</span>
+          </div>
+          <div class="flex flex-col">
+            <span id="minutes" class="text-xl font-bold text-white">00</span>
+            <span class="text-[8px] uppercase text-stone-500 tracking-widest">Min</span>
+          </div>
+          <div class="flex flex-col">
+            <span id="seconds" class="text-xl font-bold text-poeTitle">00</span>
+            <span class="text-[8px] uppercase text-stone-500 tracking-widest">Sec</span>
+          </div>
         </div>
       </div>
     </section>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
-      <div class="lg:col-span-2 space-y-6">
-        <div class="flex justify-between items-center border-b border-white/10 pb-4">
-          <h2 class="text-2xl uppercase tracking-[0.2em] text-[#e4c48a]">Exile Rankings</h2>
-          <input type="text" id="searchInput" placeholder="Search..."
-                 class="bg-transparent border-b border-white/10 text-xs px-4 py-2 outline-none focus:border-[#8e734a] transition text-stone-300" />
+    <!-- Stream + Right panel -->
+    <section class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <!-- Stream -->
+      <div class="lg:col-span-3 card-glass overflow-hidden flex flex-col border border-white/10">
+        <div class="aspect-video bg-black relative">
+          <iframe id="twitchEmbed" src="" class="w-full h-full" allowfullscreen="true" frameborder="0"></iframe>
+
+          <div id="twitchFallback" class="hidden absolute inset-0 bg-black/80 p-6 flex flex-col justify-center items-center text-center">
+            <div class="text-poeTitle font-bold uppercase tracking-widest text-sm">Twitch blocked</div>
+            <div class="text-stone-400 text-xs mt-2 max-w-md">
+              If you opened this file locally, Twitch may refuse the embed. Use GitHub Pages, or open on a real domain.
+            </div>
+            <a id="twitchLink" href="#" target="_blank" rel="noreferrer"
+               class="mt-5 bg-gradient-to-r from-poeGold to-[#5d4a2d] text-poeInk font-bold px-6 py-3 text-[10px] tracking-[0.28em] uppercase border border-poeGold2 hover:brightness-110 transition">
+              Open on Twitch
+            </a>
+          </div>
         </div>
 
-        <div class="card-glass overflow-hidden">
-          <div class="max-h-[500px] overflow-y-auto">
-            <table class="w-full text-left text-xs">
-              <tbody id="leaderboardBody"></tbody>
-            </table>
+        <div class="p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3 bg-black/40 border-t border-white/5">
+          <div class="flex items-center gap-3">
+            <img id="currentStreamerAvatar" src="" class="w-10 h-10 border border-poeGold/30" alt="" />
+            <div>
+              <div class="text-[10px] uppercase tracking-[0.28em] text-stone-500">Now watching</div>
+              <h3 id="currentStreamerName" class="text-lg text-poeTitle font-bold uppercase tracking-widest">-</h3>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <div class="text-[10px] uppercase tracking-[0.28em] text-stone-500 hidden md:block">Creator</div>
+            <select id="streamerSelect" class="bg-black border border-white/10 px-4 py-2 text-xs text-stone-300 outline-none focus:border-poeGold/60 transition"></select>
           </div>
         </div>
       </div>
 
-      <div class="lg:col-span-1 card-glass p-8 bg-gradient-to-br from-[#1a130a] to-black border-t-2 border-[#8e734a]" id="shop">
-        <h2 class="text-xl mb-2 text-[#e4c48a] uppercase font-bold tracking-widest text-center">Early Access Pack</h2>
-        <p class="text-[10px] text-stone-500 uppercase tracking-[0.3em] text-center mb-8 italic">Available Now</p>
+      <!-- Right panel -->
+      <div class="lg:col-span-1 flex flex-col gap-6">
+        <div class="card-glass p-6 border border-white/10">
+          <div class="text-[10px] uppercase tracking-[0.28em] text-poeRed font-bold">Recommended build</div>
+          <div class="mt-3 text-xl text-poeTitle font-bold uppercase">Bear Druid Starter</div>
+          <div class="mt-3 text-[11px] text-stone-400 leading-relaxed">
+            Shapeshift, clear fast, scale into endgame. Simple to explain, good for onboarding.
+          </div>
+          <a href="https://mobalytics.gg/poe-2/builds/bear-druid-build-league-starter-to-endgame"
+             target="_blank" rel="noreferrer"
+             class="mt-5 block bg-gradient-to-r from-poeGold to-[#5d4a2d] text-poeInk font-bold text-center py-4 text-[10px] tracking-[0.28em] uppercase border border-poeGold2 hover:brightness-110 transition">
+            Guide link
+          </a>
+        </div>
 
-        <ul class="space-y-4 mb-10">
-          <li class="flex items-start gap-3 text-[11px] text-stone-300"><span class="text-[#8e734a] mt-1">✦</span> 300 Points</li>
-          <li class="flex items-start gap-3 text-[11px] text-stone-300"><span class="text-[#8e734a] mt-1">✦</span> Extended Digital Soundtrack Download</li>
-          <li class="flex items-start gap-3 text-[11px] text-stone-100 font-bold border-t border-white/5 pt-3">
-            <span class="text-yellow-600 mt-1">✦</span> Path of Exile 2 Early Access or Key
-          </li>
-        </ul>
+        <div class="card-glass p-6 border border-white/10" id="shop">
+          <div class="text-center">
+            <div class="text-xl text-poeTitle uppercase font-bold tracking-widest">Early Access Pack</div>
+            <div class="text-[10px] text-stone-500 uppercase tracking-[0.3em] mt-1 italic">Available now</div>
+          </div>
 
-        <a href="https://pathofexile2.com/early-access" target="_blank" rel="noreferrer"
-           class="w-full bg-gradient-to-r from-[#8e734a] to-[#5d4a2d] text-[#050505] font-bold px-8 py-5 text-center text-xs tracking-[0.2em] uppercase border border-[#c5a572] hover:brightness-125 transition duration-500 shadow-2xl block">
-          Buy Supporter Pack
-        </a>
+          <ul class="space-y-3 mt-6 mb-6">
+            <li class="flex items-start gap-3 text-[11px] text-stone-300"><span class="text-poeGold mt-1">✦</span> 300 Points</li>
+            <li class="flex items-start gap-3 text-[11px] text-stone-300"><span class="text-poeGold mt-1">✦</span> Extended Digital Soundtrack Download</li>
+            <li class="flex items-start gap-3 text-[11px] text-stone-100 font-bold border-t border-white/5 pt-3">
+              <span class="text-yellow-500 mt-1">✦</span> Path of Exile 2 Early Access or Key
+            </li>
+          </ul>
 
-        <p class="text-[9px] text-stone-600 text-center mt-6 uppercase tracking-widest leading-relaxed">
-          Support the development <br />&amp; get immediate access.
-        </p>
+          <a href="https://pathofexile2.com/early-access" target="_blank" rel="noreferrer"
+             class="block w-full bg-gradient-to-r from-poeGold to-[#5d4a2d] text-poeInk font-bold px-8 py-5 text-center text-xs tracking-[0.2em] uppercase border border-poeGold2 hover:brightness-110 transition shadow-2xl">
+            Buy Supporter Pack
+          </a>
+
+          <div class="text-[9px] text-stone-600 text-center mt-5 uppercase tracking-widest leading-relaxed">
+            Support the development<br />and get immediate access.
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
+
+    <!-- Leaderboard -->
+    <section class="grid grid-cols-1 gap-6">
+      <div class="card-glass border border-white/10 p-5">
+        <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+          <div>
+            <div class="text-[10px] uppercase tracking-[0.3em] text-stone-500">WEU Creators</div>
+            <h2 class="text-2xl uppercase tracking-[0.18em] text-poeTitle font-bold mt-1">Exile Rankings</h2>
+            <div class="text-[11px] text-stone-400 mt-2">
+              Score formula can be changed to match your real KPIs. For now it is consistent and explainable.
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-3 w-full lg:w-auto">
+            <input id="searchInput" type="text" placeholder="Search creator"
+              class="bg-black/40 border border-white/10 px-4 py-3 text-xs text-stone-200 outline-none focus:border-poeGold/60 transition w-full" />
+
+            <select id="filterCountry"
+              class="bg-black/40 border border-white/10 px-4 py-3 text-xs text-stone-200 outline-none focus:border-poeGold/60 transition w-full"></select>
+
+            <select id="filterClass"
+              class="bg-black/40 border border-white/10 px-4 py-3 text-xs text-stone-200 outline-none focus:border-poeGold/60 transition w-full"></select>
+
+            <button id="toggleLive"
+              class="bg-black/40 border border-white/10 px-4 py-3 text-[10px] uppercase tracking-[0.22em] font-bold text-stone-200 hover:border-poeGold/60 transition w-full">
+              Live only: Off
+            </button>
+          </div>
+        </div>
+
+        <div class="mt-6 card-glass border border-white/10 overflow-hidden">
+          <div class="max-h-[520px] overflow-y-auto scroll-area">
+            <table class="w-full text-left text-xs">
+              <thead class="sticky top-0 bg-black/80 backdrop-blur-md border-b border-white/10">
+                <tr class="text-stone-400 uppercase tracking-[0.22em] text-[10px]">
+                  <th class="p-4 w-[60px]">Rank</th>
+                  <th class="p-4 cursor-pointer select-none" data-sort="name">
+                    Creator
+                    <span class="ml-2 text-stone-500" data-sort-indicator="name"></span>
+                  </th>
+                  <th class="p-4 w-[110px] cursor-pointer select-none text-center" data-sort="country">
+                    Country
+                    <span class="ml-2 text-stone-500" data-sort-indicator="country"></span>
+                  </th>
+                  <th class="p-4 w-[130px] cursor-pointer select-none text-center" data-sort="className">
+                    Class
+                    <span class="ml-2 text-stone-500" data-sort-indicator="className"></span>
+                  </th>
+                  <th class="p-4 w-[110px] cursor-pointer select-none text-center" data-sort="level">
+                    Level
+                    <span class="ml-2 text-stone-500" data-sort-indicator="level"></span>
+                  </th>
+                  <th class="p-4 w-[160px] cursor-pointer select-none text-right" data-sort="score">
+                    Score
+                    <span class="ml-2 text-stone-500" data-sort-indicator="score"></span>
+                  </th>
+                  <th class="p-4 w-[100px] text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboardBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="mt-4 text-[10px] text-stone-500 uppercase tracking-[0.26em]" id="tableMeta">-</div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="card-glass border border-white/10 p-6">
+      <div class="text-[10px] uppercase tracking-[0.3em] text-stone-500">About</div>
+      <div class="text-poeTitle font-bold uppercase tracking-widest text-lg mt-2">Path of Exile 2</div>
+      <div class="mt-3 text-[12px] text-stone-400 leading-relaxed max-w-3xl">
+        Fan dashboard concept for WEU creator tracking. Replace mock metrics with real ones (views, hours watched, clicks, installs) to turn this into a proper internal reporting surface.
+      </div>
+    </section>
   </main>
 
-  <footer class="mt-20 text-center py-12 border-t border-white/5 bg-black/40 relative z-10">
-    <p class="text-[9px] text-stone-600 tracking-[0.5em] uppercase mb-4 italic">© 2026 GGG - FAN PROJECT</p>
-    <p class="text-xs tracking-widest uppercase">Crafted by <span class="text-white">Axel Arnal</span></p>
+  <footer class="mt-12 text-center py-10 border-t border-white/5 bg-black/40 relative z-10">
+    <div class="text-[9px] text-stone-600 tracking-[0.5em] uppercase italic">© 2026 GGG - FAN PROJECT</div>
+    <div class="text-xs tracking-widest uppercase mt-3">Crafted by <span class="text-white">Axel Arnal</span></div>
   </footer>
 
   <script>
-    // ===== DATA =====
-    const kols = [
-      { name: "Alderiate", twitch: "alderiate", points: 17800, className: "Warrior", level: 70 },
-      { name: "metashi12", twitch: "metashi12", points: 14200, className: "Monk", level: 89 },
-      { name: "Bonjwa Gaming", twitch: "bonjwa", points: 11500, className: "Huntress", level: 82 },
-      { name: "NoWay4u_Sir", twitch: "noway4u_sir", points: 10900, className: "Mercenary", level: 80 },
-      { name: "Zizaran", twitch: "zizaran", points: 10900, className: "Mercenary", level: 80 },
-      { name: "Wankil Studio", twitch: "wankilstudio", points: 7500, className: "Ranger", level: 68 },
-      { name: "ZeratoR", twitch: "zerator", points: 7200, className: "Monk", level: 65 },
-      { name: "Revenant", twitch: "revenant", points: 6900, className: "Mercenary", level: 62 },
-      { name: "Ghazzytv", twitch: "ghazzytv", points: 6500, className: "Huntress", level: 60 },
-      { name: "Maxim", twitch: "maxim", points: 6200, className: "Witch", level: 58 },
-      { name: "Jessirocks", twitch: "jessirocks", points: 18500, className: "Druid", level: 12 }
+    /* =========================
+       DATA MODEL (HQ-friendly)
+       ========================= */
+
+    // This is MOCK data. Replace with your real metrics easily.
+    // Score formula is consistent and explainable.
+    const KOLS = [
+      { name: "Alderiate", twitch: "alderiate", country: "FR", className: "Warrior", level: 70, live: true,  views: 180000, hours: 4200, clicks: 1200 },
+      { name: "metashi12", twitch: "metashi12", country: "DE", className: "Monk", level: 89, live: true,  views: 220000, hours: 5800, clicks: 900 },
+      { name: "Bonjwa Gaming", twitch: "bonjwa", country: "DE", className: "Huntress", level: 82, live: false, views: 310000, hours: 7600, clicks: 1400 },
+      { name: "NoWay4u_Sir", twitch: "noway4u_sir", country: "DE", className: "Mercenary", level: 80, live: true,  views: 260000, hours: 6400, clicks: 1100 },
+      { name: "Zizaran", twitch: "zizaran", country: "NOR", className: "Mercenary", level: 80, live: false, views: 900000, hours: 22000, clicks: 4600 },
+      { name: "Wankil Studio", twitch: "wankilstudio", country: "FR", className: "Ranger", level: 68, live: false, views: 780000, hours: 14000, clicks: 5200 },
+      { name: "ZeratoR", twitch: "zerator", country: "FR", className: "Monk", level: 65, live: false, views: 650000, hours: 16500, clicks: 6100 },
+      { name: "Revenant", twitch: "revenant", country: "SP", className: "Mercenary", level: 62, live: false, views: 140000, hours: 3100, clicks: 600 },
+      { name: "Ghazzytv", twitch: "ghazzytv", country: "UK", className: "Huntress", level: 60, live: false, views: 280000, hours: 8200, clicks: 900 },
+      { name: "Maxim", twitch: "maxim", country: "DE", className: "Witch", level: 58, live: false, views: 120000, hours: 2600, clicks: 400 },
+      { name: "Jessirocks", twitch: "jessirocks", country: "DE", className: "Druid", level: 12, live: true,  views: 360000, hours: 7400, clicks: 1800 },
     ];
 
-    const runes = ['ᚱ', 'ᚦ', 'ᚧ', 'ᚩ', 'ᚼ', 'ᛏ', 'ᛒ', 'ᛖ', 'ᛗ', 'ᛚ'];
+    // Score formula: tweak weights here to match your HQ KPI logic.
+    // Example: hours matters most, clicks matters a lot, views matters a bit.
+    function computeScore(k) {
+      const viewsScore = k.views * 0.02;   // 100k views => 2000
+      const hoursScore = k.hours * 1.2;    // 1000 hours => 1200
+      const clicksScore = k.clicks * 4;    // 1000 clicks => 4000
+      const levelBonus = k.level * 10;     // level gives a small bias
+      return Math.round(viewsScore + hoursScore + clicksScore + levelBonus);
+    }
+
+    /* =========================
+       STATE + PERSISTENCE
+       ========================= */
+
+    const STORAGE_KEY = "poe2_leaderboard_state_v1";
+    const defaultState = {
+      currentStreamer: KOLS[0]?.twitch || "",
+      search: "",
+      country: "ALL",
+      className: "ALL",
+      liveOnly: false,
+      sortKey: "score",
+      sortDir: "desc"
+    };
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return { ...defaultState };
+        const parsed = JSON.parse(raw);
+        return { ...defaultState, ...parsed };
+      } catch {
+        return { ...defaultState };
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    let state = loadState();
+
+    /* =========================
+       DOM REFS
+       ========================= */
+
+    const els = {
+      preloader: document.getElementById("preloader"),
+      lootFlash: document.getElementById("loot-flash"),
+      tooltip: document.getElementById("char-tooltip"),
+      log: document.getElementById("global-log"),
+      canvas: document.getElementById("emberCanvas"),
+      twitch: document.getElementById("twitchEmbed"),
+      fallback: document.getElementById("twitchFallback"),
+      twitchLink: document.getElementById("twitchLink"),
+      currentName: document.getElementById("currentStreamerName"),
+      currentAvatar: document.getElementById("currentStreamerAvatar"),
+      select: document.getElementById("streamerSelect"),
+      leaderboard: document.getElementById("leaderboardBody"),
+      search: document.getElementById("searchInput"),
+      filterCountry: document.getElementById("filterCountry"),
+      filterClass: document.getElementById("filterClass"),
+      toggleLive: document.getElementById("toggleLive"),
+      tableMeta: document.getElementById("tableMeta"),
+      kpiCreators: document.getElementById("kpiCreators"),
+      kpiScore: document.getElementById("kpiScore"),
+      kpiCountry: document.getElementById("kpiCountry"),
+      days: document.getElementById("days"),
+      hours: document.getElementById("hours"),
+      minutes: document.getElementById("minutes"),
+      seconds: document.getElementById("seconds"),
+      vaalBtn: document.getElementById("vaalBtn"),
+      musicBtn: document.getElementById("musicBtn"),
+      bgMusic: document.getElementById("bgMusic"),
+      mirCount: document.getElementById("mir-count"),
+      divCount: document.getElementById("div-count"),
+    };
+
+    /* =========================
+       UTIL
+       ========================= */
+
+    function formatNumber(n) {
+      return new Intl.NumberFormat("fr-FR").format(n);
+    }
+
+    function uniqueSorted(arr) {
+      return Array.from(new Set(arr)).sort((a, b) => String(a).localeCompare(String(b)));
+    }
+
+    function setSortIndicator() {
+      document.querySelectorAll("[data-sort-indicator]").forEach(el => el.textContent = "");
+      const indicator = document.querySelector(`[data-sort-indicator="${state.sortKey}"]`);
+      if (!indicator) return;
+      indicator.textContent = state.sortDir === "asc" ? "▲" : "▼";
+    }
+
+    /* =========================
+       FILTER + SORT + RENDER
+       ========================= */
+
+    function getEnrichedData() {
+      return KOLS.map(k => ({ ...k, score: computeScore(k) }));
+    }
+
+    function applyFilters(data) {
+      const q = state.search.trim().toLowerCase();
+      return data.filter(k => {
+        const matchesSearch = !q || k.name.toLowerCase().includes(q) || k.twitch.toLowerCase().includes(q);
+        const matchesCountry = state.country === "ALL" || k.country === state.country;
+        const matchesClass = state.className === "ALL" || k.className === state.className;
+        const matchesLive = !state.liveOnly || k.live === true;
+        return matchesSearch && matchesCountry && matchesClass && matchesLive;
+      });
+    }
+
+    function applySort(data) {
+      const dir = state.sortDir === "asc" ? 1 : -1;
+      const key = state.sortKey;
+
+      const compare = (a, b) => {
+        const av = a[key];
+        const bv = b[key];
+
+        if (typeof av === "number" && typeof bv === "number") return (av - bv) * dir;
+        return String(av).localeCompare(String(bv)) * dir;
+      };
+
+      return [...data].sort((a, b) => {
+        const primary = compare(a, b);
+        if (primary !== 0) return primary;
+        return (b.score - a.score); // stable-ish fallback
+      });
+    }
+
+    function renderTable(data) {
+      const current = state.currentStreamer;
+
+      els.leaderboard.innerHTML = data.map((k, idx) => {
+        const active = k.twitch === current;
+        const status = k.live ? `<span class="text-[10px] uppercase tracking-widest text-poeRed font-bold">Live</span>` :
+                                `<span class="text-[10px] uppercase tracking-widest text-stone-500 font-bold">Offline</span>`;
+
+        return `
+          <tr class="border-b border-white/5 ${active ? "bg-[rgba(142,115,74,0.14)]" : ""} hover:bg-white/5 transition cursor-pointer"
+              data-twitch="${k.twitch}"
+              data-name="${k.name}"
+              data-class="${k.className}"
+              data-level="${k.level}"
+              data-country="${k.country}"
+              data-score="${k.score}">
+            <td class="p-4 w-[60px] text-center font-bold ${idx < 3 ? "text-yellow-400 text-lg" : "text-stone-500"}">${idx + 1}</td>
+            <td class="p-4">
+              <div class="flex items-center gap-3">
+                <img src="https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(k.name)}&backgroundColor=000000"
+                     class="w-7 h-7 border border-white/10" alt="">
+                <div>
+                  <div class="font-bold text-stone-100">${k.name}</div>
+                  <div class="text-[10px] text-stone-500 tracking-widest uppercase">${k.twitch}</div>
+                </div>
+              </div>
+            </td>
+            <td class="p-4 text-center font-bold text-stone-200">${k.country}</td>
+            <td class="p-4 text-center text-stone-200">${k.className}</td>
+            <td class="p-4 text-center font-bold text-stone-200">${k.level}</td>
+            <td class="p-4 text-right font-bold text-poeTitle" style="text-shadow: 0 0 12px rgba(255,184,77,0.35);">
+              ${formatNumber(k.score)}
+            </td>
+            <td class="p-4 text-center">${status}</td>
+          </tr>
+        `;
+      }).join("");
+
+      els.tableMeta.textContent = `${data.length} creators shown`;
+      setSortIndicator();
+    }
+
+    function renderKpis(data) {
+      els.kpiCreators.textContent = formatNumber(data.length);
+      const totalScore = data.reduce((sum, k) => sum + k.score, 0);
+      els.kpiScore.textContent = formatNumber(totalScore);
+
+      const counts = data.reduce((acc, k) => {
+        acc[k.country] = (acc[k.country] || 0) + 1;
+        return acc;
+      }, {});
+      const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
+      els.kpiCountry.textContent = top ? top[0] : "-";
+    }
+
+    function refresh() {
+      const data = getEnrichedData();
+      const filtered = applyFilters(data);
+      const sorted = applySort(filtered);
+
+      // If current streamer is filtered out, keep selection but do not break.
+      renderTable(sorted);
+      renderKpis(sorted);
+      saveState();
+
+      // keep select options order stable (by score desc)
+      fillStreamerSelect(applySort(data));
+    }
+
+    function fillStreamerSelect(sortedAll) {
+      const current = state.currentStreamer;
+      const options = sortedAll.map(k => `<option value="${k.twitch}">${k.name} (${k.country})</option>`).join("");
+      if (els.select.innerHTML !== options) els.select.innerHTML = options;
+      if (els.select.value !== current) els.select.value = current;
+    }
+
+    /* =========================
+       TWITCH EMBED (GitHub Pages proof)
+       ========================= */
+
+    function buildTwitchUrl(channel) {
+      const host = window.location.hostname || "localhost";
+
+      // Twitch allows multiple parent params (repeat parent=)
+      // This helps when you test on localhost, and deploy on GitHub Pages.
+      const parents = [host, "localhost", "127.0.0.1"].filter(Boolean);
+      const parentParams = parents.map(p => `parent=${encodeURIComponent(p)}`).join("&");
+
+      return `https://player.twitch.tv/?channel=${encodeURIComponent(channel)}&${parentParams}`;
+    }
+
+    function updateStream(channel) {
+      state.currentStreamer = channel;
+
+      els.twitch.src = buildTwitchUrl(channel);
+      els.currentName.textContent = channel;
+
+      els.currentAvatar.src = `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(channel)}&backgroundColor=000000`;
+      els.twitchLink.href = `https://www.twitch.tv/${encodeURIComponent(channel)}`;
+
+      // If embed is blocked, show fallback after a short delay
+      els.fallback.classList.add("hidden");
+      setTimeout(() => {
+        // If iframe still empty, likely blocked or not loaded. This is a soft fallback.
+        if (!els.twitch.src) els.fallback.classList.remove("hidden");
+      }, 1200);
+
+      refresh();
+    }
+
+    /* =========================
+       TOOLTIP
+       ========================= */
+
+    function showTip(e, k) {
+      const t = els.tooltip;
+      t.style.display = "block";
+
+      const pad = 14;
+      const w = 210;
+      const h = 120;
+
+      const maxX = window.scrollX + window.innerWidth - w - pad;
+      const maxY = window.scrollY + window.innerHeight - h - pad;
+
+      const x = Math.min(maxX, e.pageX + 16);
+      const y = Math.min(maxY, e.pageY + 16);
+
+      t.style.left = x + "px";
+      t.style.top = y + "px";
+
+      t.innerHTML = `
+        <div class="text-poeTitle font-bold text-xs uppercase tracking-widest">${k.name}</div>
+        <div class="text-[10px] text-stone-500 uppercase tracking-[0.22em] mt-1">${k.country} • ${k.className}</div>
+        <div class="mt-3 grid grid-cols-3 gap-2 text-center">
+          <div class="bg-black/40 border border-white/10 p-2">
+            <div class="text-[9px] text-stone-500 uppercase tracking-widest">Level</div>
+            <div class="text-stone-100 font-bold mt-1">${k.level}</div>
+          </div>
+          <div class="bg-black/40 border border-white/10 p-2">
+            <div class="text-[9px] text-stone-500 uppercase tracking-widest">Live</div>
+            <div class="text-stone-100 font-bold mt-1">${k.live ? "Yes" : "No"}</div>
+          </div>
+          <div class="bg-black/40 border border-white/10 p-2">
+            <div class="text-[9px] text-stone-500 uppercase tracking-widest">Score</div>
+            <div class="text-poeTitle font-bold mt-1">${formatNumber(k.score)}</div>
+          </div>
+        </div>
+        <div class="mt-3 text-[10px] text-stone-500 uppercase tracking-[0.22em]">Mock inputs</div>
+        <div class="mt-1 text-[11px] text-stone-300 leading-relaxed">
+          Views: ${formatNumber(k.views)}, Hours: ${formatNumber(k.hours)}, Clicks: ${formatNumber(k.clicks)}
+        </div>
+      `;
+    }
+
+    function hideTip() { els.tooltip.style.display = "none"; }
+
+    /* =========================
+       LOOT
+       ========================= */
+
+    let mirCount = 0;
+    let divCount = 0;
 
     const lootPool = [
-      { text: "MIRROR OF KALANDRA", color: "#fff", border: "#5df", weight: 1 },
-      { text: "DIVINE ORB", color: "#fff", border: "#ff0", weight: 20 },
-      { text: "EXALTED ORB", color: "#fff", border: "#ff0", weight: 60 },
-      { text: "CHAOS ORB", color: "#ff0", border: "#ff0", weight: 200 },
-      { text: "ALCHEMY ORB", color: "#ff0", border: "#ff0", weight: 400 },
-      { text: "TRANSMUTE", color: "#fff", border: "#888", weight: 800 },
-      { text: "WISDOM SCROLL", color: "#fff", border: "#888", weight: 1500 }
+      { text: "Mirror of Kalandra", border: "#5df", weight: 1, rare: "mir" },
+      { text: "Divine Orb", border: "#ff0", weight: 20, rare: "div" },
+      { text: "Exalted Orb", border: "#ff0", weight: 70 },
+      { text: "Chaos Orb", border: "#ff0", weight: 220 },
+      { text: "Alchemy Orb", border: "#ff0", weight: 420 },
+      { text: "Transmute", border: "#888", weight: 900 },
+      { text: "Wisdom Scroll", border: "#888", weight: 1600 },
     ];
 
-    // ===== STATE =====
-    const kolsSorted = [...kols].sort((a, b) => b.points - a.points);
-    let currentStreamer = kolsSorted[0].twitch;
-    let currentList = [...kolsSorted];
-
-    let m_count = 0;
-    let d_count = 0;
-
-    // ===== PRELOADER =====
-    function hideLoader() {
-      setTimeout(() => {
-        const p = document.getElementById('preloader');
-        p.style.opacity = '0';
-        setTimeout(() => p.style.display = 'none', 800);
-      }, 1200);
-    }
-
-    // ===== MUSIC / CORRUPTION =====
-    function toggleMusic() {
-      const m = document.getElementById('bgMusic');
-      const b = document.getElementById('music-status');
-      if (m.paused) {
-        m.play();
-        m.volume = 0.3;
-        b.innerText = "🔊 Music On";
-      } else {
-        m.pause();
-        b.innerText = "🔈 Music Off";
+    function weightedPick(pool) {
+      const total = pool.reduce((s, x) => s + x.weight, 0);
+      let r = Math.random() * total;
+      for (const item of pool) {
+        if (r < item.weight) return item;
+        r -= item.weight;
       }
+      return pool[pool.length - 1];
     }
-    function corruptSite() { document.body.classList.toggle('corrupted'); }
 
-    // ===== LOOT =====
+    function triggerRare(color) {
+      els.lootFlash.style.background = color;
+      els.lootFlash.style.opacity = "0.28";
+      setTimeout(() => els.lootFlash.style.opacity = "0", 120);
+
+      document.body.classList.add("shake-effect");
+      setTimeout(() => document.body.classList.remove("shake-effect"), 400);
+    }
+
     function spawnLoot(e) {
-      const tag = (e.target && e.target.tagName) ? e.target.tagName : "";
-      if (tag === 'A' || tag === 'BUTTON' || tag === 'SELECT' || tag === 'INPUT' || tag === 'IFRAME') return;
+      const tag = e.target?.tagName || "";
+      if (tag === "A" || tag === "BUTTON" || tag === "SELECT" || tag === "INPUT" || tag === "IFRAME") return;
 
-      const totalWeight = lootPool.reduce((sum, item) => sum + item.weight, 0);
-      let random = Math.random() * totalWeight;
-      let loot = lootPool[lootPool.length - 1];
+      const loot = weightedPick(lootPool);
+      const div = document.createElement("div");
+      div.className = "loot-drop";
+      div.textContent = loot.text;
 
-      for (const item of lootPool) {
-        if (random < item.weight) { loot = item; break; }
-        random -= item.weight;
-      }
-
-      const div = document.createElement('div');
-      div.className = 'loot-drop';
-      div.innerText = loot.text;
-
-      div.style.left = (e.pageX - 50) + 'px';
-      div.style.top = e.pageY + 'px';
-      div.style.color = loot.color;
+      div.style.left = (e.pageX - 60) + "px";
+      div.style.top = e.pageY + "px";
       div.style.borderColor = loot.border;
+      div.style.color = "#fff";
 
-      if (loot.text === "MIRROR OF KALANDRA") {
-        m_count++;
-        document.getElementById('mir-count').innerText = m_count;
+      if (loot.rare === "mir") {
+        mirCount += 1;
+        els.mirCount.textContent = mirCount;
         triggerRare("#5df");
       }
-      if (loot.text === "DIVINE ORB") {
-        d_count++;
-        document.getElementById('div-count').innerText = d_count;
+      if (loot.rare === "div") {
+        divCount += 1;
+        els.divCount.textContent = divCount;
         triggerRare("#ff0");
       }
 
@@ -367,176 +836,43 @@
       setTimeout(() => div.remove(), 2000);
     }
 
-    function triggerRare(c) {
-      const f = document.getElementById('loot-flash');
-      f.style.background = c;
-      f.style.opacity = "0.3";
-      setTimeout(() => f.style.opacity = "0", 100);
+    /* =========================
+       GLOBAL LOG
+       ========================= */
 
-      document.body.classList.add('shake-effect');
-      setTimeout(() => document.body.classList.remove('shake-effect'), 400);
-    }
-
-    // ===== TOOLTIP (clamped in viewport) =====
-    function showTip(e, cls, lvl) {
-      const t = document.getElementById('char-tooltip');
-      t.style.display = 'block';
-
-      const pad = 16;
-      const w = 180;
-      const h = 110;
-      const maxX = window.scrollX + window.innerWidth - w - pad;
-      const maxY = window.scrollY + window.innerHeight - h - pad;
-
-      const x = Math.min(maxX, e.pageX + 15);
-      const y = Math.min(maxY, e.pageY + 15);
-
-      t.style.left = x + 'px';
-      t.style.top = y + 'px';
-
-      t.innerHTML =
-        `<div class="text-[#e4c48a] font-bold text-xs uppercase">${cls}</div>` +
-        `<div class="text-stone-500 text-[10px] mb-2">Level ${lvl}</div>` +
-        `<div class="h-1 bg-gray-800 w-full"><div class="h-full bg-red-700 w-[85%]"></div></div>`;
-    }
-    function hideTip() { document.getElementById('char-tooltip').style.display = 'none'; }
-
-    // ===== TWITCH / LEADERBOARD =====
-    function updateStream(t) {
-      const parent = window.location.hostname || "localhost";
-      document.getElementById('twitchEmbed').src = `https://player.twitch.tv/?channel=${encodeURIComponent(t)}&parent=${encodeURIComponent(parent)}`;
-
-      currentStreamer = t;
-      document.getElementById('currentStreamerName').innerText = t;
-      document.getElementById('currentStreamerAvatar').src = `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(t)}&backgroundColor=000000`;
-
-      // keep select in sync
-      const sel = document.getElementById('streamerSelect');
-      if (sel.value !== t) sel.value = t;
-
-      renderLeaderboard(currentList, currentStreamer);
-    }
-
-    function renderLeaderboard(data, current) {
-      const body = document.getElementById('leaderboardBody');
-
-      body.innerHTML = data.map((kol, i) => {
-        const active = kol.twitch === current;
-        const r = runes[Math.floor(Math.random() * runes.length)];
-
-        return `
-          <tr
-            class="rank-row border-b border-white/5 ${active ? 'active-stream' : ''} cursor-pointer"
-            data-twitch="${kol.twitch}"
-            data-class="${kol.className}"
-            data-level="${kol.level}"
-            data-rune="${r}"
-          >
-            <td class="p-4 text-center font-bold ${i < 3 ? 'text-yellow-500 text-lg' : 'text-stone-500'}">${i + 1}</td>
-            <td class="p-4 flex items-center gap-3 font-bold text-stone-200">
-              <img src="https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(kol.name)}&backgroundColor=000000" class="w-6 h-6 border border-white/10" alt="">
-              <span>${kol.name}</span>
-            </td>
-            <td class="p-4 text-right points-glow text-base">${kol.points.toLocaleString()}</td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    // Event delegation for leaderboard interactions
-    function attachLeaderboardListeners() {
-      const body = document.getElementById('leaderboardBody');
-
-      body.addEventListener('click', (e) => {
-        const row = e.target.closest('tr[data-twitch]');
-        if (!row) return;
-        updateStream(row.dataset.twitch);
-      });
-
-      body.addEventListener('mousemove', (e) => {
-        const row = e.target.closest('tr[data-twitch]');
-        if (!row) return;
-        showTip(e, row.dataset.class, row.dataset.level);
-      });
-
-      body.addEventListener('mouseleave', () => hideTip(), true);
-    }
-
-    function manualStreamChange() {
-      const t = document.getElementById('streamerSelect').value;
-      updateStream(t);
-    }
-
-    // ===== SEARCH (debounced) =====
-    function attachSearch() {
-      const input = document.getElementById('searchInput');
-      let timer;
-
-      input.addEventListener('input', () => {
-        clearTimeout(timer);
-        timer = setTimeout(() => {
-          const q = input.value.toLowerCase();
-          currentList = kolsSorted.filter(k => k.name.toLowerCase().includes(q));
-          renderLeaderboard(currentList, currentStreamer);
-        }, 120);
-      });
-    }
-
-    // ===== COUNTDOWN =====
-    const eventDate = new Date("April 10, 2026 20:00:00").getTime();
-    function updateCountdown() {
-      const now = new Date().getTime();
-      const diff = eventDate - now;
-
-      if (diff > 0) {
-        document.getElementById("days").innerText = Math.floor(diff / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
-        document.getElementById("hours").innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
-        document.getElementById("minutes").innerText = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
-        document.getElementById("seconds").innerText = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
-      } else {
-        document.getElementById("countdown").innerHTML = "<div class='col-span-4 text-red-500 font-bold animate-pulse'>EVENT LIVE!</div>";
-      }
-    }
-
-    // ===== GLOBAL LOG =====
     const logs = [
-      { t: "Trymacs has been slain by Hillock.", c: "chat-death" },
-      { t: "metashi12 reached Level 90!", c: "chat-global" },
-      { t: "PietSmiet has found a Mirror of Kalandra.", c: "chat-trade" },
-      { t: "Joueur Du Grenier has died at Rank 15.", c: "chat-death" },
-      { t: "Global 1: Anyone for Merveil?", c: "chat-global" },
-      { t: "Global 1: Axel your website is so cool!", c: "chat-global" },
-      { t: "GhazzyTV: I think Diablo is kind of bad though", c: "chat-global" },
-      { t: "Global 1: LET'S GOOOO DIVINE ORBS !", c: "chat-global" },
-      { t: "Global 1: rue is a cat?", c: "chat-global" },
-      { t: "Zizaran has been slain by a Rhoa.", c: "chat-death" },
-      { t: "Global 1: Still sane, Exile? No? Me neither.", c: "chat-global" },
-      { t: "Wankil Studio: Trading 1 Chaos for 20 Necropolis Maps.", c: "chat-trade" },
-      { t: "Global 1: Toucan has been kicked for spam.", c: "chat-info" },
-      { t: "Alderiate: Why is this boss so fast?!", c: "chat-global" }
+      { t: "Global 1: Still sane, Exile?", c: "chat-global" },
+      { t: "Alderiate: Why is this boss so fast", c: "chat-global" },
+      { t: "metashi12 reached Level 90", c: "chat-global" },
+      { t: "Trade 1: 1 Chaos for 20 Maps", c: "chat-trade" },
+      { t: "Zizaran has been slain by a Rhoa", c: "chat-death" },
+      { t: "Info: Toucan removed for spam", c: "chat-info" },
+      { t: "Global 1: Divine Orb drop", c: "chat-global" },
     ];
 
     function addLog() {
-      const l = document.getElementById('global-log');
       const m = logs[Math.floor(Math.random() * logs.length)];
-      const d = document.createElement('div');
+      const d = document.createElement("div");
       d.className = `log-entry ${m.c}`;
-      d.innerText = m.t;
+      d.textContent = m.t;
 
-      l.prepend(d);
-      if (l.childNodes.length > 6) l.removeChild(l.lastChild);
+      els.log.prepend(d);
+      if (els.log.childNodes.length > 7) els.log.removeChild(els.log.lastChild);
 
-      setTimeout(addLog, Math.random() * 5000 + 4000);
+      setTimeout(addLog, Math.random() * 4500 + 3200);
     }
 
-    // ===== EMBERS CANVAS =====
+    /* =========================
+       EMBERS
+       ========================= */
+
     function initEmbers() {
-      const canvas = document.getElementById('emberCanvas');
-      const ctx = canvas.getContext('2d');
+      const canvas = els.canvas;
+      const ctx = canvas.getContext("2d");
       let particles = [];
 
       function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-      window.addEventListener('resize', resize);
+      window.addEventListener("resize", resize);
       resize();
 
       class P {
@@ -544,13 +880,13 @@
         reset() {
           this.x = Math.random() * canvas.width;
           this.y = canvas.height + 10;
-          this.size = Math.random() * 2;
-          this.speedY = Math.random() * 0.5 + 0.2;
-          this.opacity = Math.random() * 0.5;
+          this.size = Math.random() * 2.3;
+          this.speedY = Math.random() * 0.55 + 0.18;
+          this.opacity = Math.random() * 0.55;
         }
         update() {
           this.y -= this.speedY;
-          this.opacity -= 0.001;
+          this.opacity -= 0.0012;
           if (this.y < -10 || this.opacity <= 0) this.reset();
         }
         draw() {
@@ -563,48 +899,175 @@
 
       function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles.forEach(p => { p.update(); p.draw(); });
+        for (const p of particles) { p.update(); p.draw(); }
         requestAnimationFrame(animate);
       }
 
-      for (let i = 0; i < 40; i++) particles.push(new P());
+      particles = Array.from({ length: 48 }, () => new P());
       animate();
     }
 
-    // ===== INIT =====
-    window.addEventListener('DOMContentLoaded', () => {
+    /* =========================
+       COUNTDOWN
+       ========================= */
+
+    const eventDate = new Date("April 10, 2026 20:00:00").getTime();
+    function updateCountdown() {
+      const now = Date.now();
+      const diff = eventDate - now;
+
+      if (diff <= 0) {
+        els.days.textContent = "00";
+        els.hours.textContent = "00";
+        els.minutes.textContent = "00";
+        els.seconds.textContent = "00";
+        return;
+      }
+
+      const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+      els.days.textContent = String(d).padStart(2, "0");
+      els.hours.textContent = String(h).padStart(2, "0");
+      els.minutes.textContent = String(m).padStart(2, "0");
+      els.seconds.textContent = String(s).padStart(2, "0");
+    }
+
+    /* =========================
+       MUSIC + VAAL
+       ========================= */
+
+    function toggleMusic() {
+      const m = els.bgMusic;
+      if (m.paused) {
+        m.volume = 0.25;
+        m.play();
+        els.musicBtn.textContent = "Music On";
+      } else {
+        m.pause();
+        els.musicBtn.textContent = "Music Off";
+      }
+    }
+
+    function toggleCorruption() {
+      document.body.classList.toggle("corrupted");
+    }
+
+    /* =========================
+       INIT
+       ========================= */
+
+    function hideLoader() {
+      setTimeout(() => {
+        els.preloader.style.opacity = "0";
+        setTimeout(() => els.preloader.style.display = "none", 800);
+      }, 900);
+    }
+
+    function initFilters() {
+      const data = getEnrichedData();
+
+      const countries = ["ALL", ...uniqueSorted(data.map(k => k.country))];
+      const classes = ["ALL", ...uniqueSorted(data.map(k => k.className))];
+
+      els.filterCountry.innerHTML = countries.map(c => `<option value="${c}">${c === "ALL" ? "All countries" : c}</option>`).join("");
+      els.filterClass.innerHTML = classes.map(c => `<option value="${c}">${c === "ALL" ? "All classes" : c}</option>`).join("");
+
+      els.search.value = state.search;
+      els.filterCountry.value = state.country;
+      els.filterClass.value = state.className;
+      els.toggleLive.textContent = `Live only: ${state.liveOnly ? "On" : "Off"}`;
+    }
+
+    function attachEvents() {
+      // Loot click
+      document.body.addEventListener("click", spawnLoot);
+
+      // Stream select
+      els.select.addEventListener("change", () => updateStream(els.select.value));
+
+      // Filters + search (debounce)
+      let searchTimer;
+      els.search.addEventListener("input", () => {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => {
+          state.search = els.search.value;
+          refresh();
+        }, 140);
+      });
+
+      els.filterCountry.addEventListener("change", () => {
+        state.country = els.filterCountry.value;
+        refresh();
+      });
+
+      els.filterClass.addEventListener("change", () => {
+        state.className = els.filterClass.value;
+        refresh();
+      });
+
+      els.toggleLive.addEventListener("click", () => {
+        state.liveOnly = !state.liveOnly;
+        els.toggleLive.textContent = `Live only: ${state.liveOnly ? "On" : "Off"}`;
+        refresh();
+      });
+
+      // Sort headers
+      document.querySelectorAll("[data-sort]").forEach(th => {
+        th.addEventListener("click", () => {
+          const key = th.getAttribute("data-sort");
+          if (!key) return;
+
+          if (state.sortKey === key) {
+            state.sortDir = state.sortDir === "asc" ? "desc" : "asc";
+          } else {
+            state.sortKey = key;
+            state.sortDir = (key === "name" || key === "country" || key === "className") ? "asc" : "desc";
+          }
+          refresh();
+        });
+      });
+
+      // Leaderboard row interactions (event delegation)
+      els.leaderboard.addEventListener("click", (e) => {
+        const row = e.target.closest("tr[data-twitch]");
+        if (!row) return;
+        updateStream(row.dataset.twitch);
+      });
+
+      els.leaderboard.addEventListener("mousemove", (e) => {
+        const row = e.target.closest("tr[data-twitch]");
+        if (!row) return;
+
+        const data = getEnrichedData();
+        const k = data.find(x => x.twitch === row.dataset.twitch);
+        if (!k) return;
+        showTip(e, k);
+      });
+
+      els.leaderboard.addEventListener("mouseleave", () => hideTip(), true);
+
       // Buttons
-      document.getElementById('vaalBtn').addEventListener('click', (e) => { e.stopPropagation(); corruptSite(); });
-      document.getElementById('music-toggle').addEventListener('click', (e) => { e.stopPropagation(); toggleMusic(); });
+      els.vaalBtn.addEventListener("click", (e) => { e.stopPropagation(); toggleCorruption(); });
+      els.musicBtn.addEventListener("click", (e) => { e.stopPropagation(); toggleMusic(); });
+    }
 
-      // Body click => loot
-      document.body.addEventListener('click', (e) => spawnLoot(e));
-
-      // Select change
-      document.getElementById('streamerSelect').addEventListener('change', manualStreamChange);
-
-      // Fill select
-      document.getElementById('streamerSelect').innerHTML =
-        kolsSorted.map(k => `<option value="${k.twitch}">${k.name}</option>`).join('');
-
-      // Listeners + initial render
-      attachLeaderboardListeners();
-      attachSearch();
-
-      // Visuals
+    window.addEventListener("DOMContentLoaded", () => {
       initEmbers();
+      initFilters();
+      attachEvents();
 
-      // Start timers
+      // Initial select
+      fillStreamerSelect(applySort(getEnrichedData()));
+      if (!state.currentStreamer) state.currentStreamer = KOLS[0]?.twitch || "zizaran";
+      updateStream(state.currentStreamer);
+
       updateCountdown();
       setInterval(updateCountdown, 1000);
+
       addLog();
-
-      // First stream
-      currentList = [...kolsSorted];
-      renderLeaderboard(currentList, currentStreamer);
-      updateStream(currentStreamer);
-
-      // Preloader
       hideLoader();
     });
   </script>
