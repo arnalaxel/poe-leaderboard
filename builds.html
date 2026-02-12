@@ -45,6 +45,7 @@
       backdrop-filter: blur(12px);
       border: 1px solid rgba(142,115,74,0.22);
     }
+
     /* Loot */
     .loot-drop{
       position:absolute;
@@ -148,11 +149,12 @@
 
     @media (prefers-reduced-motion: reduce) {
       * { scroll-behavior: auto !important; }
-      .rune-loader, .shake-effect { animation: none !important; }
+      .shake-effect { animation: none !important; }
     }
   </style>
 </head>
 
+<body>
   <div id="loot-flash"></div>
   <div id="char-tooltip"></div>
   <div id="global-log"></div>
@@ -201,7 +203,6 @@
     <nav class="flex flex-wrap justify-center gap-8 uppercase text-[10px] tracking-[0.3em] font-bold bg-black/60 px-8 py-4 rounded-full border border-white/10 backdrop-blur-md">
       <a href="#live" class="hover:text-white transition">Live</a>
       <a href="#leaderboard" class="hover:text-white transition">Leaderboard</a>
-      <!-- IMPORTANT: redirect to builds.html -->
       <a href="builds.html" class="hover:text-white transition">Builds</a>
       <a href="#about" class="hover:text-white transition">About POE 2</a>
       <a href="#shop" class="text-yellow-600 hover:text-yellow-400 transition">Buy POE 2</a>
@@ -214,10 +215,9 @@
     </div>
   </header>
 
-  <main class="max-w-6xl mx-auto px-4 pb-24 relative z-10 space-y-10">
+  <main class="max-w-6xl mx-auto px-4 pb-20 relative z-10 space-y-10">
     <!-- LIVE -->
     <section id="live" class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-      <!-- Player -->
       <div class="lg:col-span-3 card-glass overflow-hidden flex flex-col border border-white/10">
         <div class="aspect-video bg-black">
           <iframe id="twitchEmbed" src="" class="w-full h-full" allowfullscreen="true" frameborder="0"></iframe>
@@ -253,23 +253,10 @@
               class="w-full bg-black/40 border border-white/10 px-4 py-3 text-xs text-stone-200 outline-none focus:border-[rgba(142,115,74,0.65)] transition" />
           </div>
           <div id="creatorList" class="mt-4 space-y-2"></div>
-        </div>
 
-        <div class="card-glass p-6 border border-white/10">
-          <div class="text-[10px] uppercase tracking-[0.28em] text-stone-400 font-bold">Product link</div>
-          <div class="mt-3 text-[11px] text-stone-400 leading-relaxed">
-            Official store page for Early Access.
-          </div>
-
-          <a href="https://pathofexile2.com/early-access" target="_blank" rel="noreferrer"
-             class="mt-5 block w-full bg-gradient-to-r from-[#8e734a] to-[#5d4a2d] text-[#050505] font-bold px-6 py-5 text-center text-xs tracking-[0.2em] uppercase border border-[#c5a572] hover:brightness-110 transition shadow-2xl">
-            Buy Supporter Pack
-          </a>
-
-          <!-- IMPORTANT: redirect to builds.html -->
           <a href="builds.html"
-             class="mt-3 block w-full bg-black/40 border border-white/10 text-stone-200 font-bold px-6 py-4 text-center text-[10px] tracking-[0.22em] uppercase hover:border-[rgba(142,115,74,0.65)] transition">
-            Open builds
+             class="mt-4 block w-full bg-black/40 border border-white/10 text-stone-200 font-bold px-6 py-4 text-center text-[10px] tracking-[0.22em] uppercase hover:border-[rgba(142,115,74,0.65)] transition">
+            Open builds page
           </a>
         </div>
       </div>
@@ -308,60 +295,19 @@
       <div id="meta" class="mt-4 text-[10px] text-stone-500 uppercase tracking-[0.26em]">-</div>
     </section>
 
-    <!-- OPTIONAL BUILDS SECTION (kept, but nav goes to builds.html) -->
-    <section id="builds" class="card-glass border border-white/10 p-6">
-      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-        <div>
-          <div class="text-[10px] uppercase tracking-[0.3em] text-stone-500">Builds</div>
-          <div class="text-2xl uppercase tracking-[0.18em] text-[color:var(--poe-title)] font-bold mt-1">Useful guides</div>
-          <div class="text-[11px] text-stone-400 mt-2">Quick links, then go to builds.html for the full list.</div>
-        </div>
-        <a href="builds.html"
-           class="bg-black/40 border border-white/10 px-4 py-3 text-[10px] uppercase tracking-[0.22em] font-bold text-stone-200 hover:border-[rgba(142,115,74,0.65)] transition">
-          Open builds page
-        </a>
-      </div>
-
-      <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-        <a href="https://mobalytics.gg/poe-2/builds/bear-druid-build-league-starter-to-endgame" target="_blank" rel="noreferrer"
-           class="card-glass p-5 border border-white/10 hover:border-[rgba(142,115,74,0.65)] transition">
-          <div class="text-[10px] uppercase tracking-[0.28em] text-stone-500">Starter</div>
-          <div class="mt-2 text-lg font-bold uppercase tracking-widest text-[color:var(--poe-title)]">Bear Druid</div>
-          <div class="mt-2 text-[11px] text-stone-400 leading-relaxed">Simple, tanky, good clear.</div>
-          <div class="mt-4 text-[10px] uppercase tracking-[0.22em] text-yellow-500 font-bold">Open guide</div>
-        </a>
-
-        <a href="https://mobalytics.gg/poe-2/builds" target="_blank" rel="noreferrer"
-           class="card-glass p-5 border border-white/10 hover:border-[rgba(142,115,74,0.65)] transition">
-          <div class="text-[10px] uppercase tracking-[0.28em] text-stone-500">Browse</div>
-          <div class="mt-2 text-lg font-bold uppercase tracking-widest text-[color:var(--poe-title)]">All builds</div>
-          <div class="mt-2 text-[11px] text-stone-400 leading-relaxed">Filters, updates, options.</div>
-          <div class="mt-4 text-[10px] uppercase tracking-[0.22em] text-yellow-500 font-bold">Open hub</div>
-        </a>
-
-        <a href="https://pathofexile2.com/" target="_blank" rel="noreferrer"
-           class="card-glass p-5 border border-white/10 hover:border-[rgba(142,115,74,0.65)] transition">
-          <div class="text-[10px] uppercase tracking-[0.28em] text-stone-500">Official</div>
-          <div class="mt-2 text-lg font-bold uppercase tracking-widest text-[color:var(--poe-title)]">Game website</div>
-          <div class="mt-2 text-[11px] text-stone-400 leading-relaxed">News and updates.</div>
-          <div class="mt-4 text-[10px] uppercase tracking-[0.22em] text-yellow-500 font-bold">Open site</div>
-        </a>
-      </div>
-    </section>
-
-    <!-- SHOP -->
+    <!-- SHOP (Supporter pack section restored, useful, not repetitive) -->
     <section id="shop" class="card-glass border border-white/10 p-6">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         <div class="lg:col-span-2">
           <div class="text-[10px] uppercase tracking-[0.3em] text-stone-500">Buy</div>
           <div class="text-2xl uppercase tracking-[0.18em] text-[color:var(--poe-title)] font-bold mt-1">Path of Exile 2</div>
           <div class="text-[12px] text-stone-400 mt-3 leading-relaxed max-w-2xl">
-            Early Access is available on the official website.
+            Early Access is available on the official website. Supporter packs give access and cosmetics.
           </div>
 
           <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="card-glass p-5 border border-white/10">
-              <div class="text-[10px] uppercase tracking-[0.28em] text-stone-500">Early Access Pack</div>
+              <div class="text-[10px] uppercase tracking-[0.28em] text-stone-500">Supporter pack</div>
               <div class="mt-2 text-lg font-bold uppercase tracking-widest text-[color:var(--poe-title)]">What you get</div>
               <ul class="mt-4 space-y-2 text-[11px] text-stone-300">
                 <li class="flex items-start gap-3"><span class="text-[color:var(--poe-gold)] mt-[2px]">✦</span> Path of Exile 2 Early Access or Key</li>
@@ -371,27 +317,23 @@
             </div>
 
             <div class="card-glass p-5 border border-white/10">
-              <div class="text-[10px] uppercase tracking-[0.28em] text-stone-500">Official</div>
-              <div class="mt-2 text-lg font-bold uppercase tracking-widest text-[color:var(--poe-title)]">Store page</div>
-
-              <a href="https://pathofexile2.com/early-access" target="_blank" rel="noreferrer"
-                class="mt-4 block bg-gradient-to-r from-[#8e734a] to-[#5d4a2d] text-[#050505] font-bold text-center py-4 text-[10px] tracking-[0.22em] uppercase border border-[#c5a572] hover:brightness-110 transition">
-                Buy Early Access
-              </a>
-
-              <div class="mt-5 text-[9px] text-stone-600 text-center uppercase tracking-widest leading-relaxed">
-                Fan project. Links go to official pages.
-              </div>
+              <div class="text-[10px] uppercase tracking-[0.28em] text-stone-500">Fast start</div>
+              <div class="mt-2 text-lg font-bold uppercase tracking-widest text-[color:var(--poe-title)]">Viewer to player</div>
+              <ul class="mt-4 space-y-2 text-[11px] text-stone-300">
+                <li class="flex items-start gap-3"><span class="text-yellow-500 mt-[2px]">✦</span> Pick a build on builds.html.</li>
+                <li class="flex items-start gap-3"><span class="text-yellow-500 mt-[2px]">✦</span> Watch one creator, copy the first steps.</li>
+                <li class="flex items-start gap-3"><span class="text-yellow-500 mt-[2px]">✦</span> Keep it simple, push acts first.</li>
+              </ul>
             </div>
           </div>
         </div>
 
         <div class="lg:col-span-1 card-glass p-6 border border-[rgba(142,115,74,0.35)]">
           <div class="text-center">
-            <div class="text-[10px] uppercase tracking-[0.3em] text-stone-500">Product</div>
+            <div class="text-[10px] uppercase tracking-[0.3em] text-stone-500">Official store</div>
             <div class="mt-2 text-xl font-bold uppercase tracking-widest text-[color:var(--poe-title)]">Early Access</div>
             <div class="mt-3 text-[11px] text-stone-400 leading-relaxed">
-              Official store page for packs and access.
+              This link goes to the official Path of Exile 2 store page.
             </div>
           </div>
 
@@ -401,44 +343,21 @@
           </a>
 
           <div class="mt-5 text-[9px] text-stone-600 text-center uppercase tracking-widest leading-relaxed">
-            Not affiliated with Grinding Gear Games.
+            Fan project. Not affiliated with Grinding Gear Games.
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ABOUT -->
+    <!-- ABOUT (short, clean) -->
     <section id="about" class="card-glass border border-white/10 p-6">
       <div class="text-[10px] uppercase tracking-[0.3em] text-stone-500">About Path of Exile 2</div>
       <div class="text-[color:var(--poe-title)] font-bold uppercase tracking-widest text-lg mt-2">What it is</div>
       <div class="mt-3 text-[12px] text-stone-400 leading-relaxed max-w-4xl">
-        Path of Exile 2 is an action RPG built around deep character building, skill combos, loot hunting, and challenging bosses.
-        This page is a fan-made hub to watch WEU creators and access build links quickly.
-      </div>
-
-      <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="card-glass p-5 border border-white/10">
-          <div class="text-[10px] uppercase tracking-[0.28em] text-stone-500">Buildcraft</div>
-          <div class="mt-2 text-[12px] text-stone-400 leading-relaxed">
-            Skills, passives, gear, and combos. You can keep it simple, or go very deep.
-          </div>
-        </div>
-        <div class="card-glass p-5 border border-white/10">
-          <div class="text-[10px] uppercase tracking-[0.28em] text-stone-500">Loot chase</div>
-          <div class="mt-2 text-[12px] text-stone-400 leading-relaxed">
-            Drops matter. Crafting and upgrades keep your character evolving.
-          </div>
-        </div>
-        <div class="card-glass p-5 border border-white/10">
-          <div class="text-[10px] uppercase tracking-[0.28em] text-stone-500">Boss fights</div>
-          <div class="mt-2 text-[12px] text-stone-400 leading-relaxed">
-            Mechanics, timing, and patterns. Watching creators helps a lot.
-          </div>
-        </div>
+        Action RPG focused on buildcraft, loot chase, and boss fights. This page is a fan-made hub to watch WEU creators and jump to build resources.
       </div>
     </section>
 
-    <!-- Footer -->
     <footer class="text-center py-10 border-t border-white/5 bg-black/40">
       <div class="text-[9px] text-stone-600 tracking-[0.5em] uppercase italic">© 2026 GGG - FAN PROJECT</div>
       <div class="text-xs tracking-widest uppercase mt-3">Crafted by <span class="text-white">Axel Arnal</span></div>
@@ -446,7 +365,6 @@
   </main>
 
   <script>
-    // Data
     const KOLS = [
       { name:"Alderiate", twitch:"alderiate", points:17800, className:"Warrior", level:70 },
       { name:"metashi12", twitch:"metashi12", points:14200, className:"Monk", level:89 },
@@ -461,25 +379,15 @@
       { name:"Jessirocks", twitch:"jessirocks", points:18500, className:"Druid", level:12 }
     ];
 
-    // Safety net: never stay stuck on Loading
-    function forceHideLoader() {
-      const pre = document.getElementById("preloader");
-      if (!pre) return;
-      pre.style.opacity = "0";
-      setTimeout(() => { pre.style.display = "none"; }, 300);
-    }
-
-    // Twitch embed for GitHub Pages: parent must be ONLY the hostname.
     function buildTwitchUrl(channel) {
+      // Twitch requires the exact hostname as parent. Works on arnalaxel.github.io and local dev.
       const host = window.location.hostname || "localhost";
       return `https://player.twitch.tv/?channel=${encodeURIComponent(channel)}&parent=${encodeURIComponent(host)}`;
     }
-
     function formatNumber(n) { return new Intl.NumberFormat("fr-FR").format(n); }
 
     window.addEventListener("DOMContentLoaded", () => {
       const els = {
-        preloader: document.getElementById("preloader"),
         twitch: document.getElementById("twitchEmbed"),
         currentName: document.getElementById("currentName"),
         currentAvatar: document.getElementById("currentAvatar"),
@@ -498,12 +406,6 @@
         musicBtn: document.getElementById("music-toggle"),
         music: document.getElementById("bgMusic")
       };
-
-      // If any critical element is missing, kill loader and stop gracefully.
-      if (!els.twitch || !els.select || !els.leaderboard) {
-        forceHideLoader();
-        return;
-      }
 
       let currentStreamer = KOLS[0].twitch;
       let currentTableList = [];
@@ -659,9 +561,7 @@
         if (loot.rare) triggerRare(loot.border);
       }
 
-      document.body.addEventListener("click", spawnLoot);
-
-      // Fake chat (clean)
+      // Fake chat
       const logs = [
         { t: "Global 1: Still sane, Exile?", c: "chat-global" },
         { t: "Global 1: Anyone running Act bosses?", c: "chat-global" },
@@ -736,14 +636,14 @@
         .join("");
       els.select.addEventListener("change", () => updateStream(els.select.value));
 
-      els.creatorQuickSearch.addEventListener("input", () => renderCreatorsList());
+      els.creatorQuickSearch.addEventListener("input", renderCreatorsList);
       els.creatorList.addEventListener("click", (e) => {
         const btn = e.target.closest("button[data-twitch]");
         if (!btn) return;
         updateStream(btn.dataset.twitch);
       });
 
-      els.search.addEventListener("input", () => renderTable());
+      els.search.addEventListener("input", renderTable);
 
       els.leaderboard.addEventListener("click", (e) => {
         const row = e.target.closest("tr[data-twitch]");
@@ -760,20 +660,15 @@
       });
       els.leaderboard.addEventListener("mouseleave", hideTip, true);
 
-      // Render + start
+      document.body.addEventListener("click", spawnLoot);
+
+      // Start
       initEmbers();
       renderCreatorsList();
       renderTable();
       updateStream(currentStreamer);
       addLog();
-
-      // Hide loader (normal path)
-      setTimeout(forceHideLoader, 900);
     });
-
-    // Hide loader even if something breaks
-    window.addEventListener("load", () => setTimeout(forceHideLoader, 400));
-    window.addEventListener("error", () => setTimeout(forceHideLoader, 50));
   </script>
 </body>
 </html>
