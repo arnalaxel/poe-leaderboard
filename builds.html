@@ -45,26 +45,6 @@
       backdrop-filter: blur(12px);
       border: 1px solid rgba(142,115,74,0.22);
     }
-
-    /* Preloader */
-    #preloader{
-      position:fixed; inset:0;
-      background:#050505;
-      z-index:9999;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      align-items:center;
-      transition: opacity 0.8s ease;
-    }
-    .rune-loader{
-      font-family:'Metamorphous' !important;
-      font-size: 5rem;
-      color: var(--poe-gold);
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse{ 0%,100%{opacity:.65; transform:scale(1)} 50%{opacity:1; transform:scale(1.06)} }
-
     /* Loot */
     .loot-drop{
       position:absolute;
@@ -172,12 +152,6 @@
     }
   </style>
 </head>
-
-<body>
-  <div id="preloader">
-    <div class="rune-loader">ᚦ</div>
-    <div class="mt-4 text-[10px] tracking-[0.3em] uppercase text-stone-600">Loading</div>
-  </div>
 
   <div id="loot-flash"></div>
   <div id="char-tooltip"></div>
