@@ -203,6 +203,7 @@
     <nav class="flex flex-wrap justify-center gap-8 uppercase text-[10px] tracking-[0.3em] font-bold bg-black/60 px-8 py-4 rounded-full border border-white/10 backdrop-blur-md">
       <a href="#live" class="hover:text-white transition">Live</a>
       <a href="#leaderboard" class="hover:text-white transition">Leaderboard</a>
+      <a href="#points" class="hover:text-white transition">Points</a>
       <a href="builds.html" class="hover:text-white transition">Builds</a>
       <a href="#about" class="hover:text-white transition">About POE 2</a>
       <a href="#shop" class="text-yellow-600 hover:text-yellow-400 transition">Buy POE 2</a>
@@ -293,6 +294,108 @@
       </div>
 
       <div id="meta" class="mt-4 text-[10px] text-stone-500 uppercase tracking-[0.26em]">-</div>
+    </section>
+
+    <!-- HOW TO EARN POINTS -->
+    <section id="points" class="card-glass border border-white/10 p-6">
+      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+        <div>
+          <div class="text-[10px] uppercase tracking-[0.3em] text-stone-500">Scoring</div>
+          <div class="text-2xl uppercase tracking-[0.18em] text-[color:var(--poe-title)] font-bold mt-1">How to earn points</div>
+          <div class="text-[11px] text-stone-400 mt-2">
+            Clear milestones during the run, plus a bit of stream interaction.
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 overflow-x-auto">
+        <table class="w-full text-left text-xs border border-white/10">
+          <thead class="bg-black/60 border-b border-white/10">
+            <tr class="text-stone-400 uppercase tracking-[0.22em] text-[10px]">
+              <th class="p-4">Category</th>
+              <th class="p-4">Milestone</th>
+              <th class="p-4 text-right">Points</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5">
+            <tr>
+              <td class="p-4 text-stone-300">Progression</td>
+              <td class="p-4 text-stone-400">Reach Level 10</td>
+              <td class="p-4 text-right text-[color:var(--poe-title)] font-bold">100</td>
+            </tr>
+            <tr>
+              <td class="p-4 text-stone-300">Progression</td>
+              <td class="p-4 text-stone-400">Reach Level 15</td>
+              <td class="p-4 text-right text-[color:var(--poe-title)] font-bold">150</td>
+            </tr>
+            <tr>
+              <td class="p-4 text-stone-300">Progression</td>
+              <td class="p-4 text-stone-400">Reach Level 20</td>
+              <td class="p-4 text-right text-[color:var(--poe-title)] font-bold">200</td>
+            </tr>
+            <tr>
+              <td class="p-4 text-stone-300">Progression</td>
+              <td class="p-4 text-stone-400">Reach Level 25</td>
+              <td class="p-4 text-right text-[color:var(--poe-title)] font-bold">250</td>
+            </tr>
+            <tr>
+              <td class="p-4 text-stone-300">Progression</td>
+              <td class="p-4 text-stone-400">Clear Act 1 Final Boss</td>
+              <td class="p-4 text-right text-[color:var(--poe-title)] font-bold">400</td>
+            </tr>
+            <tr>
+              <td class="p-4 text-stone-300">Build</td>
+              <td class="p-4 text-stone-400">Equip a full set of Rare gear (all main slots)</td>
+              <td class="p-4 text-right text-[color:var(--poe-title)] font-bold">250</td>
+            </tr>
+            <tr>
+              <td class="p-4 text-stone-300">Build</td>
+              <td class="p-4 text-stone-400">Upgrade weapon twice (2 meaningful upgrades during run)</td>
+              <td class="p-4 text-right text-[color:var(--poe-title)] font-bold">150</td>
+            </tr>
+            <tr>
+              <td class="p-4 text-stone-300">Build</td>
+              <td class="p-4 text-stone-400">Unlock and use 2 support gem links (or equivalent system)</td>
+              <td class="p-4 text-right text-[color:var(--poe-title)] font-bold">200</td>
+            </tr>
+            <tr>
+              <td class="p-4 text-stone-300">Build</td>
+              <td class="p-4 text-stone-400">Create a defined playstyle (minion, bow, melee, spell) and stick to it for 60 minutes</td>
+              <td class="p-4 text-right text-[color:var(--poe-title)] font-bold">150</td>
+            </tr>
+            <tr>
+              <td class="p-4 text-stone-300">Challenge</td>
+              <td class="p-4 text-stone-400">No death for 60 minutes (during stream)</td>
+              <td class="p-4 text-right text-[color:var(--poe-title)] font-bold">200</td>
+            </tr>
+            <tr>
+              <td class="p-4 text-stone-300">Challenge</td>
+              <td class="p-4 text-stone-400">Clear Act 1 Final Boss with 0 deaths total</td>
+              <td class="p-4 text-right text-[color:var(--poe-title)] font-bold">300</td>
+            </tr>
+            <tr>
+              <td class="p-4 text-stone-300">Community</td>
+              <td class="p-4 text-stone-400">Chat Build Vote 3 times (skill, passive, or gear choice)</td>
+              <td class="p-4 text-right text-[color:var(--poe-title)] font-bold">150</td>
+            </tr>
+            <tr>
+              <td class="p-4 text-stone-300">Community</td>
+              <td class="p-4 text-stone-400">Viewer Challenge completed (1 constraint chosen by chat)</td>
+              <td class="p-4 text-right text-[color:var(--poe-title)] font-bold">200</td>
+            </tr>
+            <tr>
+              <td class="p-4 text-stone-300">Bonus</td>
+              <td class="p-4 text-stone-400">First Unique drop shown live</td>
+              <td class="p-4 text-right text-[color:var(--poe-title)] font-bold">150</td>
+            </tr>
+            <tr>
+              <td class="p-4 text-stone-300">Bonus</td>
+              <td class="p-4 text-stone-400">Unique drop used for 30 minutes (even if suboptimal)</td>
+              <td class="p-4 text-right text-[color:var(--poe-title)] font-bold">200</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
 
     <!-- SHOP (Supporter pack section restored, useful, not repetitive) -->
