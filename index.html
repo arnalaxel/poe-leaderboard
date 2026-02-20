@@ -665,18 +665,44 @@
       }
 
       // Fake chat
-      const logs = [
-        { t: "Global 1: Still sane, Exile?", c: "chat-global" },
-        { t: "Global 1: Anyone running Act bosses?", c: "chat-global" },
-        { t: "Trade: WTS Chaos, fast trade.", c: "chat-trade" },
-        { t: "Info: A strongbox was opened.", c: "chat-info" },
-        { t: "Global 1: That slam is brutal.", c: "chat-global" },
-        { t: "Death: An exile has fallen.", c: "chat-death" },
-        { t: "Global 1: Crafting luck today is cursed.", c: "chat-global" },
-        { t: "Trade: Buying maps, whisper price.", c: "chat-trade" },
-        { t: "Info: A rare monster has been slain.", c: "chat-info" },
-        { t: "Global 1: Boss pattern learned, finally.", c: "chat-global" }
-      ];
+    const logs = [
+  // Global vibes
+  { t: "Global 1: Still sane, Exile?", c: "chat-global" },
+  { t: "Global 1: Anyone running Act bosses?", c: "chat-global" },
+  { t: "Global 1: I swear this boss has 3 extra phases.", c: "chat-global" },
+  { t: "Global 1: Chat, is this build cooked?", c: "chat-global" },
+  { t: "Global 1: First time POE2, I'm terrified.", c: "chat-global" },
+  { t: "Global 1: That slam is illegal.", c: "chat-global" },
+  { t: "Global 1: I love this game, I hate this game.", c: "chat-global" },
+  { t: "Global 1: Loot gods are sleeping today.", c: "chat-global" },
+  { t: "Global 1: Who needs resistances anyway?", c: "chat-global" },
+
+  // Trade nonsense
+  { t: "Trade 1: WTS Chaos, fast trade.", c: "chat-trade" },
+  { t: "Trade 1: WTB upgrades, link stats.", c: "chat-trade" },
+  { t: "Trade 1: WTS 'very good' rare, trust.", c: "chat-trade" },
+  { t: "Trade 1: Buying maps, whisper price.", c: "chat-trade" },
+  { t: "Trade 1: WTS Divine, no lowball.", c: "chat-trade" },
+
+  // System-ish info
+  { t: "Info: A strongbox was opened.", c: "chat-info" },
+  { t: "Info: A rare monster has been slain.", c: "chat-info" },
+  { t: "Info: A unique item dropped somewhere. Probably not for you.", c: "chat-info" },
+  { t: "Info: The ground is littered with questionable loot.", c: "chat-info" },
+  { t: "Info: Someone forgot to cap resistances.", c: "chat-info" },
+
+  // Death spam (the funny part)
+  { t: "Death: Alderiate has been slain by The Act 1 Final Boss.", c: "chat-death" },
+  { t: "Death: ZeratoR has been slain by a telegraphed slam.", c: "chat-death" },
+  { t: "Death: Wankil Studio has been slain by Fire Damage over Time.", c: "chat-death" },
+  { t: "Death: Zizaran has been slain by Overconfidence.", c: "chat-death" },
+  { t: "Death: Bonjwa Gaming has been slain by 'one more hit'.", c: "chat-death" },
+  { t: "Death: NoWay4u_Sir has been slain by a suspicious puddle.", c: "chat-death" },
+  { t: "Death: Revenant has been slain by a rare monster with a paragraph of mods.", c: "chat-death" },
+  { t: "Death: Ghazzytv has been slain by Minion AI.", c: "chat-death" },
+  { t: "Death: Maxim has been slain by Mana problems.", c: "chat-death" },
+  { t: "Death: Jessirocks has been slain by 'learning mechanics'.", c: "chat-death" },
+  { t: "Death: metashi12 has been slain by Hubris.", c: "chat-death" }
 
       function addLog() {
         if (!els.log) return;
