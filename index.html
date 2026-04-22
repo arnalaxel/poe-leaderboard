@@ -1,1089 +1,428 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Path of Exile 2 — WEU Creator Race</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    :root {
-      --gold: #c5a35a;
-      --gold-light: #e4c48a;
-      --gold-dim: #8e734a;
-      --ink: #050505;
-      --cyan: #38bdf8;
-      --green: #22c55e;
-    }
-
-    * { font-family: 'Cinzel', serif !important; }
-    input, select { user-select: text; }
-
-    @media (pointer: fine) {
-      body { cursor: url('https://web.poecdn.com/image/layout/cursor-pointer.png'), auto; }
-      a, button, select { cursor: url('https://web.poecdn.com/image/layout/cursor-pointer.png'), pointer; }
-    }
-
-    body {
-      background-color: var(--ink);
-      background-image:
-        linear-gradient(to bottom, rgba(5,5,5,0.5) 0%, rgba(5,5,5,0.88) 35%, rgba(5,5,5,0.97) 100%),
-        url('https://i.ibb.co/Q3R6wF9Z/The-Lastofthe-Druids-MAINKEYART-Background.png');
-      background-attachment: fixed;
-      background-size: cover;
-      background-position: center top;
-      color: #a38d6d;
-      overflow-x: hidden;
-      scroll-behavior: smooth;
-    }
-
-    /* Vignette */
-    body::after {
-      content: "";
-      position: fixed; inset: 0;
-      background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.72) 100%);
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    /* Noise grain */
-    body::before {
-      content: "";
-      position: fixed; inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
-      background-size: 180px 180px;
-      pointer-events: none;
-      z-index: 2;
-      opacity: 0.38;
-    }
-
-    /* Glass cards */
-    .glass {
-      background: rgba(5,5,5,0.84);
-      backdrop-filter: blur(18px);
-      border: 1px solid rgba(197,163,90,0.16);
-    }
-
-    /* Scrollbars */
-    .scroll-y { scrollbar-width: thin; scrollbar-color: rgba(197,163,90,0.4) rgba(0,0,0,0.15); overflow-y: auto; }
-    .scroll-y::-webkit-scrollbar { width: 5px; }
-    .scroll-y::-webkit-scrollbar-track { background: rgba(0,0,0,0.15); }
-    .scroll-y::-webkit-scrollbar-thumb { background: rgba(197,163,90,0.4); border-radius: 3px; }
-
-    /* Phase buttons */
-    .phase-btn {
-      border: 1px solid rgba(255,255,255,0.08);
-      color: #6b7280;
-      transition: all 0.2s;
-    }
-    .phase-btn:hover { border-color: rgba(197,163,90,0.35); color: #a38d6d; }
-    .phase-btn.active-total { border-color: rgba(255,255,255,0.3); color: #fff; background: rgba(255,255,255,0.05); }
-    .phase-btn.active-p1   { border-color: var(--gold); color: var(--gold-light); background: rgba(197,163,90,0.1); }
-    .phase-btn.active-p2   { border-color: var(--cyan); color: var(--cyan); background: rgba(56,189,248,0.08); }
-
-    /* Geo buttons */
-    .geo-btn { border: 1px solid rgba(255,255,255,0.08); color: #6b7280; transition: all 0.2s; }
-    .geo-btn:hover { border-color: rgba(197,163,90,0.3); color: #a38d6d; }
-    .geo-btn.active { border-color: var(--gold); color: var(--gold-light); background: rgba(197,163,90,0.1); }
-
-    /* Milestone phase tabs */
-    .ms-tab { border: 1px solid rgba(255,255,255,0.08); color: #6b7280; transition: all 0.2s; }
-    .ms-tab.active { border-color: var(--gold); color: var(--gold-light); background: rgba(197,163,90,0.1); }
-
-    /* Live dot */
-    @keyframes livePulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50%       { opacity: 0.4; transform: scale(1.5); }
-    }
-    .live-dot { animation: livePulse 2s ease-in-out infinite; }
-
-    /* Loot */
-    .loot-drop {
-      position: absolute;
-      pointer-events: none;
-      padding: 3px 10px;
-      border: 2px solid;
-      font-size: 11px;
-      font-weight: 700;
-      z-index: 500;
-      animation: lootFloat 2.2s forwards ease-out;
-      background: rgba(0,0,0,0.96);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-    @keyframes lootFloat {
-      0%   { opacity: 1; transform: translateY(0) scale(1); }
-      15%  { opacity: 1; transform: translateY(-10px) scale(1.05); }
-      100% { opacity: 0; transform: translateY(-90px) scale(0.9); }
-    }
-
-    #loot-flash { position: fixed; inset: 0; opacity: 0; pointer-events: none; z-index: 300; transition: opacity 0.1s; }
-
-    @keyframes bodyShake {
-      0%   { transform: translate(0); }
-      20%  { transform: translate(-2px, 2px); }
-      40%  { transform: translate(2px, -1px); }
-      60%  { transform: translate(-2px, 1px); }
-      80%  { transform: translate(1px, 2px); }
-      100% { transform: translate(0); }
-    }
-    .shake-anim { animation: bodyShake 0.35s ease; }
-
-    /* Expand panel */
-    .expand-panel { max-height: 0; overflow: hidden; transition: max-height 0.42s cubic-bezier(0.4,0,0.2,1); }
-    .expand-panel.open { max-height: 700px; }
-
-    /* Expand arrow */
-    .expand-arrow { transition: transform 0.3s ease; display: inline-block; }
-    .expand-arrow.open { transform: rotate(180deg); }
-
-    /* Table row */
-    tr.kol-row { transition: background 0.15s; }
-    tr.kol-row:hover td { background: rgba(255,255,255,0.035); }
-    tr.kol-row.leader td:first-child { background: linear-gradient(90deg, rgba(197,163,90,0.18), transparent); }
-
-    /* Rank medals */
-    .rank-1 { color: #fbbf24; text-shadow: 0 0 18px rgba(251,191,36,0.65); }
-    .rank-2 { color: #94a3b8; text-shadow: 0 0 12px rgba(148,163,184,0.4); }
-    .rank-3 { color: #c2713a; text-shadow: 0 0 12px rgba(194,113,58,0.5); }
-    .rank-n { color: #374151; }
-
-    /* Progress bar */
-    .prog-track { background: rgba(255,255,255,0.06); border-radius: 9999px; overflow: hidden; }
-    .prog-fill-gold { background: linear-gradient(90deg, var(--gold-dim), var(--gold)); border-radius: 9999px; }
-    .prog-fill-cyan { background: linear-gradient(90deg, #164e63, var(--cyan)); border-radius: 9999px; }
-
-    /* Milestone category colors */
-    .cat-Progression { color: #fbbf24; }
-    .cat-Build        { color: #a78bfa; }
-    .cat-Challenge    { color: #f87171; }
-    .cat-Community    { color: #34d399; }
-    .cat-Bonus        { color: #38bdf8; }
-    .cat-Atlas        { color: #7dd3fc; }
-    .cat-Economy      { color: #6ee7b7; }
-
-    /* Gold gradient text */
-    .gold-text {
-      background: linear-gradient(135deg, var(--gold-dim) 0%, var(--gold-light) 48%, var(--gold-dim) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .cyan-text {
-      background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 50%, #7dd3fc 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    /* Champion spotlight */
-    .champion-bar {
-      border-left: 3px solid var(--gold);
-      background: linear-gradient(90deg, rgba(197,163,90,0.12), transparent 70%);
-    }
-
-    /* Fixed UI */
-    #hud { position: fixed; top: 18px; right: 18px; z-index: 80; }
-    #sticky-buy { position: fixed; top: 18px; left: 18px; z-index: 80; }
-
-    /* Fake chat */
-    #chatLog {
-      position: fixed;
-      bottom: 18px; left: 18px;
-      width: 340px; max-height: 130px;
-      overflow: hidden;
-      pointer-events: none;
-      z-index: 60;
-      mask-image: linear-gradient(to bottom, black 72%, transparent 100%);
-    }
-    .log-msg {
-      font-family: system-ui, sans-serif !important;
-      font-size: 11px;
-      margin-bottom: 3px;
-      text-shadow: 1px 1px 2px #000;
-      animation: chatSlide 0.25s ease-out;
-    }
-    @keyframes chatSlide { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
-    .c-death  { color: #f87171; }
-    .c-global { color: #60c1e8; }
-    .c-trade  { color: #a3e635; }
-    .c-info   { color: #9ca3af; }
-
-    /* Embers */
-    #embers { position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.45; }
-
-    /* Content z-index */
-    .content { position: relative; z-index: 10; }
-
-    /* Input */
-    input[type="text"], select {
-      background: rgba(0,0,0,0.5) !important;
-      border: 1px solid rgba(255,255,255,0.08);
-      color: #e2e8f0;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    input[type="text"]:focus, select:focus { border-color: rgba(197,163,90,0.5); }
-
-    /* Divider line */
-    .sep { border-top: 1px solid rgba(255,255,255,0.06); }
-
-    @media (max-width: 767px) {
-      #chatLog, #sticky-buy { display: none; }
-      #hud { top: 10px; right: 10px; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .live-dot, .shake-anim { animation: none; }
-      .expand-panel, .expand-arrow { transition: none; }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Path of Exile 2 — WEU Creator Race</title>
+<meta name="description" content="Official-style creator race for Path of Exile 2 across France, Germany, UK and Spain." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+:root{--gold:#c5a35a;--gold-light:#e4c48a;--gold-dim:#8e734a;--ink:#050505;--cyan:#38bdf8;--green:#22c55e}
+html,body{background-color:var(--ink)}
+body{font-family:'Inter',system-ui,sans-serif;color:#c9bda5;overflow-x:hidden;scroll-behavior:smooth;background-image:linear-gradient(to bottom,rgba(5,5,5,.55) 0%,rgba(5,5,5,.9) 35%,rgba(5,5,5,.97) 100%),url('https://i.ibb.co/Q3R6wF9Z/The-Lastofthe-Druids-MAINKEYART-Background.png');background-attachment:fixed;background-size:cover;background-position:center top}
+.font-display{font-family:'Cinzel',serif;letter-spacing:.04em}
+body::after{content:"";position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.7) 100%);pointer-events:none;z-index:1}
+body::before{content:"";position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");background-size:180px 180px;pointer-events:none;z-index:2;opacity:.3}
+.glass{background:rgba(8,8,8,.82);backdrop-filter:blur(18px);border:1px solid rgba(197,163,90,.18)}
+.scroll-y{scrollbar-width:thin;scrollbar-color:rgba(197,163,90,.4) rgba(0,0,0,.15);overflow-y:auto}
+.scroll-y::-webkit-scrollbar{width:5px}.scroll-y::-webkit-scrollbar-track{background:rgba(0,0,0,.15)}.scroll-y::-webkit-scrollbar-thumb{background:rgba(197,163,90,.4);border-radius:3px}
+.tab-btn{border:1px solid rgba(255,255,255,.1);color:#9a9083;transition:all .2s;background:rgba(0,0,0,.3)}
+.tab-btn:hover{border-color:rgba(197,163,90,.4);color:#d9ccb0}
+.tab-btn.active-total{border-color:rgba(255,255,255,.35);color:#fff;background:rgba(255,255,255,.06)}
+.tab-btn.active-p1{border-color:var(--gold);color:var(--gold-light);background:rgba(197,163,90,.12)}
+.tab-btn.active-p2{border-color:var(--cyan);color:var(--cyan);background:rgba(56,189,248,.1)}
+.geo-btn{border:1px solid rgba(255,255,255,.1);color:#9a9083;transition:all .2s;background:rgba(0,0,0,.3)}
+.geo-btn:hover{border-color:rgba(197,163,90,.35);color:#d9ccb0}
+.geo-btn.active{border-color:var(--gold);color:var(--gold-light);background:rgba(197,163,90,.12)}
+.ms-tab{border:1px solid rgba(255,255,255,.1);color:#9a9083;transition:all .2s;background:rgba(0,0,0,.3)}
+.ms-tab.active{border-color:var(--gold);color:var(--gold-light);background:rgba(197,163,90,.12)}
+@keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.5)}}
+.live-dot{animation:livePulse 2s ease-in-out infinite}
+.expand-panel{max-height:0;overflow:hidden;transition:max-height .42s cubic-bezier(.4,0,.2,1)}
+.expand-panel.open{max-height:900px}
+.expand-arrow{transition:transform .3s ease;display:inline-block}
+.expand-arrow.open{transform:rotate(180deg)}
+tr.kol-row{transition:background .15s}tr.kol-row:hover td{background:rgba(255,255,255,.04)}
+tr.kol-row.leader td:first-child{background:linear-gradient(90deg,rgba(197,163,90,.2),transparent)}
+.rank-1{color:#fbbf24;text-shadow:0 0 18px rgba(251,191,36,.65)}
+.rank-2{color:#cbd5e1;text-shadow:0 0 12px rgba(203,213,225,.45)}
+.rank-3{color:#d1894e;text-shadow:0 0 12px rgba(209,137,78,.55)}
+.rank-n{color:#6b7280}
+.prog-track{background:rgba(255,255,255,.08);border-radius:9999px;overflow:hidden}
+.prog-fill-gold{background:linear-gradient(90deg,var(--gold-dim),var(--gold));border-radius:9999px}
+.prog-fill-cyan{background:linear-gradient(90deg,#164e63,var(--cyan));border-radius:9999px}
+.cat-Progression{color:#fbbf24}.cat-Build{color:#a78bfa}.cat-Challenge{color:#f87171}
+.cat-Community{color:#34d399}.cat-Bonus{color:#38bdf8}.cat-Atlas{color:#7dd3fc}.cat-Economy{color:#6ee7b7}
+.gold-text{background:linear-gradient(135deg,var(--gold-dim) 0%,var(--gold-light) 48%,var(--gold-dim) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.champion-bar{border-left:3px solid var(--gold);background:linear-gradient(90deg,rgba(197,163,90,.14),transparent 70%)}
+.cd-cell{background:rgba(0,0,0,.55);border:1px solid rgba(197,163,90,.22);min-width:64px}
+.feed-item{border-left:2px solid rgba(197,163,90,.3)}.feed-item.p2{border-left-color:rgba(56,189,248,.4)}
+input[type=text],select{background:rgba(0,0,0,.55)!important;border:1px solid rgba(255,255,255,.1);color:#e2e8f0;outline:none;transition:border-color .2s}
+input[type=text]:focus,select:focus{border-color:rgba(197,163,90,.55)}
+.sep{border-top:1px solid rgba(255,255,255,.08)}.content{position:relative;z-index:10}
+#embers{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.3}
+#hud{position:fixed;top:18px;right:18px;z-index:80}
+#chatLog{position:fixed;bottom:18px;left:18px;width:340px;max-height:130px;overflow:hidden;pointer-events:none;z-index:60;mask-image:linear-gradient(to bottom,black 72%,transparent 100%)}
+.log-msg{font-family:system-ui,sans-serif!important;font-size:11px;margin-bottom:3px;text-shadow:1px 1px 2px #000;animation:chatSlide .25s ease-out}
+@keyframes chatSlide{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+.c-global{color:#60c1e8}.c-trade{color:#a3e635}.c-info{color:#9ca3af}.c-system{color:#c5a35a}
+.medallion{width:86px;height:86px;background:radial-gradient(circle at 30% 30%,var(--gold-light),var(--gold-dim) 70%,#3a2e1c 100%);border:2px solid rgba(255,255,255,.2);box-shadow:0 0 28px rgba(197,163,90,.35),inset 0 0 14px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-weight:900;font-size:26px;color:#1c1408}
+@media (max-width:767px){#hud{top:10px;right:10px}#chatLog{display:none}}
+@media (prefers-reduced-motion:reduce){.live-dot{animation:none}.expand-panel,.expand-arrow{transition:none}}
+</style>
 </head>
 <body>
-
-<!-- Fixed fx -->
-<div id="loot-flash"></div>
 <canvas id="embers"></canvas>
 <div id="chatLog"></div>
-
-<!-- HUD -->
 <div id="hud" class="flex flex-col items-end gap-2">
-  <div class="glass px-4 py-2.5 flex gap-5">
-    <div class="text-center">
-      <div class="text-[9px] uppercase tracking-[0.25em] text-stone-500">Mirrors</div>
-      <div id="hud-mir" class="text-cyan-300 font-bold text-sm">0</div>
-    </div>
-    <div class="border-l border-white/10 pl-5 text-center">
-      <div class="text-[9px] uppercase tracking-[0.25em] text-stone-500">Divines</div>
-      <div id="hud-div" class="text-yellow-300 font-bold text-sm">0</div>
-    </div>
-  </div>
-  <button id="music-btn" class="glass px-4 py-2 text-[9px] uppercase tracking-[0.25em] text-stone-400 hover:text-stone-200 transition">
-    Music Off
-  </button>
-  <audio id="bgMusic" loop><source src="theme.mp3" type="audio/mpeg"></audio>
+<div class="glass px-4 py-2 flex items-center gap-3 text-[10px] uppercase tracking-[0.25em]">
+<span class="w-2 h-2 rounded-full bg-green-400 live-dot"></span>
+<span class="text-stone-300 font-semibold">Race Live</span>
+</div>
+<button id="music-btn" class="glass px-4 py-2 text-[10px] uppercase tracking-[0.25em] text-stone-400 hover:text-stone-100 transition">♪ Music Off</button>
+<audio id="bgMusic" loop preload="auto"><source src="theme.mp3" type="audio/mpeg"></audio>
 </div>
 
-<!-- Sticky buy -->
-<div id="sticky-buy">
-  <a href="#buy" class="glass flex items-center gap-3 px-4 py-3 hover:border-[rgba(197,163,90,0.45)] transition">
-    <span class="text-[9px] uppercase tracking-[0.25em] text-stone-500">Buy</span>
-    <span class="text-[11px] font-bold uppercase tracking-widest text-[color:var(--gold-light)]">Path of Exile 2</span>
-  </a>
-</div>
-
-<!-- ============================================================
-     HEADER
-============================================================ -->
-<header class="content pt-10 pb-6 flex flex-col items-center text-center">
-  <img src="https://i.ibb.co/zTKghTd2/Po-E2-The-Lastofthe-Druids-EN.png"
-       class="max-w-[240px] md:max-w-[340px] h-auto drop-shadow-2xl mb-6" alt="Path of Exile 2" />
-
-  <nav class="glass flex flex-wrap justify-center gap-7 px-8 py-3 border border-white/10 text-[10px] uppercase tracking-[0.28em] font-bold">
-    <a href="#race"       class="text-stone-400 hover:text-white transition">Leaderboard</a>
-    <a href="#live"       class="text-stone-400 hover:text-white transition">Live</a>
-    <a href="#milestones" class="text-stone-400 hover:text-white transition">Milestones</a>
-    <a href="#buy"        class="text-yellow-600 hover:text-yellow-400 transition">Buy PoE2</a>
-  </nav>
+<header class="content pt-12 pb-8 flex flex-col items-center text-center px-4">
+<img src="https://i.ibb.co/zTKghTd2/Po-E2-The-Lastofthe-Druids-EN.png" class="max-w-[220px] md:max-w-[320px] h-auto drop-shadow-2xl mb-6" alt="Path of Exile 2" />
+<div class="text-[10px] uppercase tracking-[0.32em] text-stone-500 mb-2">Level Infinite × Western Europe</div>
+<h1 class="font-display text-3xl md:text-5xl uppercase font-black gold-text">Creator Race</h1>
+<p class="mt-4 max-w-xl text-[13px] text-stone-400 leading-relaxed">Four countries. Two phases. One champion. A structured competition across Western Europe's top Path of Exile 2 creators, from launch progression to Atlas endgame mastery.</p>
+<nav class="glass mt-7 flex flex-wrap justify-center gap-6 px-8 py-3 text-[10px] uppercase tracking-[0.28em] font-semibold">
+<a href="#race" class="text-stone-400 hover:text-white transition">Leaderboard</a>
+<a href="#how" class="text-stone-400 hover:text-white transition">How it works</a>
+<a href="#builds" class="text-stone-400 hover:text-white transition">Builds</a>
+<a href="#live" class="text-stone-400 hover:text-white transition">Live</a>
+<a href="#milestones" class="text-stone-400 hover:text-white transition">Scoring</a>
+<a href="#rewards" class="text-stone-400 hover:text-white transition">Rewards</a>
+<a href="#buy" class="text-[color:var(--gold-light)] hover:text-white transition">Play PoE2</a>
+</nav>
 </header>
 
-<!-- ============================================================
-     MAIN
-============================================================ -->
-<main class="content max-w-6xl mx-auto px-4 pb-28 space-y-8">
+<main class="content max-w-6xl mx-auto px-4 pb-28 space-y-10">
 
-  <!-- ===== RACE / LEADERBOARD ===== -->
-  <section id="race" class="glass border border-white/10">
+<section class="glass border border-white/10 p-6">
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+<div>
+<div class="text-[10px] uppercase tracking-[0.32em] text-stone-500" id="cd-phase-label">Phase 1 — Launch Weekend</div>
+<div class="font-display text-xl uppercase font-bold mt-1" id="cd-headline">Race starts in</div>
+<div class="text-[11px] text-stone-500 mt-1" id="cd-sub">Early milestones: Ascendancy, bosses, level tiers.</div>
+</div>
+<div class="flex gap-2">
+<div class="cd-cell px-4 py-3 text-center"><div class="font-display text-3xl font-black text-white" id="cd-d">00</div><div class="text-[9px] uppercase tracking-[0.25em] text-stone-500 mt-1">Days</div></div>
+<div class="cd-cell px-4 py-3 text-center"><div class="font-display text-3xl font-black text-white" id="cd-h">00</div><div class="text-[9px] uppercase tracking-[0.25em] text-stone-500 mt-1">Hours</div></div>
+<div class="cd-cell px-4 py-3 text-center"><div class="font-display text-3xl font-black text-white" id="cd-m">00</div><div class="text-[9px] uppercase tracking-[0.25em] text-stone-500 mt-1">Min</div></div>
+<div class="cd-cell px-4 py-3 text-center"><div class="font-display text-3xl font-black text-white" id="cd-s">00</div><div class="text-[9px] uppercase tracking-[0.25em] text-stone-500 mt-1">Sec</div></div>
+</div>
+</div>
+</section>
 
-    <!-- Top area -->
-    <div class="p-6">
-      <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
-        <div>
-          <div class="text-[10px] uppercase tracking-[0.32em] text-stone-500">Level Infinite × WEU</div>
-          <h1 class="text-3xl md:text-4xl uppercase tracking-[0.14em] font-black mt-1 gold-text">Creator Race</h1>
-          <p id="phase-desc" class="text-[12px] text-stone-400 mt-2 max-w-md leading-relaxed">
-            Standings across both phases. Click a row to see milestone details.
-          </p>
-        </div>
+<section id="how" class="glass border border-white/10 p-6">
+<div class="text-[10px] uppercase tracking-[0.32em] text-stone-500">Format</div>
+<div class="font-display text-2xl uppercase font-bold mt-1 gold-text">How it works</div>
+<div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-5">
+<div class="p-5 border border-white/10 bg-black/35"><div class="text-[10px] uppercase tracking-widest text-[color:var(--gold-light)] font-bold">Step 1</div><div class="font-display text-sm uppercase font-bold mt-2 text-stone-100">Selected creators</div><p class="text-[12px] text-stone-400 mt-2 leading-relaxed">Curated roster across France, Germany, UK and Spain. Twitch-first, ARPG-native audiences.</p></div>
+<div class="p-5 border border-white/10 bg-black/35"><div class="text-[10px] uppercase tracking-widest text-[color:var(--gold-light)] font-bold">Step 2</div><div class="font-display text-sm uppercase font-bold mt-2 text-stone-100">Two-phase race</div><p class="text-[12px] text-stone-400 mt-2 leading-relaxed">Phase 1 covers launch progression. Phase 2 shifts to Atlas mastery and endgame, reflecting the 0.5 update.</p></div>
+<div class="p-5 border border-white/10 bg-black/35"><div class="text-[10px] uppercase tracking-widest text-[color:var(--gold-light)] font-bold">Step 3</div><div class="font-display text-sm uppercase font-bold mt-2 text-stone-100">Scored & ranked</div><p class="text-[12px] text-stone-400 mt-2 leading-relaxed">Milestones convert into points. Standings update in near real time. One regional champion crowned.</p></div>
+</div>
+</section>
 
-        <!-- Stats -->
-        <div class="flex gap-7 shrink-0 items-start">
-          <div class="text-center">
-            <div class="text-2xl md:text-3xl font-black text-white" id="stat-total">11</div>
-            <div class="text-[9px] uppercase tracking-[0.25em] text-stone-500 mt-1">Creators</div>
-          </div>
-          <div class="border-l border-white/10 pl-7 text-center">
-            <div class="text-2xl md:text-3xl font-black text-green-400" id="stat-live">3</div>
-            <div class="text-[9px] uppercase tracking-[0.25em] text-stone-500 mt-1">Live</div>
-          </div>
-          <div class="border-l border-white/10 pl-7 text-center">
-            <div class="text-2xl md:text-3xl font-black text-[color:var(--gold-light)]">4</div>
-            <div class="text-[9px] uppercase tracking-[0.25em] text-stone-500 mt-1">Geos</div>
-          </div>
-        </div>
-      </div>
+<section id="builds" class="glass border border-white/10 p-6">
+<div class="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
+<div>
+<div class="text-[10px] uppercase tracking-[0.32em] text-stone-500">Community picks</div>
+<div class="font-display text-2xl uppercase font-bold mt-1 gold-text">Build guides</div>
+<p class="text-[12px] text-stone-400 mt-2 max-w-xl leading-relaxed">Top-performing builds of the current league (0.4 — The Legacy of the Dark), curated from <a href="https://mobalytics.gg/poe-2/builds" target="_blank" rel="noreferrer" class="text-[color:var(--gold-light)] hover:text-white underline underline-offset-2">Mobalytics</a>. Updated throughout the race.</p>
+</div>
+<div class="flex gap-2 shrink-0">
+<button data-build-phase="1" class="ms-tab active px-4 py-2 text-[10px] uppercase tracking-widest font-bold">Phase 1 — Launch</button>
+<button data-build-phase="2" class="ms-tab px-4 py-2 text-[10px] uppercase tracking-widest font-bold">Phase 2 — Endgame</button>
+</div>
+</div>
+<div id="builds-grid" class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+</section>
 
-      <!-- Phase switcher -->
-      <div class="mt-6 flex flex-wrap gap-2">
-        <button data-phase="total" class="phase-btn active-total px-5 py-2.5 text-[11px] uppercase tracking-[0.2em] font-bold">
-          Total
-        </button>
-        <button data-phase="1" class="phase-btn px-5 py-2.5 text-[11px] uppercase tracking-[0.2em] font-bold">
-          Phase 1 — Launch
-        </button>
-        <button data-phase="2" class="phase-btn px-5 py-2.5 text-[11px] uppercase tracking-[0.2em] font-bold">
-          Phase 2 — Endgame
-        </button>
-      </div>
+<section id="race" class="glass border border-white/10">
+<div class="p-6">
+<div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+<div>
+<div class="text-[10px] uppercase tracking-[0.32em] text-stone-500">Standings</div>
+<h2 class="font-display text-2xl md:text-3xl uppercase font-black mt-1 gold-text">Leaderboard</h2>
+<p id="phase-desc" class="text-[12px] text-stone-400 mt-2 max-w-md leading-relaxed">Standings across both phases. Click a row to see milestone details.</p>
+</div>
+<div class="flex gap-7 shrink-0 items-start">
+<div class="text-center"><div class="font-display text-2xl md:text-3xl font-black text-white" id="stat-total">11</div><div class="text-[9px] uppercase tracking-[0.25em] text-stone-500 mt-1">Creators</div></div>
+<div class="border-l border-white/10 pl-7 text-center"><div class="font-display text-2xl md:text-3xl font-black text-green-400" id="stat-live">3</div><div class="text-[9px] uppercase tracking-[0.25em] text-stone-500 mt-1">Live now</div></div>
+<div class="border-l border-white/10 pl-7 text-center"><div class="font-display text-2xl md:text-3xl font-black text-[color:var(--gold-light)]">4</div><div class="text-[9px] uppercase tracking-[0.25em] text-stone-500 mt-1">Regions</div></div>
+</div>
+</div>
+<div class="mt-6 flex flex-wrap gap-2">
+<button data-phase="total" class="tab-btn active-total px-5 py-2.5 text-[11px] uppercase tracking-[0.2em] font-bold">Total</button>
+<button data-phase="1" class="tab-btn px-5 py-2.5 text-[11px] uppercase tracking-[0.2em] font-bold">Phase 1 — Launch</button>
+<button data-phase="2" class="tab-btn px-5 py-2.5 text-[11px] uppercase tracking-[0.2em] font-bold">Phase 2 — Endgame</button>
+</div>
+<div class="mt-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+<div class="flex gap-2 flex-wrap">
+<button data-geo="ALL" class="geo-btn active px-3 py-1.5 text-[10px] uppercase tracking-widest">All</button>
+<button data-geo="FR" class="geo-btn px-3 py-1.5 text-[10px] uppercase tracking-widest">🇫🇷 France</button>
+<button data-geo="DE" class="geo-btn px-3 py-1.5 text-[10px] uppercase tracking-widest">🇩🇪 Germany</button>
+<button data-geo="UK" class="geo-btn px-3 py-1.5 text-[10px] uppercase tracking-widest">🇬🇧 UK</button>
+<button data-geo="ES" class="geo-btn px-3 py-1.5 text-[10px] uppercase tracking-widest">🇪🇸 Spain</button>
+</div>
+<div class="flex items-center gap-3">
+<input id="lb-search" type="text" placeholder="Search creator" class="w-full md:w-56 px-4 py-2 text-xs" />
+<div class="text-[9px] text-stone-500 uppercase tracking-widest shrink-0 hidden sm:block" id="last-updated"></div>
+</div>
+</div>
+<div id="champion-bar" class="champion-bar mt-5 px-5 py-3 hidden">
+<div class="flex items-center gap-4 flex-wrap">
+<div class="text-[9px] uppercase tracking-[0.28em] text-stone-500">Current leader</div>
+<div class="font-display font-bold text-lg text-[color:var(--gold-light)] uppercase tracking-widest" id="champion-name"></div>
+<div class="ml-auto text-[11px] text-stone-300 font-bold" id="champion-pts"></div>
+</div>
+</div>
+</div>
+<div class="border-t border-white/10">
+<div class="max-h-[640px] scroll-y">
+<table class="w-full text-left text-xs border-collapse">
+<thead class="sticky top-0 z-20 bg-black/92 backdrop-blur border-b border-white/10">
+<tr class="text-stone-400 uppercase tracking-[0.18em] text-[10px]">
+<th class="px-4 py-3 w-14 text-center">Rank</th><th class="px-4 py-3">Creator</th>
+<th class="px-4 py-3 w-24 text-center hidden md:table-cell">Class</th>
+<th class="px-4 py-3 w-14 text-center hidden md:table-cell">Lvl</th>
+<th class="px-4 py-3 w-20 text-center hidden lg:table-cell" id="th-p1">P1</th>
+<th class="px-4 py-3 w-20 text-center hidden lg:table-cell" id="th-p2">P2</th>
+<th class="px-4 py-3 w-24 text-right" id="th-main">Total</th>
+<th class="px-4 py-3 w-28 hidden md:table-cell">Progress</th>
+<th class="px-4 py-3 w-8 text-center"></th>
+</tr></thead>
+<tbody id="lb-body"></tbody>
+</table>
+</div>
+<div class="px-5 py-2.5 sep text-[10px] text-stone-500 uppercase tracking-widest" id="lb-meta"></div>
+</div>
+</section>
 
-      <!-- Geo filter + search -->
-      <div class="mt-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-        <div class="flex gap-2 flex-wrap">
-          <button data-geo="ALL" class="geo-btn active px-3 py-1.5 text-[10px] uppercase tracking-widest">All</button>
-          <button data-geo="FR"  class="geo-btn px-3 py-1.5 text-[10px] uppercase tracking-widest">🇫🇷 FR</button>
-          <button data-geo="DE"  class="geo-btn px-3 py-1.5 text-[10px] uppercase tracking-widest">🇩🇪 DE</button>
-          <button data-geo="UK"  class="geo-btn px-3 py-1.5 text-[10px] uppercase tracking-widest">🇬🇧 UK</button>
-          <button data-geo="ES"  class="geo-btn px-3 py-1.5 text-[10px] uppercase tracking-widest">🇪🇸 ES</button>
-        </div>
-        <div class="flex items-center gap-3">
-          <input id="lb-search" type="text" placeholder="Search creator"
-            class="w-full md:w-56 px-4 py-2 text-xs" />
-          <div class="text-[9px] text-stone-600 uppercase tracking-widest shrink-0 hidden sm:block" id="last-updated"></div>
-        </div>
-      </div>
+<section id="live" class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+<div class="lg:col-span-1 glass border border-white/10 p-5 flex flex-col gap-3 order-2 lg:order-1">
+<div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-green-400 live-dot"></span><div class="text-[10px] uppercase tracking-[0.28em] text-stone-300 font-bold">Live milestone feed</div></div>
+<div id="feed-list" class="space-y-2 scroll-y max-h-[440px]"></div>
+</div>
+<div class="lg:col-span-3 glass border border-white/10 overflow-hidden flex flex-col order-1 lg:order-2">
+<div class="aspect-video bg-black"><iframe id="twitch-embed" src="" class="w-full h-full" allowfullscreen frameborder="0" title="Twitch stream"></iframe></div>
+<div class="p-4 border-t border-white/10 bg-black/55 flex flex-col md:flex-row md:items-center gap-4">
+<div class="flex items-center gap-3"><img id="now-avatar" src="" class="w-9 h-9 border border-white/10" alt="" /><div><div class="text-[9px] uppercase tracking-[0.28em] text-stone-500">Now watching</div><div id="now-name" class="font-display font-bold text-[color:var(--gold-light)] uppercase tracking-widest"></div></div></div>
+<div class="flex items-center gap-2 md:ml-auto w-full md:w-auto"><select id="streamer-select" class="w-full md:w-60 px-3 py-2 text-xs"></select></div>
+</div>
+<div class="p-4 border-t border-white/10 bg-black/35">
+<div class="flex items-center justify-between mb-3"><div class="text-[10px] uppercase tracking-[0.28em] text-stone-400 font-bold">All creators</div><input id="creator-search" type="text" placeholder="Filter" class="w-48 px-3 py-1.5 text-xs" /></div>
+<div id="creator-list" class="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-48 scroll-y"></div>
+</div>
+</div>
+</section>
 
-      <!-- Champion bar -->
-      <div id="champion-bar" class="champion-bar mt-5 px-5 py-3 hidden">
-        <div class="flex items-center gap-4 flex-wrap">
-          <div class="text-[9px] uppercase tracking-[0.28em] text-stone-500">Current leader</div>
-          <div class="font-bold text-lg text-[color:var(--gold-light)] uppercase tracking-widest" id="champion-name"></div>
-          <div class="ml-auto text-[11px] text-stone-300 font-bold" id="champion-pts"></div>
-        </div>
-      </div>
-    </div>
+<section id="milestones" class="glass border border-white/10 p-6">
+<div class="text-[10px] uppercase tracking-[0.32em] text-stone-500">Scoring</div>
+<div class="font-display text-2xl uppercase font-bold mt-1 gold-text">Milestone points</div>
+<p class="text-[12px] text-stone-400 mt-2 max-w-xl leading-relaxed">Milestones are validated from Twitch VODs, in-game screenshots, and (pending studio approval) API data. Points are cumulative across both phases.</p>
+<div class="mt-5 flex gap-2">
+<button data-ms-phase="1" class="ms-tab active px-5 py-2 text-[10px] uppercase tracking-widest font-bold">Phase 1 — Launch</button>
+<button data-ms-phase="2" class="ms-tab px-5 py-2 text-[10px] uppercase tracking-widest font-bold">Phase 2 — Endgame</button>
+</div>
+<div class="mt-4 overflow-x-auto">
+<table class="w-full text-xs border border-white/10">
+<thead class="bg-black/60 border-b border-white/10"><tr class="text-stone-400 uppercase tracking-[0.18em] text-[10px]"><th class="px-4 py-3 w-28">Category</th><th class="px-4 py-3">Milestone</th><th class="px-4 py-3 text-right w-20">Points</th></tr></thead>
+<tbody id="ms-tbody" class="divide-y divide-white/5"></tbody>
+</table>
+</div>
+</section>
 
-    <!-- Table -->
-    <div class="border-t border-white/6">
-      <div class="max-h-[640px] scroll-y">
-        <table class="w-full text-left text-xs border-collapse">
-          <thead class="sticky top-0 z-20 bg-black/90 backdrop-blur border-b border-white/10">
-            <tr class="text-stone-500 uppercase tracking-[0.18em] text-[10px]">
-              <th class="px-4 py-3 w-14 text-center">Rank</th>
-              <th class="px-4 py-3">Creator</th>
-              <th class="px-4 py-3 w-24 text-center hidden md:table-cell">Class</th>
-              <th class="px-4 py-3 w-14 text-center hidden md:table-cell">Lvl</th>
-              <th class="px-4 py-3 w-20 text-center hidden lg:table-cell" id="th-p1">P1</th>
-              <th class="px-4 py-3 w-20 text-center hidden lg:table-cell" id="th-p2">P2</th>
-              <th class="px-4 py-3 w-24 text-right" id="th-main">Total</th>
-              <th class="px-4 py-3 w-28 hidden md:table-cell">Progress</th>
-              <th class="px-4 py-3 w-8 text-center"></th>
-            </tr>
-          </thead>
-          <tbody id="lb-body"></tbody>
-        </table>
-      </div>
-      <div class="px-5 py-2.5 sep text-[10px] text-stone-600 uppercase tracking-widest" id="lb-meta"></div>
-    </div>
-  </section>
+<section id="rewards" class="glass border border-white/10 p-6">
+<div class="text-[10px] uppercase tracking-[0.32em] text-stone-500">Prize pool</div>
+<div class="font-display text-2xl uppercase font-bold mt-1 gold-text">Rewards</div>
+<div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-5">
+<div class="p-5 border border-[rgba(197,163,90,0.35)] bg-black/45 flex flex-col items-start gap-3"><div class="medallion">1</div><div class="text-[10px] uppercase tracking-widest text-[color:var(--gold-light)] font-bold">Grand prize</div><div class="font-display text-base uppercase font-bold text-stone-100">PoE2 Creator Champion</div><ul class="text-[12px] text-stone-400 space-y-1.5"><li>• Trophy & official title</li><li>• Optional studio spotlight</li><li>• Exclusive Supporter Pack code</li></ul></div>
+<div class="p-5 border border-white/10 bg-black/35 flex flex-col items-start gap-3"><div class="medallion" style="background:radial-gradient(circle at 30% 30%,#e2e8f0,#94a3b8 70%,#1f2937 100%);color:#1f2937">2</div><div class="text-[10px] uppercase tracking-widest text-stone-300 font-bold">Regional winners</div><div class="font-display text-base uppercase font-bold text-stone-100">Top creator per region</div><ul class="text-[12px] text-stone-400 space-y-1.5"><li>• Supporter Pack codes</li><li>• Community shoutout</li><li>• Campaign recap feature</li></ul></div>
+<div class="p-5 border border-white/10 bg-black/35 flex flex-col items-start gap-3"><div class="medallion" style="background:radial-gradient(circle at 30% 30%,#e5b57a,#a6641f 70%,#3b220b 100%);color:#2a1607">∞</div><div class="text-[10px] uppercase tracking-widest text-stone-300 font-bold">Community drops</div><div class="font-display text-base uppercase font-bold text-stone-100">Giveaways all weekend</div><ul class="text-[12px] text-stone-400 space-y-1.5"><li>• Early Access keys</li><li>• Cosmetic microtransactions</li><li>• Discord-exclusive bounties</li></ul></div>
+</div>
+<p class="text-[10px] text-stone-500 uppercase tracking-widest mt-6">Prizes are subject to final T&Cs validated with the studio and regional regulations.</p>
+</section>
 
-  <!-- ===== LIVE ===== -->
-  <section id="live" class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-    <div class="lg:col-span-3 glass border border-white/10 overflow-hidden flex flex-col">
-      <div class="aspect-video bg-black">
-        <iframe id="twitch-embed" src="" class="w-full h-full" allowfullscreen frameborder="0"></iframe>
-      </div>
-      <div class="p-4 border-t border-white/6 bg-black/50 flex flex-col md:flex-row md:items-center gap-4">
-        <div class="flex items-center gap-3">
-          <img id="now-avatar" src="" class="w-9 h-9 border border-white/10" alt="" />
-          <div>
-            <div class="text-[9px] uppercase tracking-[0.28em] text-stone-500">Now watching</div>
-            <div id="now-name" class="font-bold text-[color:var(--gold-light)] uppercase tracking-widest"></div>
-          </div>
-        </div>
-        <div class="flex items-center gap-2 md:ml-auto w-full md:w-auto">
-          <select id="streamer-select" class="w-full md:w-56 px-3 py-2 text-xs"></select>
-        </div>
-      </div>
-    </div>
+<section id="buy" class="glass border border-white/10 p-6">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+<div class="lg:col-span-2">
+<div class="text-[10px] uppercase tracking-[0.32em] text-stone-500">The game</div>
+<div class="font-display text-2xl uppercase font-bold mt-1 gold-text">Path of Exile 2</div>
+<p class="text-[13px] text-stone-400 mt-3 leading-relaxed max-w-lg">Early Access available on the official website. Supporter packs include access and cosmetics. Join the race by following any of the featured creators during the event.</p>
+<div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="p-4 border border-white/10 bg-black/35"><div class="text-[10px] uppercase tracking-widest text-stone-400 font-bold">Supporter pack includes</div><ul class="mt-3 space-y-2 text-[12px] text-stone-300"><li class="flex gap-2"><span class="text-[color:var(--gold)]">◆</span> Early Access to Path of Exile 2</li><li class="flex gap-2"><span class="text-[color:var(--gold)]">◆</span> In-game Points</li><li class="flex gap-2"><span class="text-[color:var(--gold)]">◆</span> Extended Digital Soundtrack</li></ul></div>
+<div class="p-4 border border-white/10 bg-black/35"><div class="text-[10px] uppercase tracking-widest text-stone-400 font-bold">New to PoE2?</div><ul class="mt-3 space-y-2 text-[12px] text-stone-300"><li class="flex gap-2"><span class="text-[color:var(--gold)]">◆</span> Pick a class that matches your playstyle.</li><li class="flex gap-2"><span class="text-[color:var(--gold)]">◆</span> Follow a featured creator to learn the basics.</li><li class="flex gap-2"><span class="text-[color:var(--gold)]">◆</span> Focus on progression first, optimization later.</li></ul></div>
+</div>
+</div>
+<div class="p-6 border border-[rgba(197,163,90,0.4)] bg-black/45 text-center">
+<div class="text-[10px] uppercase tracking-widest text-stone-400">Official store</div>
+<div class="font-display text-xl font-bold uppercase tracking-widest text-[color:var(--gold-light)] mt-2">Learn more</div>
+<a href="https://pathofexile2.com" target="_blank" rel="noreferrer" class="mt-6 block bg-gradient-to-r from-[#8e734a] to-[#5d4a2d] text-black font-bold px-6 py-4 text-[11px] tracking-[0.2em] uppercase border border-[#c5a35a] hover:brightness-110 transition shadow-2xl">Visit pathofexile2.com</a>
+<div class="mt-4 text-[9px] text-stone-500 uppercase tracking-widest leading-relaxed">Activation concept. Final branding pending studio approval.</div>
+</div>
+</div>
+</section>
 
-    <div class="lg:col-span-1 glass border border-white/10 p-5 flex flex-col gap-3">
-      <div class="text-[10px] uppercase tracking-[0.28em] text-stone-400 font-bold">Creators</div>
-      <input id="creator-search" type="text" placeholder="Filter" class="px-3 py-2 text-xs w-full" />
-      <div id="creator-list" class="space-y-1 scroll-y max-h-[360px]"></div>
-    </div>
-  </section>
-
-  <!-- ===== MILESTONES ===== -->
-  <section id="milestones" class="glass border border-white/10 p-6">
-    <div class="text-[10px] uppercase tracking-[0.32em] text-stone-500">Scoring</div>
-    <div class="text-2xl uppercase tracking-widest font-bold mt-1 gold-text">Milestone Points</div>
-
-    <div class="mt-4 flex gap-2">
-      <button data-ms-phase="1" class="ms-tab active px-5 py-2 text-[10px] uppercase tracking-widest font-bold">Phase 1</button>
-      <button data-ms-phase="2" class="ms-tab px-5 py-2 text-[10px] uppercase tracking-widest font-bold">Phase 2</button>
-    </div>
-
-    <div class="mt-4 overflow-x-auto">
-      <table class="w-full text-xs border border-white/10">
-        <thead class="bg-black/60 border-b border-white/10">
-          <tr class="text-stone-500 uppercase tracking-[0.18em] text-[10px]">
-            <th class="px-4 py-3 w-28">Category</th>
-            <th class="px-4 py-3">Milestone</th>
-            <th class="px-4 py-3 text-right w-20">Points</th>
-          </tr>
-        </thead>
-        <tbody id="ms-tbody" class="divide-y divide-white/5"></tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- ===== BUY ===== -->
-  <section id="buy" class="glass border border-white/10 p-6">
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
-      <div class="lg:col-span-2">
-        <div class="text-[10px] uppercase tracking-[0.32em] text-stone-500">Official store</div>
-        <div class="text-2xl uppercase tracking-widest font-bold mt-1 gold-text">Path of Exile 2</div>
-        <p class="text-[12px] text-stone-400 mt-3 leading-relaxed max-w-lg">
-          Early Access on the official website. Supporter packs give access and cosmetics.
-        </p>
-        <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="glass p-4 border border-white/10">
-            <div class="text-[9px] uppercase tracking-widest text-stone-500">Supporter pack</div>
-            <ul class="mt-3 space-y-2 text-[11px] text-stone-300">
-              <li class="flex gap-2"><span class="text-[color:var(--gold)]">✦</span> Path of Exile 2 Early Access</li>
-              <li class="flex gap-2"><span class="text-[color:var(--gold)]">✦</span> 300 Points</li>
-              <li class="flex gap-2"><span class="text-[color:var(--gold)]">✦</span> Extended Digital Soundtrack</li>
-            </ul>
-          </div>
-          <div class="glass p-4 border border-white/10">
-            <div class="text-[9px] uppercase tracking-widest text-stone-500">Jump in fast</div>
-            <ul class="mt-3 space-y-2 text-[11px] text-stone-300">
-              <li class="flex gap-2"><span class="text-yellow-500">✦</span> Pick a class and commit.</li>
-              <li class="flex gap-2"><span class="text-yellow-500">✦</span> Watch one creator, copy early steps.</li>
-              <li class="flex gap-2"><span class="text-yellow-500">✦</span> Push acts first, optimize later.</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div class="glass p-6 border border-[rgba(197,163,90,0.28)] text-center">
-        <div class="text-[9px] uppercase tracking-widest text-stone-500">Early Access</div>
-        <div class="text-xl font-bold uppercase tracking-widest text-[color:var(--gold-light)] mt-2">Buy Now</div>
-        <a href="https://pathofexile2.com/early-access" target="_blank" rel="noreferrer"
-           class="mt-6 block bg-gradient-to-r from-[#8e734a] to-[#5d4a2d] text-black font-bold px-6 py-4 text-[11px] tracking-[0.2em] uppercase border border-[#c5a35a] hover:brightness-110 transition shadow-2xl">
-          Buy Supporter Pack
-        </a>
-        <div class="mt-4 text-[9px] text-stone-600 uppercase tracking-widest leading-relaxed">
-          Fan project. Not affiliated with GGG.
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <footer class="text-center py-8 sep">
-    <div class="text-[9px] text-stone-600 tracking-[0.5em] uppercase">© 2026 GGG — Fan project</div>
-    <div class="text-[11px] text-stone-500 uppercase tracking-widest mt-2">Crafted by <span class="text-white">Axel Arnal</span></div>
-  </footer>
+<footer class="text-center py-8 sep">
+<div class="text-[10px] text-stone-500 tracking-[0.4em] uppercase">© 2026 Grinding Gear Games — Path of Exile 2 is a trademark of GGG</div>
+<div class="text-[11px] text-stone-500 uppercase tracking-widest mt-2">Creator race concept — Level Infinite WEU</div>
+<div class="text-[11px] text-stone-500 uppercase tracking-widest mt-1">Crafted by <span class="text-stone-100">Axel Arnal</span></div>
+</footer>
 </main>
 
-<!-- ============================================================
-     SCRIPT
-============================================================ -->
 <script>
-// ═══════════════════════════════════════════════════
-// DATA — update this object to change standings
-// ═══════════════════════════════════════════════════
+const LAST_UPDATED="2026-04-03T18:00:00Z";
+const SCHEDULE={phase1Start:"2026-05-02T18:00:00Z",phase1End:"2026-05-04T22:00:00Z",phase2Start:"2026-05-09T18:00:00Z",phase2End:"2026-05-11T22:00:00Z"};
+const PHASE={1:{name:"Phase 1",subtitle:"Launch Weekend",desc:"Early milestones: Ascendancy unlocks, key boss clears, level tiers.",milestones:[
+{id:"lvl10",label:"Reach Level 10",pts:100,cat:"Progression"},{id:"lvl15",label:"Reach Level 15",pts:150,cat:"Progression"},
+{id:"lvl20",label:"Reach Level 20",pts:200,cat:"Progression"},{id:"lvl25",label:"Reach Level 25",pts:250,cat:"Progression"},
+{id:"act1boss",label:"Clear Act 1 Final Boss",pts:400,cat:"Progression"},{id:"raregear",label:"Full Rare gear set (all main slots)",pts:250,cat:"Build"},
+{id:"weaponupg",label:"Upgrade weapon twice during run",pts:150,cat:"Build"},{id:"gemlinks",label:"Unlock 2 support gem links",pts:200,cat:"Build"},
+{id:"playstyle",label:"Defined playstyle held for 60 min",pts:150,cat:"Build"},{id:"nodeaths60",label:"No death for 60 minutes",pts:200,cat:"Challenge"},
+{id:"nodeath_act1",label:"Clear Act 1 boss with 0 deaths",pts:300,cat:"Challenge"},{id:"chatvote",label:"Chat Build Vote x3",pts:150,cat:"Community"},
+{id:"viewerch",label:"Viewer Challenge completed",pts:200,cat:"Community"},{id:"firstunique",label:"First Unique drop shown live",pts:150,cat:"Bonus"},
+{id:"uniqueused",label:"Unique drop used for 30 min",pts:200,cat:"Bonus"}]},
+2:{name:"Phase 2",subtitle:"Endgame Weekend",desc:"Atlas mastery: endgame overhaul and Atlas specialization showcase.",milestones:[
+{id:"atlas_in",label:"Enter the Atlas",pts:300,cat:"Atlas"},{id:"atlas_10",label:"Complete 10 Atlas maps",pts:400,cat:"Atlas"},
+{id:"atlas_spec",label:"Unlock Atlas Specialization",pts:500,cat:"Atlas"},{id:"atlas_pin",label:"Defeat a Pinnacle Atlas Boss",pts:800,cat:"Atlas"},
+{id:"e_85",label:"Reach Level 85",pts:300,cat:"Progression"},{id:"e_90",label:"Reach Level 90",pts:500,cat:"Progression"},
+{id:"e_div10",label:"Accumulate 10 Divine Orbs",pts:400,cat:"Economy"},{id:"e_craft",label:"Craft fully optimized endgame piece",pts:350,cat:"Build"},
+{id:"e_wave20",label:"Complete Wave 20+ Endgame mode",pts:450,cat:"Challenge"},{id:"e_group",label:"Host a community group run live",pts:300,cat:"Community"},
+{id:"e_guide",label:"Post a build guide or recap video",pts:250,cat:"Bonus"}]}};
+const GEO={FR:"🇫🇷",DE:"🇩🇪",UK:"🇬🇧",ES:"🇪🇸"};
+const KOLS=[
+{name:"Jessirocks",twitch:"jessirocks",geo:"DE",cls:"Druid",lvl:72,live:false,p1:{pts:2900,done:["lvl10","lvl15","lvl20","lvl25","act1boss","raregear","weaponupg","gemlinks","playstyle","nodeaths60","nodeath_act1","chatvote","viewerch","firstunique","uniqueused"]},p2:{pts:1200,done:["atlas_in","atlas_10","e_85","e_div10"]}},
+{name:"Alderiate",twitch:"alderiate",geo:"FR",cls:"Warrior",lvl:70,live:true,p1:{pts:2750,done:["lvl10","lvl15","lvl20","lvl25","act1boss","raregear","weaponupg","gemlinks","nodeaths60","firstunique","uniqueused","chatvote","viewerch"]},p2:{pts:1550,done:["atlas_in","atlas_10","atlas_spec","e_85","e_div10","e_group"]}},
+{name:"metashi12",twitch:"metashi12",geo:"DE",cls:"Monk",lvl:89,live:true,p1:{pts:2600,done:["lvl10","lvl15","lvl20","lvl25","act1boss","raregear","weaponupg","gemlinks","nodeaths60","firstunique","chatvote"]},p2:{pts:900,done:["atlas_in","atlas_10","e_85"]}},
+{name:"Zizaran",twitch:"zizaran",geo:"UK",cls:"Mercenary",lvl:80,live:false,p1:{pts:2400,done:["lvl10","lvl15","lvl20","lvl25","act1boss","raregear","weaponupg","gemlinks","playstyle","nodeaths60","firstunique","chatvote"]},p2:{pts:950,done:["atlas_in","atlas_10","atlas_spec","e_85"]}},
+{name:"Bonjwa Gaming",twitch:"bonjwa",geo:"DE",cls:"Huntress",lvl:82,live:false,p1:{pts:2100,done:["lvl10","lvl15","lvl20","lvl25","act1boss","raregear","weaponupg","gemlinks","firstunique"]},p2:{pts:600,done:["atlas_in","atlas_10"]}},
+{name:"NoWay4u_Sir",twitch:"noway4u_sir",geo:"DE",cls:"Mercenary",lvl:80,live:false,p1:{pts:2000,done:["lvl10","lvl15","lvl20","lvl25","act1boss","raregear","weaponupg","firstunique","chatvote"]},p2:{pts:800,done:["atlas_in","atlas_10","e_85"]}},
+{name:"Wankil Studio",twitch:"wankilstudio",geo:"FR",cls:"Ranger",lvl:68,live:true,p1:{pts:1650,done:["lvl10","lvl15","lvl20","lvl25","raregear","weaponupg","chatvote","viewerch"]},p2:{pts:450,done:["atlas_in"]}},
+{name:"ZeratoR",twitch:"zerator",geo:"FR",cls:"Monk",lvl:65,live:false,p1:{pts:1500,done:["lvl10","lvl15","lvl20","raregear","weaponupg","gemlinks","firstunique"]},p2:{pts:400,done:["atlas_in"]}},
+{name:"Revenant",twitch:"revenant",geo:"UK",cls:"Mercenary",lvl:62,live:false,p1:{pts:1350,done:["lvl10","lvl15","lvl20","raregear","weaponupg","firstunique"]},p2:{pts:300,done:["atlas_in"]}},
+{name:"Ghazzytv",twitch:"ghazzytv",geo:"UK",cls:"Huntress",lvl:60,live:false,p1:{pts:1200,done:["lvl10","lvl15","lvl20","raregear","weaponupg"]},p2:{pts:250,done:["atlas_in"]}},
+{name:"Maxim",twitch:"maxim",geo:"ES",cls:"Witch",lvl:58,live:false,p1:{pts:1100,done:["lvl10","lvl15","lvl20","raregear","firstunique"]},p2:{pts:200,done:["atlas_in"]}}];
+const FEED=[
+{t:"18:42",creator:"Alderiate",geo:"FR",event:"Cleared Act 1 Final Boss",pts:400,phase:1},
+{t:"18:28",creator:"metashi12",geo:"DE",event:"Reached Level 25",pts:250,phase:1},
+{t:"18:11",creator:"Jessirocks",geo:"DE",event:"Unique drop used for 30 min",pts:200,phase:1},
+{t:"17:55",creator:"Zizaran",geo:"UK",event:"Unlocked Atlas Specialization",pts:500,phase:2},
+{t:"17:32",creator:"Alderiate",geo:"FR",event:"Chat Build Vote x3",pts:150,phase:1},
+{t:"17:10",creator:"Wankil Studio",geo:"FR",event:"Viewer Challenge completed",pts:200,phase:1},
+{t:"16:48",creator:"Bonjwa Gaming",geo:"DE",event:"Full Rare gear set",pts:250,phase:1},
+{t:"16:22",creator:"NoWay4u_Sir",geo:"DE",event:"First Unique drop shown",pts:150,phase:1},
+{t:"15:59",creator:"Jessirocks",geo:"DE",event:"Cleared Act 1 boss — 0 deaths",pts:300,phase:1},
+{t:"15:41",creator:"metashi12",geo:"DE",event:"Entered the Atlas",pts:300,phase:2},
+{t:"15:18",creator:"Zizaran",geo:"UK",event:"Reached Level 85",pts:300,phase:2}];
 
-const LAST_UPDATED = "2026-04-03T18:00:00Z";
-
-const PHASE = {
-  1: {
-    name: "Phase 1", subtitle: "Launch Weekend",
-    desc: "Early milestones: Ascendancy unlocks, key boss clears, level tiers.",
-    milestones: [
-      { id: "lvl10",        label: "Reach Level 10",                        pts: 100,  cat: "Progression" },
-      { id: "lvl15",        label: "Reach Level 15",                        pts: 150,  cat: "Progression" },
-      { id: "lvl20",        label: "Reach Level 20",                        pts: 200,  cat: "Progression" },
-      { id: "lvl25",        label: "Reach Level 25",                        pts: 250,  cat: "Progression" },
-      { id: "act1boss",     label: "Clear Act 1 Final Boss",                pts: 400,  cat: "Progression" },
-      { id: "raregear",     label: "Full Rare gear set (all main slots)",   pts: 250,  cat: "Build"       },
-      { id: "weaponupg",    label: "Upgrade weapon twice during run",       pts: 150,  cat: "Build"       },
-      { id: "gemlinks",     label: "Unlock 2 support gem links",            pts: 200,  cat: "Build"       },
-      { id: "playstyle",    label: "Defined playstyle held for 60 min",     pts: 150,  cat: "Build"       },
-      { id: "nodeaths60",   label: "No death for 60 minutes",               pts: 200,  cat: "Challenge"   },
-      { id: "nodeath_act1", label: "Clear Act 1 boss with 0 deaths",        pts: 300,  cat: "Challenge"   },
-      { id: "chatvote",     label: "Chat Build Vote x3",                    pts: 150,  cat: "Community"   },
-      { id: "viewerch",     label: "Viewer Challenge completed",            pts: 200,  cat: "Community"   },
-      { id: "firstunique",  label: "First Unique drop shown live",          pts: 150,  cat: "Bonus"       },
-      { id: "uniqueused",   label: "Unique drop used for 30 min",           pts: 200,  cat: "Bonus"       },
-    ]
-  },
-  2: {
-    name: "Phase 2", subtitle: "Endgame Weekend",
-    desc: "Atlas mastery: endgame overhaul and Atlas specialization showcase.",
-    milestones: [
-      { id: "atlas_in",   label: "Enter the Atlas",                      pts: 300,  cat: "Atlas"       },
-      { id: "atlas_10",   label: "Complete 10 Atlas maps",               pts: 400,  cat: "Atlas"       },
-      { id: "atlas_spec", label: "Unlock Atlas Specialization",          pts: 500,  cat: "Atlas"       },
-      { id: "atlas_pin",  label: "Defeat a Pinnacle Atlas Boss",         pts: 800,  cat: "Atlas"       },
-      { id: "e_85",       label: "Reach Level 85",                       pts: 300,  cat: "Progression" },
-      { id: "e_90",       label: "Reach Level 90",                       pts: 500,  cat: "Progression" },
-      { id: "e_div10",    label: "Accumulate 10 Divine Orbs",            pts: 400,  cat: "Economy"     },
-      { id: "e_craft",    label: "Craft fully optimized endgame piece",  pts: 350,  cat: "Build"       },
-      { id: "e_wave20",   label: "Complete Wave 20+ Endgame mode",       pts: 450,  cat: "Challenge"   },
-      { id: "e_group",    label: "Host a community group run live",      pts: 300,  cat: "Community"   },
-      { id: "e_guide",    label: "Post a build guide or recap video",    pts: 250,  cat: "Bonus"       },
-    ]
-  }
+// Build guides — curated from Mobalytics PoE 2 (0.4 TLotD league).
+// Source: https://mobalytics.gg/poe-2/builds
+const BUILDS={
+1:[
+{cls:"Druid",asc:"Oracle",name:"Plants Oracle League Starter",author:"DEADRABB1T",difficulty:"Easy",tag:"League starter",notes:"Full 1-to-endgame plant-based Oracle. Forgiving curve, solid clear speed from the first zones.",url:"https://mobalytics.gg/poe-2/builds"},
+{cls:"Druid",asc:"Shaman",name:"Shaman BEAR Druid",author:"Ronarray",difficulty:"Easy",tag:"Speed leveling",notes:"Bear-form melee Shaman. Tanky, straightforward, one of the most popular starters of the league.",url:"https://mobalytics.gg/poe-2/builds"},
+{cls:"Druid",asc:"Oracle",name:"Woolie's WOLFMAN Druid",author:"Woolie",difficulty:"Medium",tag:"Starter / hybrid",notes:"Werewolf shapeshift leveling. Agile melee with summoned wolves, strong identity for streaming.",url:"https://mobalytics.gg/poe-2/builds"}
+],
+2:[
+{cls:"Ranger",asc:"Pathfinder",name:"Fubgun Poisonburst Pathfinder",author:"Fubgun",difficulty:"Medium",tag:"Atlas farmer",notes:"Poison-chain clear-speed machine. Ideal for high-tier mapping and Atlas farming.",url:"https://mobalytics.gg/poe-2/builds"},
+{cls:"Huntress",asc:"Ritualist",name:"Infinite Frenzy Glacial Lance",author:"MisoxShiru",difficulty:"Hard",tag:"High-ceiling endgame",notes:"Frenzy-stacking Glacial Lance. Fast, flashy, gear-demanding. Strong content for streaming.",url:"https://mobalytics.gg/poe-2/builds"},
+{cls:"Mercenary",asc:"Witch Hunter",name:"Pohx's Permafrost SSF",author:"Pohx",difficulty:"Hard",tag:"SSF endgame",notes:"Permafreeze Witch Hunter optimized for SSF. Low gear dependency, proven endgame viability.",url:"https://mobalytics.gg/poe-2/builds"}
+]
 };
 
-const GEO = { FR: "🇫🇷", DE: "🇩🇪", UK: "🇬🇧", ES: "🇪🇸" };
-
-const KOLS = [
-  { name: "Jessirocks",    twitch: "jessirocks",    geo: "DE", cls: "Druid",     lvl: 72, live: false,
-    p1: { pts: 2900, done: ["lvl10","lvl15","lvl20","lvl25","act1boss","raregear","weaponupg","gemlinks","playstyle","nodeaths60","nodeath_act1","chatvote","viewerch","firstunique","uniqueused"] },
-    p2: { pts: 1200, done: ["atlas_in","atlas_10","e_85","e_div10"] } },
-  { name: "Alderiate",     twitch: "alderiate",     geo: "FR", cls: "Warrior",   lvl: 70, live: true,
-    p1: { pts: 2750, done: ["lvl10","lvl15","lvl20","lvl25","act1boss","raregear","weaponupg","gemlinks","nodeaths60","firstunique","uniqueused","chatvote","viewerch"] },
-    p2: { pts: 1550, done: ["atlas_in","atlas_10","atlas_spec","e_85","e_div10","e_group"] } },
-  { name: "metashi12",     twitch: "metashi12",     geo: "DE", cls: "Monk",      lvl: 89, live: true,
-    p1: { pts: 2600, done: ["lvl10","lvl15","lvl20","lvl25","act1boss","raregear","weaponupg","gemlinks","nodeaths60","firstunique","chatvote"] },
-    p2: { pts: 900,  done: ["atlas_in","atlas_10","e_85"] } },
-  { name: "Zizaran",       twitch: "zizaran",       geo: "UK", cls: "Mercenary", lvl: 80, live: false,
-    p1: { pts: 2400, done: ["lvl10","lvl15","lvl20","lvl25","act1boss","raregear","weaponupg","gemlinks","playstyle","nodeaths60","firstunique","chatvote"] },
-    p2: { pts: 950,  done: ["atlas_in","atlas_10","atlas_spec","e_85"] } },
-  { name: "Bonjwa Gaming", twitch: "bonjwa",        geo: "DE", cls: "Huntress",  lvl: 82, live: false,
-    p1: { pts: 2100, done: ["lvl10","lvl15","lvl20","lvl25","act1boss","raregear","weaponupg","gemlinks","firstunique"] },
-    p2: { pts: 600,  done: ["atlas_in","atlas_10"] } },
-  { name: "NoWay4u_Sir",   twitch: "noway4u_sir",   geo: "DE", cls: "Mercenary", lvl: 80, live: false,
-    p1: { pts: 2000, done: ["lvl10","lvl15","lvl20","lvl25","act1boss","raregear","weaponupg","firstunique","chatvote"] },
-    p2: { pts: 800,  done: ["atlas_in","atlas_10","e_85"] } },
-  { name: "Wankil Studio", twitch: "wankilstudio",  geo: "FR", cls: "Ranger",    lvl: 68, live: true,
-    p1: { pts: 1650, done: ["lvl10","lvl15","lvl20","lvl25","raregear","weaponupg","chatvote","viewerch"] },
-    p2: { pts: 450,  done: ["atlas_in"] } },
-  { name: "ZeratoR",       twitch: "zerator",       geo: "FR", cls: "Monk",      lvl: 65, live: false,
-    p1: { pts: 1500, done: ["lvl10","lvl15","lvl20","raregear","weaponupg","gemlinks","firstunique"] },
-    p2: { pts: 400,  done: ["atlas_in"] } },
-  { name: "Revenant",      twitch: "revenant",      geo: "UK", cls: "Mercenary", lvl: 62, live: false,
-    p1: { pts: 1350, done: ["lvl10","lvl15","lvl20","raregear","weaponupg","firstunique"] },
-    p2: { pts: 300,  done: ["atlas_in"] } },
-  { name: "Ghazzytv",      twitch: "ghazzytv",      geo: "UK", cls: "Huntress",  lvl: 60, live: false,
-    p1: { pts: 1200, done: ["lvl10","lvl15","lvl20","raregear","weaponupg"] },
-    p2: { pts: 250,  done: ["atlas_in"] } },
-  { name: "Maxim",         twitch: "maxim",         geo: "DE", cls: "Witch",     lvl: 58, live: false,
-    p1: { pts: 1100, done: ["lvl10","lvl15","lvl20","raregear","firstunique"] },
-    p2: { pts: 200,  done: ["atlas_in"] } },
+const CHAT=[
+{t:"Global 1: Still sane, Exile?",c:"c-global"},
+{t:"Global 1: Anyone running Act bosses right now?",c:"c-global"},
+{t:"Global 1: First time PoE2. Any tips welcome.",c:"c-global"},
+{t:"Global 1: Chat, is this build cooked?",c:"c-global"},
+{t:"Global 1: Loot gods are testing my patience today.",c:"c-global"},
+{t:"Global 1: Who needs resistances anyway.",c:"c-global"},
+{t:"Global 1: That telegraphed slam is something else.",c:"c-global"},
+{t:"Global 1: GGs to everyone pushing the race!",c:"c-global"},
+{t:"Global 1: Atlas unlocks this weekend, let's go.",c:"c-global"},
+{t:"Trade 1: WTS Chaos, fast trade.",c:"c-trade"},
+{t:"Trade 1: WTB upgrades, link stats pls.",c:"c-trade"},
+{t:"Trade 1: WTS Divine, no lowball.",c:"c-trade"},
+{t:"Trade 1: WTB Exalted, offering Chaos.",c:"c-trade"},
+{t:"Info: A strongbox has been opened.",c:"c-info"},
+{t:"Info: A rare monster has been slain.",c:"c-info"},
+{t:"Info: A portal has been created.",c:"c-info"},
+{t:"Info: New area reached.",c:"c-info"},
+{t:"System: Creator race standings updated.",c:"c-system"},
+{t:"System: Phase 2 unlocks soon. Stay tuned.",c:"c-system"},
+{t:"System: New milestone achieved on the leaderboard.",c:"c-system"}
 ];
 
-// ═══════════════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════════════
-const S = {
-  phase:    "total",
-  geo:      "ALL",
-  search:   "",
-  streamer: "alderiate",
-  msPhase:  1,
-  mir: 0,
-  div: 0
-};
+const S={phase:"total",geo:"ALL",search:"",streamer:"alderiate",msPhase:1,buildPhase:1};
+const fmt=n=>new Intl.NumberFormat("en-US").format(n);
+function kolPts(k,p){if(p==="1"||p===1)return k.p1.pts;if(p==="2"||p===2)return k.p2.pts;return k.p1.pts+k.p2.pts}
+function totalDonePct(k){const t=PHASE[1].milestones.length+PHASE[2].milestones.length;const d=k.p1.done.length+k.p2.done.length;return Math.round(d/t*100)}
+function filteredSorted(){const q=S.search.toLowerCase();return[...KOLS].filter(k=>S.geo==="ALL"||k.geo===S.geo).filter(k=>!q||k.name.toLowerCase().includes(q)||k.twitch.toLowerCase().includes(q)).sort((a,b)=>kolPts(b,S.phase)-kolPts(a,S.phase))}
+function twitchUrl(c){const h=window.location.hostname||"localhost";return`https://player.twitch.tv/?channel=${encodeURIComponent(c)}&parent=${encodeURIComponent(h)}`}
+function avatar(s){return`https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(s)}&backgroundColor=0a0a0a`}
 
-// ═══════════════════════════════════════════════════
-// HELPERS
-// ═══════════════════════════════════════════════════
-const fmt = n => new Intl.NumberFormat("fr-FR").format(n);
+function activePhase(){const n=Date.now();const p1s=Date.parse(SCHEDULE.phase1Start),p1e=Date.parse(SCHEDULE.phase1End),p2s=Date.parse(SCHEDULE.phase2Start),p2e=Date.parse(SCHEDULE.phase2End);
+if(n<p1s)return{target:p1s,label:"Phase 1 — Launch Weekend",headline:"Race starts in",sub:"Early milestones: Ascendancy, bosses, level tiers."};
+if(n<p1e)return{target:p1e,label:"Phase 1 — Launch Weekend",headline:"Phase 1 ends in",sub:"Early milestones: Ascendancy, bosses, level tiers."};
+if(n<p2s)return{target:p2s,label:"Intermission",headline:"Phase 2 starts in",sub:"Endgame & Atlas race unlocks next weekend."};
+if(n<p2e)return{target:p2e,label:"Phase 2 — Endgame Weekend",headline:"Phase 2 ends in",sub:"Atlas mastery and endgame objectives."};
+return{target:null,label:"Race complete",headline:"Race complete",sub:"Final standings below."}}
+function renderCountdown(){const ph=activePhase();document.getElementById("cd-phase-label").textContent=ph.label;document.getElementById("cd-headline").textContent=ph.headline;document.getElementById("cd-sub").textContent=ph.sub;const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=String(v).padStart(2,"0")};if(!ph.target){["cd-d","cd-h","cd-m","cd-s"].forEach(id=>set(id,0));return}let d=Math.max(0,ph.target-Date.now());const dd=Math.floor(d/86400000);d-=dd*86400000;const hh=Math.floor(d/3600000);d-=hh*3600000;const mm=Math.floor(d/60000);d-=mm*60000;const ss=Math.floor(d/1000);set("cd-d",dd);set("cd-h",hh);set("cd-m",mm);set("cd-s",ss)}
 
-function kolPts(k, phase) {
-  if (phase === "1" || phase === 1) return k.p1.pts;
-  if (phase === "2" || phase === 2) return k.p2.pts;
-  return k.p1.pts + k.p2.pts;
-}
+function renderLeaderboard(){const list=filteredSorted();const tbody=document.getElementById("lb-body");if(!tbody)return;
+const thP1=document.getElementById("th-p1"),thP2=document.getElementById("th-p2"),thMain=document.getElementById("th-main");
+if(S.phase==="1"){thMain.textContent="Phase 1";thP1.textContent="";thP2.textContent="P2"}
+else if(S.phase==="2"){thMain.textContent="Phase 2";thP1.textContent="P1";thP2.textContent=""}
+else{thMain.textContent="Total";thP1.textContent="P1";thP2.textContent="P2"}
+if(list.length>0){document.getElementById("champion-bar").classList.remove("hidden");document.getElementById("champion-name").textContent=list[0].name;document.getElementById("champion-pts").textContent=fmt(kolPts(list[0],S.phase))+" pts"}
+document.getElementById("lb-meta").textContent=`${list.length} creator${list.length!==1?"s":""} shown`;
+tbody.innerHTML=list.map((k,i)=>{const rank=i+1;const rankCls=rank===1?"rank-1":rank===2?"rank-2":rank===3?"rank-3":"rank-n";const rankGlyph=rank<=3?["①","②","③"][rank-1]:rank;const pct=totalDonePct(k);const main=kolPts(k,S.phase);const p1d=S.phase==="1"?"":fmt(k.p1.pts);const p2d=S.phase==="2"?"":fmt(k.p2.pts);const pfill=S.phase==="2"?"prog-fill-cyan":"prog-fill-gold";
+return`<tr class="kol-row border-b border-white/5 cursor-pointer ${rank===1?"leader":""}" data-twitch="${k.twitch}">
+<td class="px-4 py-3 text-center font-display font-black text-lg ${rankCls}">${rankGlyph}</td>
+<td class="px-4 py-3"><div class="flex items-center gap-3"><div class="relative shrink-0"><img src="${avatar(k.name)}" class="w-8 h-8 border border-white/10" alt="" />${k.live?`<span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-green-400 rounded-full border border-black live-dot"></span>`:""}</div><div><div class="font-semibold text-stone-100 flex items-center gap-1.5">${k.name}<span class="text-sm">${GEO[k.geo]||""}</span></div><div class="text-[10px] text-stone-500 uppercase tracking-widest">${k.twitch}</div></div></div></td>
+<td class="px-4 py-3 text-center text-stone-300 hidden md:table-cell">${k.cls}</td>
+<td class="px-4 py-3 text-center font-semibold text-stone-300 hidden md:table-cell">${k.lvl}</td>
+<td class="px-4 py-3 text-center text-stone-400 hidden lg:table-cell">${p1d}</td>
+<td class="px-4 py-3 text-center text-stone-400 hidden lg:table-cell">${p2d}</td>
+<td class="px-4 py-3 text-right font-display font-bold" style="color:var(--gold-light);text-shadow:0 0 12px rgba(197,163,90,0.35)">${fmt(main)}</td>
+<td class="px-4 py-3 hidden md:table-cell"><div class="flex items-center gap-2"><div class="flex-1 h-1.5 prog-track"><div class="h-full ${pfill}" style="width:${pct}%"></div></div><span class="text-[9px] text-stone-500 shrink-0">${pct}%</span></div></td>
+<td class="px-4 py-3 text-center"><span class="expand-arrow text-stone-500 text-xs">▾</span></td>
+</tr>
+<tr class="border-b border-white/5"><td colspan="9" class="p-0"><div class="expand-panel" id="panel-${k.twitch}">${buildPanel(k)}</div></td></tr>`}).join("")}
 
-function totalDonePct(k) {
-  const total = PHASE[1].milestones.length + PHASE[2].milestones.length;
-  const done  = k.p1.done.length + k.p2.done.length;
-  return Math.round((done / total) * 100);
-}
+function buildPanel(k){function grid(ms,done,pn){const p=PHASE[pn];const hc=pn===2?"text-cyan-300":"text-[color:var(--gold)]";return`<div><div class="text-[9px] uppercase tracking-[0.28em] font-bold mb-3 ${hc}">${p.name} — ${p.subtitle}<span class="text-stone-500 font-normal ml-2">${done.length}/${ms.length} done</span></div><div class="grid grid-cols-1 md:grid-cols-2 gap-y-1 gap-x-6">${ms.map(m=>{const ok=done.includes(m.id);return`<div class="flex items-center gap-2 ${ok?"text-stone-200":"text-stone-500"}"><span class="shrink-0 text-xs ${ok?"text-[color:var(--gold)]":""}">${ok?"◆":"·"}</span><span class="text-[11px] flex-1">${m.label}</span><span class="text-[11px] font-semibold shrink-0 ${ok?"text-[color:var(--gold-light)]":"opacity-30"}">${m.pts}</span></div>`}).join("")}</div></div>`}
+const tm=PHASE[1].milestones.length+PHASE[2].milestones.length,dm=k.p1.done.length+k.p2.done.length,tp=k.p1.pts+k.p2.pts;
+return`<div class="px-6 md:px-10 py-6 bg-black/55 border-t border-white/8 grid grid-cols-1 lg:grid-cols-2 gap-8">${grid(PHASE[1].milestones,k.p1.done,1)}${grid(PHASE[2].milestones,k.p2.done,2)}<div class="lg:col-span-2 sep pt-4 flex flex-col md:flex-row md:items-center gap-3 md:justify-between"><div class="text-[11px] text-stone-400 uppercase tracking-widest">${dm} / ${tm} milestones &nbsp;·&nbsp; Total: <span class="text-[color:var(--gold-light)] font-bold">${fmt(tp)} pts</span></div><button class="watch-btn glass px-5 py-2 text-[10px] uppercase tracking-widest text-stone-100 hover:border-[rgba(197,163,90,0.55)] transition self-start md:self-auto" data-twitch="${k.twitch}">Watch ${k.name}</button></div></div>`}
 
-function filteredSorted() {
-  const q = S.search.toLowerCase();
-  return [...KOLS]
-    .filter(k => S.geo === "ALL" || k.geo === S.geo)
-    .filter(k => !q || k.name.toLowerCase().includes(q) || k.twitch.toLowerCase().includes(q))
-    .sort((a, b) => kolPts(b, S.phase) - kolPts(a, S.phase));
-}
+function renderFeed(){const el=document.getElementById("feed-list");if(!el)return;el.innerHTML=FEED.map(f=>`<div class="feed-item ${f.phase===2?"p2":""} pl-3 py-1.5"><div class="flex items-center justify-between gap-2"><div class="text-[10px] text-stone-500 uppercase tracking-widest">${f.t}</div><div class="text-[10px] font-semibold ${f.phase===2?"text-cyan-300":"text-[color:var(--gold-light)]"}">+${f.pts} pts</div></div><div class="text-[12px] text-stone-100 font-semibold mt-0.5">${f.creator} <span class="text-xs">${GEO[f.geo]||""}</span></div><div class="text-[11px] text-stone-400">${f.event}</div></div>`).join("")}
 
-function twitchUrl(ch) {
-  const host = window.location.hostname || "localhost";
-  return `https://player.twitch.tv/?channel=${encodeURIComponent(ch)}&parent=${encodeURIComponent(host)}`;
-}
+function renderCreatorList(){const q=(document.getElementById("creator-search")?.value||"").toLowerCase();const list=[...KOLS].sort((a,b)=>a.name.localeCompare(b.name,"en")).filter(k=>!q||k.name.toLowerCase().includes(q)||k.twitch.toLowerCase().includes(q));const el=document.getElementById("creator-list");if(!el)return;el.innerHTML=list.map(k=>`<button class="text-left px-3 py-2 border border-white/8 hover:border-[rgba(197,163,90,0.4)] transition ${k.twitch===S.streamer?"border-[rgba(197,163,90,0.4)] bg-[rgba(197,163,90,0.08)]":""}" data-twitch="${k.twitch}"><div class="flex items-center justify-between gap-2"><div class="flex items-center gap-2 min-w-0">${k.live?`<span class="w-1.5 h-1.5 rounded-full bg-green-400 live-dot shrink-0"></span>`:`<span class="w-1.5 h-1.5 rounded-full bg-stone-700 shrink-0"></span>`}<span class="text-stone-100 text-[11px] font-semibold truncate">${k.name}</span></div><span class="shrink-0">${GEO[k.geo]||""}</span></div><div class="text-[10px] text-stone-500 uppercase tracking-widest mt-0.5 pl-3.5">${k.cls} · Lv${k.lvl}</div></button>`).join("")||`<div class="text-[11px] text-stone-500 col-span-full">No match.</div>`}
 
-function avatar(seed) {
-  return `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(seed)}&backgroundColor=000000`;
-}
+function renderMilestoneTable(){const ms=PHASE[S.msPhase].milestones;const tbody=document.getElementById("ms-tbody");if(!tbody)return;tbody.innerHTML=ms.map(m=>`<tr class="border-b border-white/5 hover:bg-white/3 transition"><td class="px-4 py-3 text-[10px] font-bold uppercase tracking-widest cat-${m.cat}">${m.cat}</td><td class="px-4 py-3 text-stone-200">${m.label}</td><td class="px-4 py-3 text-right font-display font-bold" style="color:var(--gold-light)">${m.pts}</td></tr>`).join("")}
 
-// ═══════════════════════════════════════════════════
-// LEADERBOARD
-// ═══════════════════════════════════════════════════
-function renderLeaderboard() {
-  const list = filteredSorted();
-  const tbody = document.getElementById("lb-body");
-  if (!tbody) return;
+function renderBuilds(){const grid=document.getElementById("builds-grid");if(!grid)return;const list=BUILDS[S.buildPhase]||[];const diffColor=d=>d==="Easy"?"text-green-400":d==="Medium"?"text-yellow-400":d==="Hard"?"text-red-400":"text-stone-400";if(list.length===0){grid.innerHTML=`<div class="md:col-span-3 p-8 border border-dashed border-white/15 bg-black/25 text-center"><div class="text-[11px] text-stone-500 uppercase tracking-widest">Builds coming soon</div><div class="text-[12px] text-stone-400 mt-2">Creator picks will be published as the race unlocks.</div></div>`;return}grid.innerHTML=list.map(b=>`<div class="p-5 border border-white/10 bg-black/35 flex flex-col gap-2"><div class="flex items-center justify-between"><div class="text-[10px] uppercase tracking-widest text-[color:var(--gold-light)] font-bold">${b.cls}${b.asc?` · ${b.asc}`:""}</div><div class="text-[9px] uppercase tracking-widest ${diffColor(b.difficulty)} font-bold">${b.difficulty}</div></div><div class="font-display text-base uppercase font-bold text-stone-100 mt-1 leading-tight">${b.name}</div><div class="text-[10px] text-stone-500 uppercase tracking-widest">by ${b.author} · ${b.tag}</div><p class="text-[12px] text-stone-400 leading-relaxed mt-2 flex-1">${b.notes}</p>${b.url?`<a href="${b.url}" target="_blank" rel="noreferrer" class="mt-3 inline-block text-[10px] uppercase tracking-widest text-[color:var(--gold-light)] hover:text-white transition border border-white/10 px-3 py-1.5 text-center">View build →</a>`:""}</div>`).join("")}
 
-  // Headers
-  const thP1   = document.getElementById("th-p1");
-  const thP2   = document.getElementById("th-p2");
-  const thMain = document.getElementById("th-main");
-  if (S.phase === "1") {
-    if (thMain) thMain.textContent = "Phase 1";
-    if (thP1)   thP1.textContent   = "";
-    if (thP2)   thP2.textContent   = "P2";
-  } else if (S.phase === "2") {
-    if (thMain) thMain.textContent = "Phase 2";
-    if (thP1)   thP1.textContent   = "P1";
-    if (thP2)   thP2.textContent   = "";
-  } else {
-    if (thMain) thMain.textContent = "Total";
-    if (thP1)   thP1.textContent   = "P1";
-    if (thP2)   thP2.textContent   = "P2";
-  }
+function addChatMsg(){const log=document.getElementById("chatLog");if(!log)return;const m=CHAT[Math.floor(Math.random()*CHAT.length)];const d=document.createElement("div");d.className=`log-msg ${m.c}`;d.textContent=m.t;log.prepend(d);if(log.childNodes.length>6)log.removeChild(log.lastChild);setTimeout(addChatMsg,Math.random()*5000+3500)}
 
-  // Champion bar
-  if (list.length > 0) {
-    const bar = document.getElementById("champion-bar");
-    if (bar) bar.classList.remove("hidden");
-    const cn = document.getElementById("champion-name");
-    const cp = document.getElementById("champion-pts");
-    if (cn) cn.textContent = list[0].name;
-    if (cp) cp.textContent = fmt(kolPts(list[0], S.phase)) + " pts";
-  }
+function setStream(t){S.streamer=t;const e=document.getElementById("twitch-embed");if(e)e.src=twitchUrl(t);const n=document.getElementById("now-name");if(n)n.textContent=t;const a=document.getElementById("now-avatar");if(a)a.src=avatar(t);const s=document.getElementById("streamer-select");if(s)s.value=t;renderCreatorList()}
 
-  // Meta
-  const meta = document.getElementById("lb-meta");
-  if (meta) meta.textContent = `${list.length} creator${list.length !== 1 ? "s" : ""} shown`;
+function toggleExpand(t){const p=document.getElementById(`panel-${t}`);if(!p)return;const r=document.querySelector(`tr.kol-row[data-twitch="${t}"]`);const a=r?.querySelector(".expand-arrow");const o=p.classList.contains("open");document.querySelectorAll(".expand-panel").forEach(x=>x.classList.remove("open"));document.querySelectorAll(".expand-arrow").forEach(x=>x.classList.remove("open"));if(!o){p.classList.add("open");if(a)a.classList.add("open")}}
 
-  // Rows
-  tbody.innerHTML = list.map((k, i) => {
-    const rank = i + 1;
-    const rankCls  = rank === 1 ? "rank-1" : rank === 2 ? "rank-2" : rank === 3 ? "rank-3" : "rank-n";
-    const rankGlyph = rank <= 3 ? ["🥇","🥈","🥉"][rank-1] : rank;
-    const pct  = totalDonePct(k);
-    const main = kolPts(k, S.phase);
-    const p1d  = S.phase === "1" ? "" : fmt(k.p1.pts);
-    const p2d  = S.phase === "2" ? "" : fmt(k.p2.pts);
-    const pfill = S.phase === "2" ? "prog-fill-cyan" : "prog-fill-gold";
+function initEmbers(){const c=document.getElementById("embers");if(!c)return;const ctx=c.getContext("2d");function r(){c.width=innerWidth;c.height=innerHeight}addEventListener("resize",r);r();class E{constructor(){this.reset();this.y=Math.random()*c.height}reset(){this.x=Math.random()*c.width;this.y=c.height+8;this.r=Math.random()*1.6+.3;this.vy=Math.random()*.45+.12;this.vx=(Math.random()-.5)*.22;this.a=Math.random()*.5+.1}update(){this.y-=this.vy;this.x+=this.vx;this.a-=.001;if(this.y<-8||this.a<=0)this.reset()}draw(){ctx.fillStyle=`rgba(255,145,0,${this.a})`;ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,Math.PI*2);ctx.fill()}}const embers=Array.from({length:45},()=>new E());(function tick(){ctx.clearRect(0,0,c.width,c.height);embers.forEach(e=>{e.update();e.draw()});requestAnimationFrame(tick)})()}
 
-    return `
-      <tr class="kol-row border-b border-white/5 cursor-pointer ${rank === 1 ? "leader" : ""}"
-          data-twitch="${k.twitch}">
-        <td class="px-4 py-3 text-center font-black text-base ${rankCls}">${rankGlyph}</td>
-        <td class="px-4 py-3">
-          <div class="flex items-center gap-3">
-            <div class="relative shrink-0">
-              <img src="${avatar(k.name)}" class="w-8 h-8 border border-white/10" alt="" />
-              ${k.live ? `<span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-green-400 rounded-full border border-black live-dot"></span>` : ""}
-            </div>
-            <div>
-              <div class="font-bold text-stone-100 flex items-center gap-1.5">
-                ${k.name}
-                <span class="text-sm">${GEO[k.geo] || ""}</span>
-              </div>
-              <div class="text-[10px] text-stone-600 uppercase tracking-widest">${k.twitch}</div>
-            </div>
-          </div>
-        </td>
-        <td class="px-4 py-3 text-center text-stone-300 hidden md:table-cell">${k.cls}</td>
-        <td class="px-4 py-3 text-center font-bold text-stone-300 hidden md:table-cell">${k.lvl}</td>
-        <td class="px-4 py-3 text-center text-stone-500 hidden lg:table-cell">${p1d}</td>
-        <td class="px-4 py-3 text-center text-stone-500 hidden lg:table-cell">${p2d}</td>
-        <td class="px-4 py-3 text-right font-bold" style="color:var(--gold-light);text-shadow:0 0 12px rgba(197,163,90,0.35)">${fmt(main)}</td>
-        <td class="px-4 py-3 hidden md:table-cell">
-          <div class="flex items-center gap-2">
-            <div class="flex-1 h-1.5 prog-track">
-              <div class="h-full ${pfill}" style="width:${pct}%"></div>
-            </div>
-            <span class="text-[9px] text-stone-600 shrink-0">${pct}%</span>
-          </div>
-        </td>
-        <td class="px-4 py-3 text-center">
-          <span class="expand-arrow text-stone-500 text-xs">▾</span>
-        </td>
-      </tr>
-      <tr id="exp-row-${k.twitch}" class="border-b border-white/5">
-        <td colspan="9" class="p-0">
-          <div class="expand-panel" id="panel-${k.twitch}">
-            ${buildPanel(k)}
-          </div>
-        </td>
-      </tr>
-    `;
-  }).join("");
-}
-
-function buildPanel(k) {
-  function grid(milestones, done, phaseNum) {
-    const p = PHASE[phaseNum];
-    const isP2 = phaseNum === 2;
-    const headerColor = isP2 ? "text-cyan-400" : "text-[color:var(--gold)]";
-    return `
-      <div>
-        <div class="text-[9px] uppercase tracking-[0.28em] font-bold mb-3 ${headerColor}">
-          ${p.name} — ${p.subtitle}
-          <span class="text-stone-600 font-normal ml-2">${done.length}/${milestones.length} done</span>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-y-1 gap-x-6">
-          ${milestones.map(ms => {
-            const isOk = done.includes(ms.id);
-            return `
-              <div class="flex items-center gap-2 ${isOk ? "text-stone-200" : "text-stone-600"}">
-                <span class="shrink-0 text-xs ${isOk ? "text-[color:var(--gold)]" : ""}">${isOk ? "✦" : "·"}</span>
-                <span class="text-[10px] flex-1">${ms.label}</span>
-                <span class="text-[10px] font-bold shrink-0 ${isOk ? "text-[color:var(--gold-light)]" : "opacity-25"}">${ms.pts}</span>
-              </div>
-            `;
-          }).join("")}
-        </div>
-      </div>
-    `;
-  }
-
-  const totalMs = PHASE[1].milestones.length + PHASE[2].milestones.length;
-  const doneMs  = k.p1.done.length + k.p2.done.length;
-  const totalP  = k.p1.pts + k.p2.pts;
-
-  return `
-    <div class="px-6 md:px-10 py-6 bg-black/50 border-t border-white/5 grid grid-cols-1 lg:grid-cols-2 gap-8">
-      ${grid(PHASE[1].milestones, k.p1.done, 1)}
-      ${grid(PHASE[2].milestones, k.p2.done, 2)}
-      <div class="lg:col-span-2 sep pt-4 flex flex-col md:flex-row md:items-center gap-3 md:justify-between">
-        <div class="text-[10px] text-stone-500 uppercase tracking-widest">
-          ${doneMs} / ${totalMs} milestones &nbsp;·&nbsp; Total: <span class="text-[color:var(--gold-light)] font-bold">${fmt(totalP)} pts</span>
-        </div>
-        <button class="watch-btn glass px-5 py-2 text-[10px] uppercase tracking-widest text-stone-200 hover:border-[rgba(197,163,90,0.5)] transition self-start md:self-auto"
-                data-twitch="${k.twitch}">
-          Watch ${k.name}
-        </button>
-      </div>
-    </div>
-  `;
-}
-
-// ═══════════════════════════════════════════════════
-// CREATOR LIST (live sidebar)
-// ═══════════════════════════════════════════════════
-function renderCreatorList() {
-  const q = (document.getElementById("creator-search")?.value || "").toLowerCase();
-  const list = [...KOLS]
-    .sort((a,b) => a.name.localeCompare(b.name, "fr"))
-    .filter(k => !q || k.name.toLowerCase().includes(q) || k.twitch.toLowerCase().includes(q));
-
-  const el = document.getElementById("creator-list");
-  if (!el) return;
-  el.innerHTML = list.map(k => `
-    <button class="w-full text-left px-3 py-2 border border-white/6 hover:border-[rgba(197,163,90,0.38)] transition ${k.twitch === S.streamer ? "border-[rgba(197,163,90,0.28)] bg-[rgba(197,163,90,0.06)]" : ""}"
-            data-twitch="${k.twitch}">
-      <div class="flex items-center justify-between gap-2">
-        <div class="flex items-center gap-2">
-          ${k.live
-            ? `<span class="w-1.5 h-1.5 rounded-full bg-green-400 live-dot shrink-0"></span>`
-            : `<span class="w-1.5 h-1.5 rounded-full bg-stone-700 shrink-0"></span>`}
-          <span class="text-stone-100 text-[11px] font-bold">${k.name}</span>
-        </div>
-        <span>${GEO[k.geo] || ""}</span>
-      </div>
-      <div class="text-[10px] text-stone-600 uppercase tracking-widest mt-0.5 pl-3.5">${k.cls} · Lv${k.lvl}</div>
-    </button>
-  `).join("") || `<div class="text-[11px] text-stone-500">No match.</div>`;
-}
-
-// ═══════════════════════════════════════════════════
-// MILESTONE TABLE
-// ═══════════════════════════════════════════════════
-function renderMilestoneTable() {
-  const ms = PHASE[S.msPhase].milestones;
-  const tbody = document.getElementById("ms-tbody");
-  if (!tbody) return;
-  tbody.innerHTML = ms.map(m => `
-    <tr class="border-b border-white/5 hover:bg-white/3 transition">
-      <td class="px-4 py-3 text-[10px] font-bold uppercase tracking-widest cat-${m.cat}">${m.cat}</td>
-      <td class="px-4 py-3 text-stone-300">${m.label}</td>
-      <td class="px-4 py-3 text-right font-bold" style="color:var(--gold-light)">${m.pts}</td>
-    </tr>
-  `).join("");
-}
-
-// ═══════════════════════════════════════════════════
-// STREAM
-// ═══════════════════════════════════════════════════
-function setStream(twitch) {
-  S.streamer = twitch;
-  const embed = document.getElementById("twitch-embed");
-  if (embed) embed.src = twitchUrl(twitch);
-  const name = document.getElementById("now-name");
-  if (name) name.textContent = twitch;
-  const av = document.getElementById("now-avatar");
-  if (av) av.src = avatar(twitch);
-  const sel = document.getElementById("streamer-select");
-  if (sel) sel.value = twitch;
-  renderCreatorList();
-}
-
-// ═══════════════════════════════════════════════════
-// EXPAND TOGGLE (no full re-render)
-// ═══════════════════════════════════════════════════
-function toggleExpand(twitch) {
-  const panel = document.getElementById(`panel-${twitch}`);
-  if (!panel) return;
-
-  const row = document.querySelector(`tr.kol-row[data-twitch="${twitch}"]`);
-  const arrow = row?.querySelector(".expand-arrow");
-  const isOpen = panel.classList.contains("open");
-
-  // Close all panels first
-  document.querySelectorAll(".expand-panel").forEach(p => p.classList.remove("open"));
-  document.querySelectorAll(".expand-arrow").forEach(a => a.classList.remove("open"));
-
-  if (!isOpen) {
-    panel.classList.add("open");
-    if (arrow) arrow.classList.add("open");
-  }
-}
-
-// ═══════════════════════════════════════════════════
-// LOOT SYSTEM
-// ═══════════════════════════════════════════════════
-const LOOT_POOL = [
-  { text: "MIRROR OF KALANDRA", border: "#5df", weight: 1,    type: "mirror" },
-  { text: "DIVINE ORB",         border: "#ffe066", weight: 16, type: "divine" },
-  { text: "EXALTED ORB",        border: "#ffa040", weight: 60, type: "other"  },
-  { text: "CHAOS ORB",          border: "#ff50aa", weight: 200, type: "other" },
-  { text: "ALCHEMY ORB",        border: "#ffaa00", weight: 380, type: "other" },
-  { text: "PORTAL SCROLL",      border: "#8888ff", weight: 750, type: "other" },
-  { text: "WISDOM SCROLL",      border: "#777",    weight: 1400, type: "other"},
-];
-
-function pickLoot() {
-  const total = LOOT_POOL.reduce((s,x)=>s+x.weight,0);
-  let r = Math.random()*total;
-  for (const it of LOOT_POOL) { if (r<it.weight) return it; r-=it.weight; }
-  return LOOT_POOL[LOOT_POOL.length-1];
-}
-
-function spawnLoot(e) {
-  const tag = (e.target?.tagName || "").toUpperCase();
-  if (["A","BUTTON","SELECT","INPUT","IFRAME","TH"].includes(tag)) return;
-  if (e.target.closest(".expand-panel") || e.target.closest("thead")) return;
-
-  const loot = pickLoot();
-  const el = document.createElement("div");
-  el.className = "loot-drop";
-  el.textContent = loot.text;
-  el.style.left = (e.pageX - 60) + "px";
-  el.style.top  = e.pageY + "px";
-  el.style.borderColor = loot.border;
-  el.style.color = "#fff";
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 2200);
-
-  if (loot.type !== "other") {
-    const flash = document.getElementById("loot-flash");
-    if (flash) { flash.style.background = loot.border; flash.style.opacity = "0.22"; setTimeout(()=>flash.style.opacity="0",100); }
-    document.body.classList.add("shake-anim");
-    setTimeout(()=>document.body.classList.remove("shake-anim"), 360);
-  }
-  if (loot.type === "mirror") { S.mir++; document.getElementById("hud-mir").textContent = S.mir; }
-  if (loot.type === "divine") { S.div++; document.getElementById("hud-div").textContent = S.div; }
-}
-
-// ═══════════════════════════════════════════════════
-// FAKE CHAT
-// ═══════════════════════════════════════════════════
-const CHAT = [
-  { t: "Global 1: Still sane, Exile?", c: "c-global" },
-  { t: "Global 1: Anyone running Act bosses?", c: "c-global" },
-  { t: "Global 1: That boss slam is straight up illegal.", c: "c-global" },
-  { t: "Global 1: I love this game. I hate this game.", c: "c-global" },
-  { t: "Global 1: Loot gods are AFK today.", c: "c-global" },
-  { t: "Global 1: Who needs resistances anyway.", c: "c-global" },
-  { t: "Global 1: First time POE2. Send help.", c: "c-global" },
-  { t: "Global 1: Chat, is this build cooked?", c: "c-global" },
-  { t: "Trade 1: WTS Chaos, fast trade.", c: "c-trade" },
-  { t: "Trade 1: WTB upgrades, link stats.", c: "c-trade" },
-  { t: "Trade 1: WTS Divine, no lowball.", c: "c-trade" },
-  { t: "Info: A strongbox was opened.", c: "c-info" },
-  { t: "Info: A rare monster has been slain.", c: "c-info" },
-  { t: "Info: Someone forgot to cap resistances.", c: "c-info" },
-  { t: "Death: Alderiate has been slain by The Act 1 Final Boss.", c: "c-death" },
-  { t: "Death: ZeratoR has been slain by a telegraphed slam.", c: "c-death" },
-  { t: "Death: Wankil Studio has been slain by Fire Damage over Time.", c: "c-death" },
-  { t: "Death: Zizaran has been slain by Overconfidence.", c: "c-death" },
-  { t: "Death: NoWay4u_Sir has been slain by a suspicious puddle.", c: "c-death" },
-  { t: "Death: Ghazzytv has been slain by Minion AI.", c: "c-death" },
-  { t: "Death: Maxim has been slain by Mana problems.", c: "c-death" },
-  { t: "Death: Jessirocks has been slain by 'learning mechanics'.", c: "c-death" },
-  { t: "Global 1: I opened Diablo 4. I closed Diablo 4.", c: "c-global" },
-  { t: "Global 1: Diablo 4 loot: 400 rares, 0 emotions.", c: "c-global" },
-  { t: "Global 1: Diablo 4 skill trees have 3 real choices. Trust.", c: "c-global" },
-];
-
-function addChatMsg() {
-  const log = document.getElementById("chatLog");
-  if (!log) return;
-  const m = CHAT[Math.floor(Math.random() * CHAT.length)];
-  const d = document.createElement("div");
-  d.className = `log-msg ${m.c}`;
-  d.textContent = m.t;
-  log.prepend(d);
-  if (log.childNodes.length > 6) log.removeChild(log.lastChild);
-  setTimeout(addChatMsg, Math.random() * 5000 + 3200);
-}
-
-// ═══════════════════════════════════════════════════
-// EMBERS
-// ═══════════════════════════════════════════════════
-function initEmbers() {
-  const canvas = document.getElementById("embers");
-  if (!canvas) return;
-  const ctx = canvas.getContext("2d");
-
-  function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
-  addEventListener("resize", resize);
-  resize();
-
-  class Ember {
-    constructor() { this.reset(); this.y = Math.random() * canvas.height; }
-    reset() {
-      this.x  = Math.random() * canvas.width;
-      this.y  = canvas.height + 8;
-      this.r  = Math.random() * 2 + 0.3;
-      this.vy = Math.random() * 0.5 + 0.15;
-      this.vx = (Math.random() - 0.5) * 0.28;
-      this.a  = Math.random() * 0.55 + 0.1;
-    }
-    update() {
-      this.y -= this.vy; this.x += this.vx; this.a -= 0.001;
-      if (this.y < -8 || this.a <= 0) this.reset();
-    }
-    draw() {
-      ctx.fillStyle = `rgba(255,145,0,${this.a})`;
-      ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2); ctx.fill();
-    }
-  }
-
-  const embers = Array.from({length: 60}, () => new Ember());
-  (function tick() {
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    embers.forEach(e => { e.update(); e.draw(); });
-    requestAnimationFrame(tick);
-  })();
-}
-
-// ═══════════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════════
-addEventListener("DOMContentLoaded", () => {
-
-  // Last updated
-  const lu = document.getElementById("last-updated");
-  if (lu) {
-    const d = new Date(LAST_UPDATED);
-    lu.textContent = `Updated ${d.toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit",year:"numeric"})} ${d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}`;
-  }
-
-  // Stats
-  document.getElementById("stat-live").textContent = KOLS.filter(k=>k.live).length;
-  document.getElementById("stat-total").textContent = KOLS.length;
-
-  // Streamer select
-  const sel = document.getElementById("streamer-select");
-  if (sel) {
-    sel.innerHTML = [...KOLS]
-      .sort((a,b) => a.name.localeCompare(b.name,"fr"))
-      .map(k => `<option value="${k.twitch}">${k.name}${k.live ? " (LIVE)" : ""}</option>`)
-      .join("");
-    sel.addEventListener("change", () => setStream(sel.value));
-  }
-
-  // Phase switcher
-  document.querySelectorAll("[data-phase]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      S.phase = btn.dataset.phase;
-      document.querySelectorAll("[data-phase]").forEach(b => b.classList.remove("active-total","active-p1","active-p2"));
-      if (S.phase === "total") btn.classList.add("active-total");
-      else if (S.phase === "1") btn.classList.add("active-p1");
-      else btn.classList.add("active-p2");
-      const desc = document.getElementById("phase-desc");
-      if (desc) {
-        desc.textContent = S.phase === "total"
-          ? "Standings across both phases. Click a row to see milestone details."
-          : PHASE[parseInt(S.phase)].desc;
-      }
-      renderLeaderboard();
-    });
-  });
-
-  // Geo filter
-  document.querySelectorAll("[data-geo]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      S.geo = btn.dataset.geo;
-      document.querySelectorAll("[data-geo]").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      renderLeaderboard();
-    });
-  });
-
-  // Search
-  document.getElementById("lb-search")?.addEventListener("input", e => {
-    S.search = e.target.value;
-    renderLeaderboard();
-  });
-
-  // Creator search
-  document.getElementById("creator-search")?.addEventListener("input", renderCreatorList);
-
-  // Leaderboard clicks
-  document.getElementById("lb-body")?.addEventListener("click", e => {
-    const watchBtn = e.target.closest(".watch-btn");
-    if (watchBtn) { setStream(watchBtn.dataset.twitch); return; }
-    const row = e.target.closest("tr.kol-row");
-    if (row) toggleExpand(row.dataset.twitch);
-  });
-
-  // Creator list clicks
-  document.getElementById("creator-list")?.addEventListener("click", e => {
-    const btn = e.target.closest("button[data-twitch]");
-    if (btn) setStream(btn.dataset.twitch);
-  });
-
-  // Milestone tabs
-  document.querySelectorAll("[data-ms-phase]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      S.msPhase = parseInt(btn.dataset.msPhase);
-      document.querySelectorAll("[data-ms-phase]").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      renderMilestoneTable();
-    });
-  });
-
-  // Music
-  document.getElementById("music-btn")?.addEventListener("click", () => {
-    const m = document.getElementById("bgMusic");
-    if (!m) return;
-    const btn = document.getElementById("music-btn");
-    if (m.paused) { m.volume = 0.25; m.play(); if (btn) btn.textContent = "Music On"; }
-    else { m.pause(); if (btn) btn.textContent = "Music Off"; }
-  });
-
-  // Loot
-  document.body.addEventListener("click", spawnLoot);
-
-  // Boot
-  initEmbers();
-  renderLeaderboard();
-  renderCreatorList();
-  renderMilestoneTable();
-  setStream(S.streamer);
-  addChatMsg();
+addEventListener("DOMContentLoaded",()=>{
+const lu=document.getElementById("last-updated");if(lu){const d=new Date(LAST_UPDATED);lu.textContent=`Updated ${d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"})} ${d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})}`}
+document.getElementById("stat-live").textContent=KOLS.filter(k=>k.live).length;
+document.getElementById("stat-total").textContent=KOLS.length;
+const sel=document.getElementById("streamer-select");if(sel){sel.innerHTML=[...KOLS].sort((a,b)=>a.name.localeCompare(b.name,"en")).map(k=>`<option value="${k.twitch}">${k.name}${k.live?" (LIVE)":""}</option>`).join("");sel.addEventListener("change",()=>setStream(sel.value))}
+document.querySelectorAll("[data-phase]").forEach(btn=>{btn.addEventListener("click",()=>{S.phase=btn.dataset.phase;document.querySelectorAll("[data-phase]").forEach(b=>b.classList.remove("active-total","active-p1","active-p2"));if(S.phase==="total")btn.classList.add("active-total");else if(S.phase==="1")btn.classList.add("active-p1");else btn.classList.add("active-p2");const d=document.getElementById("phase-desc");if(d)d.textContent=S.phase==="total"?"Standings across both phases. Click a row to see milestone details.":PHASE[parseInt(S.phase)].desc;renderLeaderboard()})});
+document.querySelectorAll("[data-geo]").forEach(btn=>{btn.addEventListener("click",()=>{S.geo=btn.dataset.geo;document.querySelectorAll("[data-geo]").forEach(b=>b.classList.remove("active"));btn.classList.add("active");renderLeaderboard()})});
+document.getElementById("lb-search")?.addEventListener("input",e=>{S.search=e.target.value;renderLeaderboard()});
+document.getElementById("creator-search")?.addEventListener("input",renderCreatorList);
+document.getElementById("lb-body")?.addEventListener("click",e=>{const w=e.target.closest(".watch-btn");if(w){setStream(w.dataset.twitch);document.getElementById("live")?.scrollIntoView({behavior:"smooth",block:"start"});return}const r=e.target.closest("tr.kol-row");if(r)toggleExpand(r.dataset.twitch)});
+document.getElementById("creator-list")?.addEventListener("click",e=>{const b=e.target.closest("button[data-twitch]");if(b)setStream(b.dataset.twitch)});
+document.querySelectorAll("[data-ms-phase]").forEach(btn=>{btn.addEventListener("click",()=>{S.msPhase=parseInt(btn.dataset.msPhase);document.querySelectorAll("[data-ms-phase]").forEach(b=>b.classList.remove("active"));btn.classList.add("active");renderMilestoneTable()})});
+document.querySelectorAll("[data-build-phase]").forEach(btn=>{btn.addEventListener("click",()=>{S.buildPhase=parseInt(btn.dataset.buildPhase);document.querySelectorAll("[data-build-phase]").forEach(b=>b.classList.remove("active"));btn.classList.add("active");renderBuilds()})});
+(function musicInit(){const m=document.getElementById("bgMusic"),btn=document.getElementById("music-btn");if(!m||!btn)return;const update=()=>{btn.textContent=m.paused?"♪ Music Off":"♪ Music On"};m.volume=.22;btn.addEventListener("click",()=>{if(m.paused){m.play().then(update).catch(()=>{btn.textContent="♪ Music Off"})}else{m.pause();update()}});m.addEventListener("play",update);m.addEventListener("pause",update);m.play().then(update).catch(()=>{})})();
+initEmbers();renderLeaderboard();renderFeed();renderCreatorList();renderMilestoneTable();renderBuilds();setStream(S.streamer);renderCountdown();setInterval(renderCountdown,1000);addChatMsg();
 });
 </script>
 </body>
