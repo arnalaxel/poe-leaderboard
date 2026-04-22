@@ -120,19 +120,50 @@ input[type=text]:focus,select:focus{border-color:rgba(197,163,90,.55)}
 </div>
 </section>
 
-<section id="builds" class="glass border border-white/10 p-6">
-<div class="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
+<section id="live" class="glass border border-white/10 p-6">
+<div class="flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-5">
 <div>
-<div class="text-[10px] uppercase tracking-[0.32em] text-stone-500">Community picks</div>
-<div class="font-display text-2xl uppercase font-bold mt-1 gold-text">Build guides</div>
-<p class="text-[12px] text-stone-400 mt-2 max-w-xl leading-relaxed">Top-performing builds of the current league (0.4 — The Legacy of the Dark), curated from <a href="https://mobalytics.gg/poe-2/builds" target="_blank" rel="noreferrer" class="text-[color:var(--gold-light)] hover:text-white underline underline-offset-2">Mobalytics</a>. Updated throughout the race.</p>
+<div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-red-500 live-dot"></span><div class="text-[10px] uppercase tracking-[0.32em] text-stone-500">Live now</div></div>
+<div class="font-display text-2xl uppercase font-bold mt-1 gold-text">Watch the race</div>
+<p class="text-[12px] text-stone-400 mt-2 max-w-xl leading-relaxed">Featured creators streaming Path of Exile 2. Switch between regions and follow the action in real time.</p>
 </div>
-<div class="flex gap-2 shrink-0">
-<button data-build-phase="1" class="ms-tab active px-4 py-2 text-[10px] uppercase tracking-widest font-bold">Phase 1 — Launch</button>
-<button data-build-phase="2" class="ms-tab px-4 py-2 text-[10px] uppercase tracking-widest font-bold">Phase 2 — Endgame</button>
+<div class="flex items-center gap-4 shrink-0">
+<div class="text-center"><div class="font-display text-xl md:text-2xl font-black text-green-400" id="live-count">3</div><div class="text-[9px] uppercase tracking-[0.25em] text-stone-500 mt-1">Live streams</div></div>
 </div>
 </div>
-<div id="builds-grid" class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-5">
+<div class="lg:col-span-3 border border-white/10 overflow-hidden flex flex-col bg-black/40">
+<div class="aspect-video bg-black relative">
+<iframe id="twitch-embed" src="" class="w-full h-full" allowfullscreen frameborder="0" title="Twitch stream"></iframe>
+<div id="live-badge" class="absolute top-3 left-3 hidden items-center gap-2 bg-red-600/95 px-3 py-1 text-[10px] uppercase tracking-widest font-bold text-white"><span class="w-1.5 h-1.5 rounded-full bg-white live-dot"></span>LIVE</div>
+</div>
+<div class="p-4 border-t border-white/10 bg-black/60 flex flex-col md:flex-row md:items-center gap-4">
+<div class="flex items-center gap-3">
+<img id="now-avatar" src="" class="w-10 h-10 border border-white/10" alt="" />
+<div>
+<div class="text-[9px] uppercase tracking-[0.28em] text-stone-500">Now watching</div>
+<div id="now-name" class="font-display font-bold text-[color:var(--gold-light)] uppercase tracking-widest"></div>
+<div id="now-meta" class="text-[10px] text-stone-500 uppercase tracking-widest mt-0.5"></div>
+</div>
+</div>
+<div class="flex items-center gap-2 md:ml-auto w-full md:w-auto">
+<select id="streamer-select" class="w-full md:w-56 px-3 py-2 text-xs"></select>
+<a id="twitch-link" href="#" target="_blank" rel="noreferrer" class="shrink-0 px-3 py-2 text-[10px] uppercase tracking-widest font-bold border border-[rgba(145,70,255,0.5)] bg-[rgba(145,70,255,0.1)] text-[#b794f4] hover:bg-[rgba(145,70,255,0.2)] transition">Open Twitch ↗</a>
+</div>
+</div>
+</div>
+
+<div class="lg:col-span-1 border border-white/10 p-4 flex flex-col gap-3 bg-black/40">
+<div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-green-400 live-dot"></span><div class="text-[10px] uppercase tracking-[0.28em] text-stone-300 font-bold">Milestone feed</div></div>
+<div id="feed-list" class="space-y-2 scroll-y max-h-[360px]"></div>
+</div>
+</div>
+
+<div class="mt-5 border-t border-white/10 pt-5">
+<div class="flex items-center justify-between mb-3"><div class="text-[10px] uppercase tracking-[0.28em] text-stone-400 font-bold">All creators</div><input id="creator-search" type="text" placeholder="Filter" class="w-48 px-3 py-1.5 text-xs" /></div>
+<div id="creator-list" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 max-h-60 scroll-y"></div>
+</div>
 </section>
 
 <section id="race" class="glass border border-white/10">
@@ -196,22 +227,19 @@ input[type=text]:focus,select:focus{border-color:rgba(197,163,90,.55)}
 </div>
 </section>
 
-<section id="live" class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-<div class="lg:col-span-1 glass border border-white/10 p-5 flex flex-col gap-3 order-2 lg:order-1">
-<div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-green-400 live-dot"></span><div class="text-[10px] uppercase tracking-[0.28em] text-stone-300 font-bold">Live milestone feed</div></div>
-<div id="feed-list" class="space-y-2 scroll-y max-h-[440px]"></div>
+<section id="builds" class="glass border border-white/10 p-6">
+<div class="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
+<div>
+<div class="text-[10px] uppercase tracking-[0.32em] text-stone-500">Community picks</div>
+<div class="font-display text-2xl uppercase font-bold mt-1 gold-text">Build guides</div>
+<p class="text-[12px] text-stone-400 mt-2 max-w-xl leading-relaxed">Top-performing builds of the current league (0.4 — The Legacy of the Dark), curated from <a href="https://mobalytics.gg/poe-2/builds" target="_blank" rel="noreferrer" class="text-[color:var(--gold-light)] hover:text-white underline underline-offset-2">Mobalytics</a>. Updated throughout the race.</p>
 </div>
-<div class="lg:col-span-3 glass border border-white/10 overflow-hidden flex flex-col order-1 lg:order-2">
-<div class="aspect-video bg-black"><iframe id="twitch-embed" src="" class="w-full h-full" allowfullscreen frameborder="0" title="Twitch stream"></iframe></div>
-<div class="p-4 border-t border-white/10 bg-black/55 flex flex-col md:flex-row md:items-center gap-4">
-<div class="flex items-center gap-3"><img id="now-avatar" src="" class="w-9 h-9 border border-white/10" alt="" /><div><div class="text-[9px] uppercase tracking-[0.28em] text-stone-500">Now watching</div><div id="now-name" class="font-display font-bold text-[color:var(--gold-light)] uppercase tracking-widest"></div></div></div>
-<div class="flex items-center gap-2 md:ml-auto w-full md:w-auto"><select id="streamer-select" class="w-full md:w-60 px-3 py-2 text-xs"></select></div>
-</div>
-<div class="p-4 border-t border-white/10 bg-black/35">
-<div class="flex items-center justify-between mb-3"><div class="text-[10px] uppercase tracking-[0.28em] text-stone-400 font-bold">All creators</div><input id="creator-search" type="text" placeholder="Filter" class="w-48 px-3 py-1.5 text-xs" /></div>
-<div id="creator-list" class="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-48 scroll-y"></div>
+<div class="flex gap-2 shrink-0">
+<button data-build-phase="1" class="ms-tab active px-4 py-2 text-[10px] uppercase tracking-widest font-bold">Phase 1 — Launch</button>
+<button data-build-phase="2" class="ms-tab px-4 py-2 text-[10px] uppercase tracking-widest font-bold">Phase 2 — Endgame</button>
 </div>
 </div>
+<div id="builds-grid" class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4"></div>
 </section>
 
 <section id="milestones" class="glass border border-white/10 p-6">
@@ -402,7 +430,7 @@ function renderBuilds(){const grid=document.getElementById("builds-grid");if(!gr
 
 function addChatMsg(){const log=document.getElementById("chatLog");if(!log)return;const m=CHAT[Math.floor(Math.random()*CHAT.length)];const d=document.createElement("div");d.className=`log-msg ${m.c}`;d.textContent=m.t;log.prepend(d);if(log.childNodes.length>6)log.removeChild(log.lastChild);setTimeout(addChatMsg,Math.random()*5000+3500)}
 
-function setStream(t){S.streamer=t;const e=document.getElementById("twitch-embed");if(e)e.src=twitchUrl(t);const n=document.getElementById("now-name");if(n)n.textContent=t;const a=document.getElementById("now-avatar");if(a)a.src=avatar(t);const s=document.getElementById("streamer-select");if(s)s.value=t;renderCreatorList()}
+function setStream(t){S.streamer=t;const k=KOLS.find(x=>x.twitch===t);const e=document.getElementById("twitch-embed");if(e)e.src=twitchUrl(t);const n=document.getElementById("now-name");if(n)n.textContent=k?k.name:t;const a=document.getElementById("now-avatar");if(a)a.src=avatar(k?k.name:t);const meta=document.getElementById("now-meta");if(meta&&k)meta.textContent=`${GEO[k.geo]||""} ${k.cls} · Lv${k.lvl}`;const badge=document.getElementById("live-badge");if(badge){if(k&&k.live){badge.classList.remove("hidden");badge.classList.add("flex")}else{badge.classList.add("hidden");badge.classList.remove("flex")}}const link=document.getElementById("twitch-link");if(link)link.href=`https://twitch.tv/${t}`;const s=document.getElementById("streamer-select");if(s)s.value=t;renderCreatorList()}
 
 function toggleExpand(t){const p=document.getElementById(`panel-${t}`);if(!p)return;const r=document.querySelector(`tr.kol-row[data-twitch="${t}"]`);const a=r?.querySelector(".expand-arrow");const o=p.classList.contains("open");document.querySelectorAll(".expand-panel").forEach(x=>x.classList.remove("open"));document.querySelectorAll(".expand-arrow").forEach(x=>x.classList.remove("open"));if(!o){p.classList.add("open");if(a)a.classList.add("open")}}
 
@@ -412,7 +440,8 @@ addEventListener("DOMContentLoaded",()=>{
 const lu=document.getElementById("last-updated");if(lu){const d=new Date(LAST_UPDATED);lu.textContent=`Updated ${d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"})} ${d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})}`}
 document.getElementById("stat-live").textContent=KOLS.filter(k=>k.live).length;
 document.getElementById("stat-total").textContent=KOLS.length;
-const sel=document.getElementById("streamer-select");if(sel){sel.innerHTML=[...KOLS].sort((a,b)=>a.name.localeCompare(b.name,"en")).map(k=>`<option value="${k.twitch}">${k.name}${k.live?" (LIVE)":""}</option>`).join("");sel.addEventListener("change",()=>setStream(sel.value))}
+const lc=document.getElementById("live-count");if(lc)lc.textContent=KOLS.filter(k=>k.live).length;
+const sel=document.getElementById("streamer-select");if(sel){sel.innerHTML=[...KOLS].sort((a,b)=>{if(a.live!==b.live)return a.live?-1:1;return a.name.localeCompare(b.name,"en")}).map(k=>`<option value="${k.twitch}">${k.live?"🔴 LIVE · ":""}${k.name} · ${k.cls}</option>`).join("");sel.addEventListener("change",()=>setStream(sel.value))}
 document.querySelectorAll("[data-phase]").forEach(btn=>{btn.addEventListener("click",()=>{S.phase=btn.dataset.phase;document.querySelectorAll("[data-phase]").forEach(b=>b.classList.remove("active-total","active-p1","active-p2"));if(S.phase==="total")btn.classList.add("active-total");else if(S.phase==="1")btn.classList.add("active-p1");else btn.classList.add("active-p2");const d=document.getElementById("phase-desc");if(d)d.textContent=S.phase==="total"?"Standings across both phases. Click a row to see milestone details.":PHASE[parseInt(S.phase)].desc;renderLeaderboard()})});
 document.querySelectorAll("[data-geo]").forEach(btn=>{btn.addEventListener("click",()=>{S.geo=btn.dataset.geo;document.querySelectorAll("[data-geo]").forEach(b=>b.classList.remove("active"));btn.classList.add("active");renderLeaderboard()})});
 document.getElementById("lb-search")?.addEventListener("input",e=>{S.search=e.target.value;renderLeaderboard()});
@@ -422,7 +451,7 @@ document.getElementById("creator-list")?.addEventListener("click",e=>{const b=e.
 document.querySelectorAll("[data-ms-phase]").forEach(btn=>{btn.addEventListener("click",()=>{S.msPhase=parseInt(btn.dataset.msPhase);document.querySelectorAll("[data-ms-phase]").forEach(b=>b.classList.remove("active"));btn.classList.add("active");renderMilestoneTable()})});
 document.querySelectorAll("[data-build-phase]").forEach(btn=>{btn.addEventListener("click",()=>{S.buildPhase=parseInt(btn.dataset.buildPhase);document.querySelectorAll("[data-build-phase]").forEach(b=>b.classList.remove("active"));btn.classList.add("active");renderBuilds()})});
 (function musicInit(){const m=document.getElementById("bgMusic"),btn=document.getElementById("music-btn");if(!m||!btn)return;const update=()=>{btn.textContent=m.paused?"♪ Music Off":"♪ Music On"};m.volume=.22;btn.addEventListener("click",()=>{if(m.paused){m.play().then(update).catch(()=>{btn.textContent="♪ Music Off"})}else{m.pause();update()}});m.addEventListener("play",update);m.addEventListener("pause",update);m.play().then(update).catch(()=>{})})();
-initEmbers();renderLeaderboard();renderFeed();renderCreatorList();renderMilestoneTable();renderBuilds();setStream(S.streamer);renderCountdown();setInterval(renderCountdown,1000);addChatMsg();
+initEmbers();renderLeaderboard();renderFeed();renderCreatorList();renderMilestoneTable();renderBuilds();const firstLive=KOLS.find(k=>k.live);setStream(firstLive?firstLive.twitch:S.streamer);renderCountdown();setInterval(renderCountdown,1000);addChatMsg();
 });
 </script>
 </body>
